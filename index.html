@@ -782,7 +782,7 @@ function renderProductos(){
     }
 
     const abre = () => abreModal(p, varIdx, filaSel);
-    sec.querySelector(".ver-mas").addEventListener("click", abre);
+    /* sec.querySelector(".ver-mas").addEventListener("click", abre); */
     sec.querySelector(".arte").addEventListener("click", abre);
     sec.querySelector(".arte").addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " "){ e.preventDefault(); abre(); }
