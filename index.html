@@ -674,6 +674,18 @@ const fotosDe = p => {
   if (p.img && !l.includes(p.img)) l.unshift(p.img);
   return l;
 };
+/* Todas las fotos: primero las genéricas (las que rotan solas) y después las
+   propias de cada color, para que elegir un color sea solo saltar de índice. */
+const fotosTodas = p => {
+  const l = fotosDe(p);
+  (p.cols || []).forEach(c => { if (c.img && !l.includes(c.img)) l.push(c.img); });
+  return l;
+};
+/* índice de la foto de un color dentro de esa lista; -1 si ese color no tiene */
+const idxColor = (p, lista, i) => {
+  const c = (p.cols || [])[i];
+  return c && c.img ? lista.indexOf(c.img) : -1;
+};
 
 function renderMarquee(){
   const base = `<span>✦ DISEÑO GRATIS</span><span><em>HEART</em> <i>GRAPHIC</i></span><span>♡ PERSONALIZA TODO</span><span>✦ FULL COLOR</span><span><em>ENVÍOS</em> A TODO CHILE</span>`;
@@ -687,7 +699,8 @@ function renderProductos(){
   const lista = CATALOGO;
 
   lista.forEach((p, idx) => {
-    const fotos = fotosDe(p);
+    const fotos = fotosTodas(p);
+    const nGen = fotosDe(p).length;          /* solo estas rotan solas */
     const art = fotos.length
       ? `<div class="capa">${fotos.map((f,i) => `<img class="anim${i ? " oculta" : ""}" src="${resolveImg(f)}" alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`).join("")}</div>`
       : `<div class="pegatina anim"><span class="emoji">${p.e}</span></div>`;
@@ -695,7 +708,7 @@ function renderProductos(){
     sec.className = "prod reveal";
     sec.innerHTML = `
       <div class="arte" data-par="${idx % 2 ? '-0.05' : '-0.08'}" role="button" tabindex="0" aria-label="Ver detalle de ${p.n}">
-        ${fotos.length > 1 ? `<span class="cont-fotos">📷 ${fotos.length} fotos</span>` : ""}
+        ${nGen > 1 ? `<span class="cont-fotos">📷 ${nGen} fotos</span>` : ""}
         <span class="deco d1">${idx % 2 ? '♥' : '✦'}</span>
         ${art}
         <span class="deco d2">${idx % 2 ? '✧' : '♥'}</span>
@@ -708,6 +721,7 @@ function renderProductos(){
         <div class="colores" hidden><span class="lab">Colores</span><div class="swatches"></div></div>
         <div class="tabla"></div>
         <p class="notas">${p.notas}</p>
+        <button class="ver-mas" type="button">🔍 Ver fotos y detalle</button>
         <a class="pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> Lo quiero</a>
       </div>`;
     cont.appendChild(sec);
@@ -715,28 +729,51 @@ function renderProductos(){
     const varCont = sec.querySelector(".variantes");
     const tabla = sec.querySelector(".tabla");
     const pedir = sec.querySelector(".pedir");
-    let varIdx = 0, filaSel = 0, colorSel = 0;
+    let varIdx = 0, filaSel = 0, colorSel = -1;
+
+    /* La tarjeta muestra la foto del color elegido; sin color elegido, las fotos
+       genéricas se van turnando al pasar el mouse. */
+    const capa = sec.querySelector(".arte .capa");
+    const ims = capa ? [...capa.querySelectorAll("img")] : [];
+    let fotoSel = 0, giro = null;
+    function muestraFoto(i){
+      if (!ims.length) return;
+      fotoSel = Math.max(0, Math.min(i, ims.length - 1));
+      ims.forEach((im, j) => im.classList.toggle("oculta", j !== fotoSel));
+    }
+    if (ims.length > 1 && !reduceMotion){
+      const arte = sec.querySelector(".arte");
+      const gira = () => { if (colorSel < 0) muestraFoto((fotoSel + 1) % nGen); };
+      arte.addEventListener("mouseenter", () => { clearInterval(giro); if (colorSel < 0) giro = setInterval(gira, 1400); });
+      arte.addEventListener("mouseleave", () => clearInterval(giro));
+    }
 
     const paleta = p.cols || [];
     if (paleta.length){
       const box = sec.querySelector(".colores");
       const sws = box.querySelector(".swatches");
+      const lab = box.querySelector(".lab");
       box.hidden = false;
+      const pintaColor = () => {
+        [...sws.children].forEach((x, j) => { x.classList.toggle("on", j === colorSel); x.textContent = j === colorSel ? "✓" : ""; });
+        lab.innerHTML = colorSel < 0 ? "Colores" : `Colores <b>· ${paleta[colorSel].nom}</b>`;
+        muestraFoto(colorSel < 0 ? 0 : (idxColor(p, fotos, colorSel) >= 0 ? idxColor(p, fotos, colorSel) : 0));
+      };
       paleta.forEach((c, i) => {
         const b = document.createElement("button");
-        b.className = "sw" + (esClaro(c.hex) ? " claro" : "") + (i === 0 ? " on" : "");
+        b.className = "sw" + (esClaro(c.hex) ? " claro" : "");
         b.style.background = c.hex;
         b.title = c.nom;
         b.type = "button";
         b.setAttribute("aria-label", "Color " + c.nom);
-        b.textContent = i === 0 ? "✓" : "";
         b.addEventListener("click", () => {
-          colorSel = i;
-          sws.querySelectorAll(".sw").forEach((x, j) => { x.classList.toggle("on", j === i); x.textContent = j === i ? "✓" : ""; });
+          colorSel = (colorSel === i) ? -1 : i;   /* volver a tocarlo lo deselecciona */
+          pintaColor();
           pintaTabla();
         });
         sws.appendChild(b);
       });
+      pintaColor();
     }
 
     function pintaTabla(){
@@ -750,7 +787,7 @@ function renderProductos(){
         tabla.appendChild(f);
       });
       const [un, pr] = v.p[Math.min(filaSel, v.p.length-1)];
-      pedir.href = waLink(p, v.v, un, pr, paleta.length ? paleta[colorSel].nom : "");
+      pedir.href = waLink(p, v.v, un, pr, colorSel >= 0 ? paleta[colorSel].nom : "");
     }
     if (p.vars.length > 1){
       p.vars.forEach((v, i) => {
@@ -770,18 +807,8 @@ function renderProductos(){
     }
     pintaTabla();
 
-    /* rotación suave de las fotos genéricas en la tarjeta, solo al pasar el mouse */
-    const capa = sec.querySelector(".arte .capa");
-    if (capa && fotos.length > 1 && !reduceMotion){
-      const ims = [...capa.querySelectorAll("img")];
-      let k = 0, t = null;
-      const gira = () => { ims[k].classList.add("oculta"); k = (k+1) % ims.length; ims[k].classList.remove("oculta"); };
-      sec.querySelector(".arte").addEventListener("mouseenter", () => { clearInterval(t); t = setInterval(gira, 1400); });
-      sec.querySelector(".arte").addEventListener("mouseleave", () => { clearInterval(t); });
-    }
-
     const abre = () => abreModal(p, varIdx, filaSel);
-    /* sec.querySelector(".ver-mas").addEventListener("click", abre); */
+    sec.querySelector(".ver-mas").addEventListener("click", abre);
     sec.querySelector(".arte").addEventListener("click", abre);
     sec.querySelector(".arte").addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " "){ e.preventDefault(); abre(); }
@@ -799,7 +826,7 @@ const MODAL = (() => {
   const foto  = raiz.querySelector(".m-foto");
   const thumbs= raiz.querySelector(".m-thumbs");
   const avisoRot = raiz.querySelector(".m-rot");
-  let rot = null, ims = [], k = 0, ultimoFoco = null;
+  let rot = null, ims = [], k = 0, nGen = 0, ultimoFoco = null;
 
   const paraRot = () => { clearInterval(rot); rot = null; avisoRot.hidden = true; };
   const muestra = i => {
@@ -809,15 +836,17 @@ const MODAL = (() => {
   };
   const arrancaRot = () => {
     paraRot();
-    if (ims.length < 2 || reduceMotion) return;
+    if (nGen < 2 || reduceMotion) return;
+    if (k >= nGen) muestra(0);
     avisoRot.hidden = false;
-    rot = setInterval(() => muestra((k + 1) % ims.length), 3000);
+    rot = setInterval(() => muestra((k + 1) % nGen), 3000);
   };
 
-  function pintaFotos(fotos, emoji){
+  function pintaFotos(fotos, emoji, genericas){
     foto.innerHTML = "";
     thumbs.innerHTML = "";
     ims = [];
+    nGen = Math.max(0, Math.min(genericas ?? fotos.length, fotos.length));
     if (!fotos.length){
       foto.innerHTML = `<div class="emoji-big">${emoji}</div>`;
       avisoRot.hidden = true;
@@ -830,7 +859,7 @@ const MODAL = (() => {
       foto.appendChild(im); ims.push(im);
       const t = document.createElement("button");
       t.className = "m-thumb"; t.type = "button";
-      t.setAttribute("aria-label", `Foto ${i+1} de ${fotos.length}`);
+      t.setAttribute("aria-label", i < nGen ? `Foto ${i+1} de ${fotos.length}` : "Foto del color elegido");
       t.innerHTML = `<img src="${resolveImg(f)}" alt="" loading="lazy">`;
       t.addEventListener("click", () => { paraRot(); muestra(i); });
       thumbs.appendChild(t);
@@ -876,7 +905,8 @@ function abreModal(p, varIdx0 = 0, filaSel0 = 0){
   m.card.classList.toggle("vet", esVet);
   m.foco = document.activeElement;
 
-  const fotos = fotosDe(p);
+  const fotos = fotosTodas(p);
+  const nGenericas = fotosDe(p).length;
   const paleta = p.cols || [];
   let varIdx = varIdx0, filaSel = filaSel0, colorSel = -1;   /* -1 = ningún color elegido */
 
@@ -884,7 +914,7 @@ function abreModal(p, varIdx0 = 0, filaSel0 = 0){
   raiz.querySelector(".m-desc").textContent = p.d;
   raiz.querySelector(".m-notas").textContent = p.notas || "";
   raiz.querySelector(".m-notas").hidden = !p.notas;
-  m.pintaFotos(fotos, p.e);
+  m.pintaFotos(fotos, p.e, nGenericas);
 
   /* colores */
   const cajaCol = raiz.querySelector(".m-colores");
@@ -895,18 +925,13 @@ function abreModal(p, varIdx0 = 0, filaSel0 = 0){
   const pintaCol = () => {
     [...sws.children].forEach((x, j) => { x.classList.toggle("on", j === colorSel); x.textContent = j === colorSel ? "✓" : ""; });
     labCol.innerHTML = colorSel < 0
-      ? `Colores <b>· elige uno</b>`
-      : `Colores <b>· ${paleta[colorSel].nom}</b>`;
-    if (colorSel < 0){ m.arrancaRot(); return; }
-    const url = paleta[colorSel].img;
-    if (url){
-      const i = fotos.findIndex(f => f === url);
-      m.paraRot();
-      if (i >= 0) m.muestra(i);
-      else { m.pintaFotos([url, ...fotos], p.e); m.paraRot(); m.muestra(0); }
-    } else {
-      m.arrancaRot();   /* ese color aún no tiene foto: seguimos mostrando las genéricas */
-    }
+      ? (paleta.some(c => c.img) ? `Colores <b>· elige uno para ver su foto</b>` : `Colores <b>· elige uno</b>`)
+      : `Colores <b>· ${paleta[colorSel].nom}</b>` +
+        (paleta[colorSel].img ? "" : ` <b style="color:var(--ink-soft)">(sin foto aún)</b>`);
+    if (colorSel < 0){ m.muestra(0); m.arrancaRot(); return; }
+    const i = idxColor(p, fotos, colorSel);
+    if (i >= 0){ m.paraRot(); m.muestra(i); }
+    else m.arrancaRot();   /* ese color aún no tiene foto: seguimos mostrando las genéricas */
   };
   paleta.forEach((c, i) => {
     const b = document.createElement("button");
