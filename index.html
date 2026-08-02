@@ -110,7 +110,7 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
 @media(max-width:760px){.prod,.prod:nth-child(even){grid-template-columns:1fr;max-width:480px}
 .prod .arte,.prod:nth-child(even) .arte{margin:0}
 .prod .arte img{width:clamp(240px,66vw,330px);max-width:88vw}}
-.prod .arte{position:relative;z-index:0;display:grid;place-items:center;padding:20px;will-change:transform}
+.prod .arte{position:relative;z-index:0;display:grid;place-items:center;align-content:center;padding:20px;will-change:transform}
 .prod .arte .anim{animation:floaty 5s ease-in-out infinite}
 .prod .arte .pegatina{width:clamp(230px,30vw,330px);height:clamp(230px,30vw,330px);border-radius:50%;background:#fff;border:4px solid var(--ink);display:grid;place-items:center;box-shadow:8px 10px 0 rgba(63,60,102,.2);position:relative}
 .prod .arte .pegatina::after{content:"";position:absolute;inset:9px;border:3px dashed var(--celeste);border-radius:50%}
@@ -169,8 +169,18 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
 .ver-mas:hover{transform:translate(2px,2px);background:var(--lila);color:var(--ink)}
 
 /* ============ MATERIAL DEL PRODUCTO ============ */
-.materiales{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:15px}
-.mat{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#eefaff 0%,#f4eeff 100%);border:2.5px solid var(--ink);border-radius:20px;padding:8px 15px 8px 9px;box-shadow:3px 3px 0 rgba(63,60,102,.16)}
+.materiales{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.mat{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#eefaff 0%,#f4eeff 100%);border:2.5px solid var(--ink);border-radius:22px;padding:8px 16px 8px 9px;box-shadow:4px 4px 0 rgba(63,60,102,.18)}
+
+/* burbuja bajo la foto de la tarjeta: se apoya sobre la parte visible del arte,
+   compensando el -10% con que el arte se mete por detrás de la tarjeta */
+.prod .arte .materiales{position:relative;z-index:3;margin-top:16px;padding-right:11%;max-width:100%}
+.prod:nth-child(even) .arte .materiales{padding-right:0;padding-left:11%}
+@media(max-width:760px){.prod .arte .materiales,.prod:nth-child(even) .arte .materiales{padding:0}
+.prod .arte,.prod:nth-child(even) .arte{margin-bottom:12px}}
+
+/* y bajo la galería del modal */
+.m-galeria .materiales{margin-top:14px}
 .mat .ico{width:40px;height:40px;flex:0 0 auto;border-radius:13px;background:#fff;border:2px solid var(--ink);display:grid;place-items:center;overflow:hidden}
 .mat .ico img{width:27px;height:27px;object-fit:contain;display:block}
 .mat .ico span{font-size:20px;line-height:1}
@@ -620,11 +630,11 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
     <div class="m-galeria">
       <div class="m-foto"><span class="m-rot" hidden>&#10022; fotos rotando</span></div>
       <div class="m-thumbs"></div>
+      <div class="m-materiales"></div>
     </div>
     <div class="m-info">
       <h3 class="m-nombre" id="mNombre"></h3>
       <p class="desc m-desc"></p>
-      <div class="m-materiales"></div>
       <div class="m-precio"></div>
       <div class="m-bloque m-colores" hidden><span class="lab">Colores</span><div class="swatches"></div></div>
       <div class="m-bloque m-caja-var" hidden><span class="lab">Elige el tipo</span><div class="variantes m-variantes"></div></div>
@@ -742,12 +752,12 @@ function renderProductos(){
         <span class="deco d1">${idx % 2 ? '♥' : '✦'}</span>
         ${art}
         <span class="deco d2">${idx % 2 ? '✧' : '♥'}</span>
+        ${htmlMateriales(p.mat)}
       </div>
       <div class="tarjeta">
         <span class="badge">producto ${String(idx+1).padStart(2,"0")}</span>
         <h3>${p.n}</h3>
         <p class="desc">${p.d}</p>
-        ${htmlMateriales(p.mat)}
         <div class="variantes"></div>
         <div class="colores" hidden><span class="lab">Colores</span><div class="swatches"></div></div>
         <div class="tabla"></div>
@@ -1043,6 +1053,9 @@ function parallax(){
     el.style.transform = `translate3d(0, ${-(y * el.dataset.speed)}px, 0)`;
   });
   document.querySelectorAll("[data-par]").forEach(el => {
+    /* En móvil el arte va apilado sobre la tarjeta: desplazarlo le comería la
+       burbuja de material. Además ahí el efecto casi no se nota. */
+    if (innerWidth <= 760){ if (el.style.transform) el.style.transform = ""; return; }
     const r = el.getBoundingClientRect();
     const centro = r.top + r.height/2 - innerHeight/2;
     el.style.transform = `translate3d(0, ${centro * el.dataset.par}px, 0)`;
