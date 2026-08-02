@@ -1,0 +1,43 @@
+TIENDA HEART GRAPHIC — ESTRUCTURA DE LA CARPETA
+================================================
+
+index.html .................... EL SITIO COMPLETO (un solo archivo, listo para subir a cualquier hosting).
+                                Es una SPA: incluye la tienda y la vista de Políticas, con transición
+                                deslizante entre ambas. Fuentes Neulis, logos, íconos y fotos van
+                                embebidos adentro, así que funciona sin depender de otras carpetas.
+                                Al llamarse index.html, el hosting lo abre solo al entrar al dominio.
+
+catalogo_heart_graphic.xlsx ... Catálogo de productos y precios. Subirlo a Google Sheets,
+                                publicarlo (Archivo → Compartir → Publicar en la web) y pegar
+                                el ID de la planilla en la constante SHEET_ID al inicio del
+                                <script> de index.html. Instrucciones en la hoja "leeme".
+
+assets\
+  logos\ ...................... SVG de marca (logo completo, isotipo corazón, corazón blanco).
+  iconos\ ..................... Íconos de contacto (WhatsApp, Instagram, Facebook, correo).
+                                WhatsApp e Instagram ya integrados; Facebook y correo disponibles.
+  fuentes\ .................... Tipografías Neulis originales (OTF licenciados).
+                                El sitio solo embebe Neulis Alt Regular y Neulis Bold.
+  productos\ .................. Fotos PNG de productos (6 ya embebidas en el sitio) y
+                                carnets_veterinarios\ con los 10 diseños del carrusel.
+                                Cuando el Sheet esté publicado, subirlas a Cloudinary/ImgBB y
+                                poner la URL en la columna imagen_principal.
+  referencias\ ................ CATÁLOGO.pdf (referencia de estilo), logo.ai y JPG del logo.
+
+mockups\ ...................... Capturas y versiones de exploración del diseño.
+
+_para_borrar\ ................. Archivos que ya no se usan. Elimina esta carpeta cuando quieras
+                                (el puente de Claude no puede borrar archivos de tu equipo).
+
+CONFIGURACIÓN RÁPIDA (al inicio del <script> en index.html):
+  WHATSAPP     → número de pedidos (hoy: 56946910637)
+  SHEET_ID     → ID de la planilla publicada (vacío = usa el catálogo embebido)
+  IMG_BASE     → URL base si subes las imágenes a Cloudinary/ImgBB
+  COLORES      → paleta de colores por producto (hoy solo tazones, id 1)
+  TESTIMONIOS  → lista de testimonios del carrusel final (editar textos y nombres)
+
+SECCIONES DEL SITIO: inicio · especial veterinarias · catálogo · testimonios · contacto,
+más la vista de Políticas (se abre desde el menú y vuelve con "Productos" o el botón inferior).
+
+NOTA GIT: los archivos movidos y renombrados aparecerán en git status.
+Haz commit cuando estés conforme.
