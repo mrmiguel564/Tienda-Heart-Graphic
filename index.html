@@ -178,12 +178,13 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
      background:linear-gradient(135deg,#eefaff 0%,#f4eeff 100%);
      border:2.5px solid var(--ink);border-radius:var(--r-pill);
      padding:6px 15px 6px 6px;box-shadow:3px 3px 0 rgba(63,60,102,.16)}
-.mat .ico{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:#fff;
-          border:2px solid var(--ink);display:grid;place-items:center;overflow:hidden;
+/* El ícono va suelto, sin pastilla ni borde. La caja se mantiene en 32px para
+   no mover el sangrado del móvil (41px = 32 del ícono + 9 del gap). */
+.mat .ico{flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;
           color:var(--celeste-deep)}
-.mat .ico img{width:20px;height:20px;object-fit:contain;display:block}
-.mat .ico svg{width:20px;height:20px;display:block;fill:currentColor;stroke:currentColor}
-.mat .ico span{font-size:16px;line-height:1}
+.mat .ico img{width:26px;height:26px;object-fit:contain;display:block}
+.mat .ico svg{width:26px;height:26px;display:block;fill:currentColor;stroke:currentColor}
+.mat .ico span{font-size:22px;line-height:1}
 .mat b{flex:0 0 auto;font-family:'Neulis',sans-serif;font-weight:900;font-size:11.5px;
        letter-spacing:.05em;text-transform:uppercase;color:var(--celeste-deep);
        line-height:1.1;white-space:nowrap}
