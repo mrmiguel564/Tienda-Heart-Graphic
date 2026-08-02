@@ -165,30 +165,47 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
 .prod .arte .capa{position:relative;display:grid;place-items:center}
 .prod .arte .capa img{transition:opacity .7s ease}
 .prod .arte .capa img.oculta{opacity:0}
-.ver-mas{font-family:'Neulis',sans-serif;font-weight:800;font-size:13px;color:var(--ink);background:#f3edff;border:2.5px solid var(--ink);border-radius:var(--r-pill);padding:9px 16px;cursor:pointer;margin-bottom:13px;display:inline-flex;align-items:center;gap:7px;transition:.14s}
-.ver-mas:hover{transform:translate(2px,2px);background:var(--lila);color:var(--ink)}
+.ver-mas{font-family:'Neulis',sans-serif;font-weight:800;font-size:13px;color:var(--ink);background:#fff;border:2.5px solid var(--ink);border-radius:var(--r-pill);padding:10px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.14s;box-shadow:4px 4px 0 rgba(63,60,102,.18)}
+.ver-mas:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(63,60,102,.18);background:var(--lila)}
 
-/* ============ MATERIAL DEL PRODUCTO ============ */
-.materiales{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
-.mat{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#ffffff 0%,#ffffff 100%);border:2.5px solid var(--ink);border-radius:22px;padding:8px 16px 8px 9px;box-shadow:4px 4px 0 rgba(63,60,102,.18)}
+/* ============ MATERIAL DEL PRODUCTO ============
+   Una sola línea: ícono · título · descripción.
+   El ícono no se encoge nunca; el título tampoco (son nombres cortos y mandan);
+   la descripción se queda con todo el ancho sobrante y, si aún así no cabe,
+   se recorta con puntos suspensivos (el texto completo queda en el title). */
+.materiales{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.mat{display:flex;align-items:center;gap:9px;min-width:0;
+     background:linear-gradient(135deg,#eefaff 0%,#f4eeff 100%);
+     border:2.5px solid var(--ink);border-radius:var(--r-pill);
+     padding:6px 15px 6px 6px;box-shadow:3px 3px 0 rgba(63,60,102,.16)}
+.mat .ico{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:#fff;
+          border:2px solid var(--ink);display:grid;place-items:center;overflow:hidden}
+.mat .ico img{width:20px;height:20px;object-fit:contain;display:block}
+.mat .ico span{font-size:16px;line-height:1}
+.mat b{flex:0 0 auto;font-family:'Neulis',sans-serif;font-weight:900;font-size:11.5px;
+       letter-spacing:.05em;text-transform:uppercase;color:var(--celeste-deep);
+       line-height:1.1;white-space:nowrap}
+.mat i{flex:1 1 0;min-width:0;font-style:normal;font-weight:700;font-size:11px;
+       color:var(--ink-soft);line-height:1.2;white-space:nowrap;overflow:hidden;
+       text-overflow:ellipsis;text-align:right;
+       padding-left:9px;border-left:2px dashed rgba(63,60,102,.22)}
+.mat b:only-child,.mat i:only-child{flex:1 1 auto;text-align:left;border-left:0;padding-left:0}
+.prod:nth-child(even) .mat b,.modal-card.vet .mat b{color:var(--lila-deep)}
+/* En un celular angosto los tres no caben en una línea de texto. Antes que
+   recortar datos, la fila se mantiene (ícono | título | descripción) y solo la
+   descripción se parte en dos renglones: el título nunca se corta. */
+@media(max-width:520px){
+  .mat{flex-wrap:wrap;row-gap:3px}
+  .mat b{flex:1 1 auto;font-size:11px}
+  .mat i{flex:1 0 100%;padding-left:41px;border-left:0;text-align:left;
+         white-space:normal;text-overflow:clip;line-height:1.3}
+}
 
-/* burbuja bajo la foto de la tarjeta: se apoya sobre la parte visible del arte,
-   compensando el -10% con que el arte se mete por detrás de la tarjeta */
-.prod .arte .materiales{position:relative;z-index:3;margin-top:16px;max-width:100%}
-.prod:nth-child(even) .arte .materiales{padding-right:0;padding-left:0}
-@media(max-width:760px){.prod .arte .materiales,.prod:nth-child(even) .arte .materiales{padding:0}
-.prod .arte,.prod:nth-child(even) .arte{margin-bottom:12px}}
+/* el botón de detalle ahora vive bajo la foto */
+.prod .arte .ver-mas{position:relative;z-index:3;margin:18px 0 0}
 
-/* y bajo la galería del modal */
-.m-galeria .materiales{margin-top:14px}
-.mat .ico{width:40px;height:40px;flex:0 0 auto;border-radius:13px;background:#fff;border:2px solid var(--ink);display:grid;place-items:center;overflow:hidden}
-.mat .ico img{width:27px;height:27px;object-fit:contain;display:block}
-.mat .ico span{font-size:20px;line-height:1}
-.mat .txt{display:flex;flex-direction:column;gap:1px;min-width:0}
-.mat .txt b{font-family:'Neulis',sans-serif;font-weight:900;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--celeste-deep);line-height:1.18}
-.mat .txt i{font-style:normal;font-weight:700;font-size:11px;color:var(--ink-soft);line-height:1.35}
-.prod:nth-child(even) .mat .txt b,.modal-card.vet .mat .txt b{color:var(--lila-deep)}
-@media(max-width:420px){.mat{width:100%}}
+/* y en el modal el material va bajo la galería */
+.m-galeria .materiales{margin:14px 0 0}
 
 /* ============ MODAL DE PRODUCTO ============ */
 .modal{position:fixed;inset:0;z-index:140;display:none;overflow-y:auto;padding:18px}
@@ -723,11 +740,15 @@ function renderMarquee(){
    Se configura en la columna "material" de la planilla. */
 function htmlMateriales(mats){
   if (!mats || !mats.length) return "";
-  return `<div class="materiales">` + mats.map(m => `<div class="mat">` +
+  return `<div class="materiales">` + mats.map(m => {
+    const desc = m.detalle.join(" · ");
+    return `<div class="mat">` +
       (m.icono ? `<span class="ico"><img src="${resolveImg(m.icono)}" alt="" loading="lazy"></span>`
                : m.emoji ? `<span class="ico"><span>${m.emoji}</span></span>` : "") +
-      `<span class="txt">${m.titulo ? `<b>${m.titulo}</b>` : ""}` +
-      m.detalle.map(d => `<i>${d}</i>`).join("") + `</span></div>`).join("") + `</div>`;
+      (m.titulo ? `<b>${m.titulo}</b>` : "") +
+      (desc ? `<i title="${desc}">${desc}</i>` : "") +
+    `</div>`;
+  }).join("") + `</div>`;
 }
 
 /* ============ LISTADO DE PRODUCTOS ============ */
@@ -752,7 +773,7 @@ function renderProductos(){
         <span class="deco d1">${idx % 2 ? '♥' : '✦'}</span>
         ${art}
         <span class="deco d2">${idx % 2 ? '✧' : '♥'}</span>
-        ${htmlMateriales(p.mat)}
+        <button class="ver-mas" type="button">🔍 Ver fotos y detalle</button>
       </div>
       <div class="tarjeta">
         <span class="badge">producto ${String(idx+1).padStart(2,"0")}</span>
@@ -762,7 +783,7 @@ function renderProductos(){
         <div class="colores" hidden><span class="lab">Colores</span><div class="swatches"></div></div>
         <div class="tabla"></div>
         <p class="notas">${p.notas}</p>
-        <button class="ver-mas" type="button">🔍 Ver fotos y detalle</button>
+        ${htmlMateriales(p.mat)}
         <a class="pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> Lo quiero</a>
       </div>`;
     cont.appendChild(sec);
@@ -859,7 +880,9 @@ function renderProductos(){
     pintaTabla();
 
     const abre = () => abreModal(p, varIdx, filaSel);
-    sec.querySelector(".ver-mas").addEventListener("click", abre);
+    /* el botón vive dentro de .arte, que también abre la ficha: sin esto el
+       modal se inicializaría dos veces por cada click */
+    sec.querySelector(".ver-mas").addEventListener("click", e => { e.stopPropagation(); abre(); });
     sec.querySelector(".arte").addEventListener("click", abre);
     sec.querySelector(".arte").addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " "){ e.preventDefault(); abre(); }
