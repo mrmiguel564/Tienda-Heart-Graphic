@@ -639,6 +639,11 @@ const WHATSAPP = "56946910637";
 const SHEET_ID = "1L20psMPcime5mykDnrCMMIJagioEIyQ6Q-_iwfvMKN8";
 const IMG_BASE = "assets/productos/";
 
+/* Cada cuánto se turnan solas las fotos genéricas (milisegundos).
+   La transición entre una y otra dura .7s y está en el CSS (.capa img). */
+const ROTA_TARJETA = 4000;   /* en las tarjetas del catálogo */
+const ROTA_MODAL   = 3000;   /* dentro de la ficha ampliada  */
+
 let CATALOGO = [{"id":1,"n":"Tazones Personalizados","e":"☕","carrusel":false,"d":"Tazón de 11 onzas personalizado con tu diseño favorito.","notas":"Valores por mayor no válidos para tazones de colores/especiales (valor único $4.000) · Colores: blanco, rojo, verde, celeste, rosado y amarillo (mango e interior de color) · Diseño gratis","img":"","fotos":[],"cols":[{"hex":"#ffffff","nom":"Blanco","img":""},{"hex":"#f23b3b","nom":"Rojo","img":""},{"hex":"#12b653","nom":"Verde","img":""},{"hex":"#25b6ee","nom":"Azul","img":""},{"hex":"#f9a8dd","nom":"Rosado","img":""},{"hex":"#ffd34d","nom":"Amarillo","img":""}],"vars":[{"v":"11 Onzas","p":[[1,4000],[5,18500],[20,50000],[30,60000]]}]},{"id":2,"n":"Stickers Troquelados","e":"🌟","carrusel":false,"d":"Stickers troquelados full color, máxima calidad de impresión.","notas":"Para forma personalizada se requiere previa cotización · Adhesivo 135gr, full impresión · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"3x3 cm","p":[[100,4000],[500,13000],[1000,22500],[2000,37500]]},{"v":"4x4 cm","p":[[100,5500],[500,19950],[1000,35700],[2000,42000]]},{"v":"5x5 cm","p":[[100,7000],[500,25000],[1000,38000],[2000,48000]]},{"v":"6x6 cm","p":[[100,9500],[500,27500],[1000,42000],[2000,55900]]}]},{"id":3,"n":"Volantes / Flyers","e":"📄","carrusel":false,"d":"Flyers en papel fotográfico full color para tu negocio.","notas":"Gramaje del papel: 135gr · Full impresiones, máxima calidad · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"Fotográfico 10x14,5","p":[[500,24000],[1000,36000],[2000,60000],[4000,110000],[8000,155000]]},{"v":"Fotográfico 20x14,5","p":[[500,27000],[1000,40000],[2000,57000],[4000,120000],[8000,162000]]},{"v":"Mini Flyer 10x7,25","p":[[500,18000],[1000,27000],[2000,38000],[4000,63000],[8000,110000]]}]},{"id":4,"n":"Tarjetas de Presentación","e":"💳","carrusel":false,"d":"Tarjetas de 9x5,5 cm en opalina lisa full color.","notas":"Gramaje del papel: 250gr · Opalina lisa, full color · Tamaño 9x5,5 cm · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"1 Cara","p":[[100,8000],[200,14000],[500,25000],[1000,35000],[2000,55000]]},{"v":"2 Caras","p":[[100,16000],[200,20000],[500,30000],[1000,48000],[2000,68000]]}]},{"id":5,"n":"Magnético / Imán para el Refri","e":"🧲","carrusel":false,"d":"Imanes publicitarios para que nunca te olviden.","notas":"Grosor del imán: 0,4 · Adhesivo fotográfico full color · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"Simple 5x5,5 cm","p":[[100,13000],[300,25000],[500,40000],[1000,63000],[2000,110000]]},{"v":"Grande 10x5,5 cm","p":[[100,21000],[300,45000],[500,65000],[1000,110000],[2000,185000]]}]},{"id":6,"n":"Talonario / Recetario","e":"📋","carrusel":true,"d":"Talonarios de 100 hojas, papel bond encolado full color.","notas":"100 hojas por talonario · Papel bond encolado, impresión alta calidad · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"Media Carta 14x21,6","p":[[2,10000],[5,22000],[10,35000],[20,52000],[50,97000]]},{"v":"Carta 21,6x27,9","p":[[1,10000],[2,18000],[5,30000],[10,50000],[20,85000]]}]},{"id":7,"n":"Carnet de Vacunación","e":"🐾","carrusel":true,"d":"Carnets de vacunas para veterinarias y mascotas regalonas.","notas":"La medida indicada corresponde al carnet abierto · Papel 250gr, opalina lisa full color · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"Mini Carnet 20x14,5","p":[[50,16000],[100,26000],[200,42000],[300,51000]]},{"v":"Maxi Carnet 21x27","p":[[50,18500],[100,35000],[200,60000],[300,80000]]}]},{"id":8,"n":"Bolsas de Papel Personalizadas","e":"🛍️","carrusel":false,"d":"Bolsas de papel kraft blanca personalizadas full color.","notas":"Bolsa kraft blanca personalizada full color · Con manilla · Biodegradables · Solo color blanco disponible","img":"","fotos":[],"cols":[],"vars":[{"v":"Talla S 22x30","p":[[30,15100],[50,24500],[100,47500],[200,76000]]},{"v":"Talla M 30x32","p":[[30,18100],[50,29500],[100,55000],[200,98000]]},{"v":"Talla L 30x41","p":[[30,21100],[50,34000],[100,65000],[200,114000]]},{"v":"Talla XL 38x48","p":[[30,26850],[50,42000],[100,80000],[200,140000]]}]},{"id":9,"n":"Cierre de Bolsas","e":"🎀","carrusel":false,"d":"Stickers de cierre con QR personalizado para tus pedidos.","notas":"Puede incluir QR personalizado (redes sociales, contactos, agradecimiento) · Adhesivo brillante troquelado · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"3,5 x 10 cm","p":[[100,10000],[300,19000]]},{"v":"5 x 10 cm","p":[[100,14000],[300,25000]]}]},{"id":10,"n":"Tarjetas Cliente Frecuente","e":"💖","carrusel":false,"d":"Tarjetas de fidelización con sus stickers para timbrar.","notas":"Tarjetas de 9x5,5 cm y stickers de 1,5 cm de diámetro · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"Tarjeta + Stickers","p":[[100,19500],[300,28000]]}]},{"id":11,"n":"Sticker de Envío","e":"📦","carrusel":false,"d":"Stickers con datos de envío para tus paquetos.","notas":"Papel adhesivo glossy 135gr · Full color · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"10 x 8 cm","p":[[100,13000],[300,25000]]}]},{"id":12,"n":"Chapitas Personalizadas","e":"😺","carrusel":false,"d":"Chapitas metálicas con el diseño que quieras.","notas":"Diseño gratis al solicitar nuestro servicio","img":"","fotos":[],"cols":[],"vars":[{"v":"Unidades","p":[[10,5000],[20,8600],[30,11100],[50,15000],[100,26000]]}]},{"id":13,"n":"Credenciales PVC","e":"🪪","carrusel":true,"d":"Credenciales de PVC para tu equipo o institución.","notas":"Plástico PVC · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"Unidades","p":[[1,3000],[10,25000],[20,40000],[30,53000]]}]},{"id":14,"n":"Cédula de Identidad para Mascotas","e":"🐱","carrusel":true,"d":"La cédula chilena de tu mascota, igualita a la real.","notas":"Plástico PVC · Diseño ambos lados","img":"","fotos":[],"cols":[],"vars":[{"v":"Unidades","p":[[1,3000],[2,5000]]}]},{"id":15,"n":"Placa para Mascotas","e":"🦴","carrusel":true,"d":"Placas rígidas con forma y nombre para tu mascota.","notas":"Plástico PVC rígido · Diseño ambos lados","img":"","fotos":[],"cols":[],"vars":[{"v":"Unidades","p":[[1,3000],[2,5000]]}]},{"id":16,"n":"Etiquetas de Ropa","e":"👕","carrusel":false,"d":"Cinta espiga sublimada con tu marca para tus prendas.","notas":"Cinta espiga blanca sublimada · Full color personalizada · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"Espiga 1,5 cm","p":[[30,3500],[50,5000],[100,8000],[300,18000],[500,23500]]},{"v":"Espiga 2 cm","p":[[30,4500],[50,6000],[100,9500],[300,20400],[500,25000]]},{"v":"Espiga 2,5 cm","p":[[30,5500],[50,7000],[100,11500],[300,22500],[500,27500]]}]},{"id":17,"n":"Cuadro Spotify","e":"🎵","carrusel":false,"d":"Tu canción favorita estampada directo al vidrio.","notas":"Precio único · Estampado directo al vidrio · Stock rotativo","img":"","fotos":[],"cols":[],"vars":[{"v":"16 x 11 cm","p":[[1,12000]]}]},{"id":18,"n":"Morral","e":"🎒","carrusel":false,"d":"Morral blanco con cordones ajustables para estampar.","notas":"Solo color blanco · Talla estándar · Cordones ajustables · 100% poliéster","img":"","fotos":[],"cols":[],"vars":[{"v":"Unidad","p":[[1,1800]]}]},{"id":19,"n":"Mousepad","e":"🖱️","carrusel":false,"d":"Mousepad de 21x17 cm con tu diseño motivacional.","notas":"Sobre las 10 unidades: $2.500 c/u · Diseño gratis","img":"","fotos":[],"cols":[],"vars":[{"v":"21 x 17 cm","p":[[1,3000],[10,25000]]}]},{"id":20,"n":"Llavero Spotify","e":"🔑","carrusel":false,"d":"Llavero con código Spotify escaneable, fondo personalizado.","notas":"Fondo personalizado · Diseño ambos lados","img":"","fotos":[],"cols":[],"vars":[{"v":"Unidades","p":[[1,3000],[2,5000],[3,6000]]}]},{"id":21,"n":"Mini Tarjeta QR","e":"📱","carrusel":false,"d":"Mini tarjetas 5x7 con tu QR: ¡Escanéame!","notas":"Precio único · Opalina lisa · Gramaje 250gr","img":"","fotos":[],"cols":[],"vars":[{"v":"5 x 7 cm","p":[[100,5500]]}]},{"id":22,"n":"Poleras","e":"✨","carrusel":false,"d":"Poleras blancas 100% poliéster con tu estampado.","notas":"100% poliéster · Poleras solo color blanco","img":"","fotos":[],"cols":[],"vars":[{"v":"S - M - L","p":[[1,8000]]},{"v":"XL - 2XL","p":[[1,9000]]}]}];
 
 document.getElementById("waNav").href =
@@ -693,8 +698,10 @@ function renderMarquee(){
 }
 
 /* ============ LISTADO DE PRODUCTOS ============ */
+const rotadores = [];   /* apagadores de las tarjetas del render anterior */
 function renderProductos(){
   const cont = document.getElementById("listaProductos");
+  rotadores.splice(0).forEach(apaga => apaga());
   cont.innerHTML = "";
   const lista = CATALOGO;
 
@@ -735,17 +742,27 @@ function renderProductos(){
        genéricas se van turnando al pasar el mouse. */
     const capa = sec.querySelector(".arte .capa");
     const ims = capa ? [...capa.querySelectorAll("img")] : [];
-    let fotoSel = 0, giro = null;
+    let fotoSel = 0, giro = null;   /* giro: temporizador de la rotación */
     function muestraFoto(i){
       if (!ims.length) return;
       fotoSel = Math.max(0, Math.min(i, ims.length - 1));
       ims.forEach((im, j) => im.classList.toggle("oculta", j !== fotoSel));
     }
-    if (ims.length > 1 && !reduceMotion){
-      const arte = sec.querySelector(".arte");
+    if (nGen > 1 && !reduceMotion){
+      /* Solo giran las tarjetas que están en pantalla: 22 productos rotando a la
+         vez gastarían batería sin que nadie los vea. El desfase por índice evita
+         que dos tarjetas visibles cambien exactamente en el mismo instante. */
       const gira = () => { if (colorSel < 0) muestraFoto((fotoSel + 1) % nGen); };
-      arte.addEventListener("mouseenter", () => { clearInterval(giro); if (colorSel < 0) giro = setInterval(gira, 1400); });
-      arte.addEventListener("mouseleave", () => clearInterval(giro));
+      const arranca = () => {
+        if (giro) return;
+        const paso = () => { gira(); giro = setTimeout(paso, ROTA_TARJETA); };
+        giro = setTimeout(paso, ROTA_TARJETA + (idx % 3) * 700);
+      };
+      const para = () => { clearTimeout(giro); giro = null; };
+      const io = new IntersectionObserver(
+        es => es.forEach(e => e.isIntersecting ? arranca() : para()), {threshold: .2});
+      io.observe(sec);
+      rotadores.push(() => { para(); io.disconnect(); });
     }
 
     const paleta = p.cols || [];
@@ -839,7 +856,7 @@ const MODAL = (() => {
     if (nGen < 2 || reduceMotion) return;
     if (k >= nGen) muestra(0);
     avisoRot.hidden = false;
-    rot = setInterval(() => muestra((k + 1) % nGen), 3000);
+    rot = setInterval(() => muestra((k + 1) % nGen), ROTA_MODAL);
   };
 
   function pintaFotos(fotos, emoji, genericas){
