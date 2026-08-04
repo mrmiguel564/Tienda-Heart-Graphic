@@ -703,6 +703,47 @@ const resolveImg = v => {
   return IMG_BASE + s.split("/").map(encodeURIComponent).join("/");
 };
 
+/* ============ FOTOS LIVIANAS (CLOUDINARY) ============
+   Cloudinary transforma por URL: entre /upload/ y el archivo se insertan
+   parámetros y su CDN devuelve —y deja cacheada— esa versión ya optimizada.
+     f_auto  → entrega WebP/AVIF según el navegador (el ahorro más grande)
+     q_auto  → calidad automática según el contenido de la foto
+     w_###   → ancho máximo en píxeles
+     c_limit → solo achica: nunca agranda ni recorta la foto original
+   Así puedes pegar en la planilla la URL cruda que te da Cloudinary y el sitio
+   pide sola la versión chica. Una URL que NO sea de Cloudinary (foto local,
+   base64, otro hosting) o que ya venga con transformaciones propias se
+   devuelve intacta, sin tocar nada. */
+const CLD = /^(https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.+)$/i;
+/* Prefijos de parámetro de Cloudinary. Sirven para reconocer una URL que ya
+   trae transformaciones y respetarla (un nombre como "carnet_vet.png" o una
+   carpeta "productos_heart" no se confunde: no están en esta lista). */
+const CLD_PARAM = /^(a|ar|b|bo|c|co|d|dl|dn|dpr|e|f|fl|fn|g|h|if|l|o|pg|q|r|t|u|vc|w|x|y|z)_/;
+const cldYaTransf = seg => !seg.includes(".") && seg.split(",").every(t => CLD_PARAM.test(t));
+
+const cld = (url, ancho) => {
+  const m = CLD.exec(String(url || ""));
+  if (!m || cldYaTransf(m[2].split("/")[0])) return url;
+  return `${m[1]}f_auto,q_auto,c_limit,w_${ancho}/${m[2]}`;
+};
+/* La misma foto en varios anchos: el navegador elige según el tamaño real en
+   pantalla y la densidad (retina). Vacío si la URL no es transformable. */
+const cldSet = (url, anchos) =>
+  cld(url, anchos[0]) === url ? "" : anchos.map(w => `${cld(url, w)} ${w}w`).join(", ");
+/* Atributos listos para pegar dentro de un <img>. */
+const cldAttrs = (url, anchos, sizes) => {
+  const set = cldSet(url, anchos);
+  return set ? ` srcset="${set}" sizes="${sizes}"` : "";
+};
+
+/* Anchos por lugar de la página (ver el CSS de cada uno):
+   tarjeta .prod .arte img → hasta 430px · carrusel .pv-item img → hasta 225px */
+const ANCHOS_TARJETA = [300, 460, 700, 900], SIZES_TARJETA = "(max-width:760px) 330px, 430px";
+const ANCHOS_VET = [200, 320, 460, 640], SIZES_VET = "225px";
+const ANCHO_MODAL = 1000;   /* .m-foto ocupa ~480px, x2 por retina */
+const ANCHO_THUMB = 120;    /* .m-thumb mide 56px */
+const ANCHO_LIGHTBOX = 1600;
+
 function waLink(p, variante, unidades, precio, color){
   const v = (p.vars.length > 1 || !/unidad/i.test(variante)) ? ` ${variante},` : "";
   const c = color ? `, color ${color}` : "";
@@ -805,7 +846,10 @@ function renderProductos(){
     const fotos = fotosTodas(p);
     const nGen = fotosDe(p).length;          /* solo estas rotan solas */
     const art = fotos.length
-      ? `<div class="capa">${fotos.map((f,i) => `<img class="anim${i ? " oculta" : ""}" src="${resolveImg(f)}" alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`).join("")}</div>`
+      ? `<div class="capa">${fotos.map((f,i) => {
+          const u = resolveImg(f);
+          return `<img class="anim${i ? " oculta" : ""}" src="${cld(u, 700)}"${cldAttrs(u, ANCHOS_TARJETA, SIZES_TARJETA)} alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`;
+        }).join("")}</div>`
       : `<div class="pegatina anim"><span class="emoji">${p.e}</span></div>`;
     const sec = document.createElement("article");
     sec.className = "prod reveal";
@@ -971,13 +1015,14 @@ const MODAL = (() => {
       return;
     }
     fotos.forEach((f, i) => {
+      const u = resolveImg(f);
       const im = document.createElement("img");
-      im.src = resolveImg(f); im.alt = ""; im.loading = i ? "lazy" : "eager";
+      im.src = cld(u, ANCHO_MODAL); im.alt = ""; im.loading = i ? "lazy" : "eager";
       foto.appendChild(im); ims.push(im);
       const t = document.createElement("button");
       t.className = "m-thumb"; t.type = "button";
       t.setAttribute("aria-label", i < nGen ? `Foto ${i+1} de ${fotos.length}` : "Foto del color elegido");
-      t.innerHTML = `<img src="${resolveImg(f)}" alt="" loading="lazy">`;
+      t.innerHTML = `<img src="${cld(u, ANCHO_THUMB)}" alt="" loading="lazy">`;
       t.addEventListener("click", () => { paraRot(); muestra(i); });
       thumbs.appendChild(t);
     });
@@ -1180,7 +1225,10 @@ const VET = (() => {
   const nodo = it => {
     const d = document.createElement("div");
     d.className = "pv-item";
-    d.innerHTML = `<img src="${it.url}" alt="${it.alt || "Diseño"}" loading="lazy">`;
+    /* en la columna se ve chiquito; la versión grande queda guardada en
+       data-full para cuando se abra el lightbox */
+    d.innerHTML = `<img src="${cld(it.url, 460)}"${cldAttrs(it.url, ANCHOS_VET, SIZES_VET)} alt="${it.alt || "Diseño"}" loading="lazy">`;
+    d.dataset.full = cld(it.url, ANCHO_LIGHTBOX);
     if (it.prod) d.dataset.pid = it.prod.id;
     return d;
   };
@@ -1236,7 +1284,7 @@ const VET = (() => {
     if (!item) return;
     const p = CATALOGO.find(x => String(x.id) === item.dataset.pid);
     if (p){ abreModal(p); return; }          /* si sabemos de qué producto es, abrimos su ficha */
-    lb.querySelector("img").src = item.querySelector("img").src;
+    lb.querySelector("img").src = item.dataset.full || item.querySelector("img").src;
     lb.classList.add("open");
   });
   lb.addEventListener("click", () => lb.classList.remove("open"));
