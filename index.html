@@ -394,6 +394,58 @@ body.en-politicas .nav-volver{display:inline-block !important}
 .pol-volver{display:block;text-align:center;margin-top:28px}
 footer{text-align:center;font-size:13px;color:var(--ink-soft);padding:0 20px 44px}
 footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;opacity:.85;line-height:1.55}
+
+/* ============ CARRITO ============ */
+.fila-pedir{display:flex;gap:10px;align-items:stretch}
+.fila-pedir .pedir{flex:1;min-width:0}
+.add-cart{font-family:'Neulis',sans-serif;font-weight:900;font-size:15px;flex:0 0 auto;display:flex;align-items:center;gap:6px;background:#fff;border:3px solid var(--ink);color:var(--ink);padding:13px 16px;border-radius:var(--r-pill);cursor:pointer;box-shadow:5px 5px 0 var(--ink);transition:.15s;white-space:nowrap}
+.add-cart:hover{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+.add-cart.ok{background:var(--rosa)}
+
+.carro-btn{position:fixed;right:18px;bottom:18px;z-index:150;width:64px;height:64px;border-radius:50%;background:var(--btn-lila);border:3px solid var(--ink);color:#fff;font-size:26px;cursor:pointer;box-shadow:5px 5px 0 var(--ink);display:grid;place-items:center;transition:.15s}
+.carro-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.carro-btn[hidden]{display:none}
+.carro-btn .num{position:absolute;top:-7px;right:-7px;min-width:26px;height:26px;padding:0 6px;border-radius:var(--r-pill);background:var(--rosa);border:2.5px solid var(--ink);color:var(--ink);font-family:'Neulis',sans-serif;font-weight:900;font-size:13px;display:grid;place-items:center}
+@keyframes carroPop{0%{transform:scale(1)}45%{transform:scale(1.22) rotate(-7deg)}100%{transform:scale(1)}}
+.carro-btn.pop{animation:carroPop .45s ease}
+
+.carro-panel{position:fixed;right:16px;bottom:94px;z-index:160;width:min(400px,calc(100vw - 32px));max-height:min(66vh,560px);display:none;flex-direction:column;background:#fff;border:4px solid var(--ink);border-radius:28px;box-shadow:9px 9px 0 var(--celeste);overflow:hidden}
+.carro-panel.abierto{display:flex}
+.carro-cab{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px 12px;border-bottom:3px solid var(--ink);background:linear-gradient(135deg,rgba(108,218,244,.18),rgba(205,185,249,.22))}
+.carro-cab h3{font-family:'Neulis',sans-serif;font-weight:900;font-size:20px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.carro-cerrar{width:34px;height:34px;border-radius:50%;background:#fff;border:2.5px solid var(--ink);color:var(--ink);font-weight:900;font-size:15px;cursor:pointer;display:grid;place-items:center;box-shadow:3px 3px 0 rgba(63,60,102,.25);transition:.14s}
+.carro-cerrar:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(63,60,102,.25)}
+.carro-lista{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.carro-vacio{text-align:center;font-weight:600;color:var(--ink-soft);padding:26px 10px;font-size:14.5px}
+.carro-item{display:flex;gap:10px;align-items:center;border:2.5px solid rgba(63,60,102,.25);border-radius:18px;padding:10px 12px}
+.carro-item .emo{flex:0 0 auto;font-size:22px}
+.carro-item .inf{flex:1;min-width:0}
+.carro-item .inf b{display:block;font-size:14px;color:var(--ink);line-height:1.15}
+.carro-item .inf span{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-top:2px}
+.carro-item .pr{font-family:'Neulis',sans-serif;font-weight:900;font-size:14px;color:var(--celeste-deep);white-space:nowrap}
+.carro-item .veces{display:flex;align-items:center;gap:6px}
+.carro-item .veces button{width:26px;height:26px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;color:var(--ink);font-weight:900;font-size:13px;cursor:pointer;display:grid;place-items:center;transition:.12s;padding:0}
+.carro-item .veces button:hover{background:var(--celeste);color:#fff}
+.carro-item .veces b{font-family:'Neulis',sans-serif;font-size:13px;min-width:22px;text-align:center}
+.carro-pie{border-top:3px solid var(--ink);padding:14px 18px 16px;background:#fff}
+.carro-total{display:flex;justify-content:space-between;align-items:baseline;font-family:'Neulis',sans-serif;font-weight:900;color:var(--ink);margin-bottom:12px}
+.carro-total small{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.carro-total .tot{font-size:24px;color:var(--celeste-deep)}
+.carro-enviar{width:100%;font-family:'Neulis',sans-serif;font-weight:900;font-size:16px;text-decoration:none;display:flex;justify-content:center;align-items:center;gap:8px;background:var(--btn-celeste);border:3px solid var(--ink);color:#fff;padding:13px 18px;border-radius:var(--r-pill);box-shadow:4px 4px 0 var(--ink);transition:.15s;cursor:pointer}
+.carro-enviar:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.carro-vaciar{display:flex;align-items:center;gap:5px;margin:10px auto 0;background:none;border:none;font-weight:700;font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline}
+.carro-vaciar:hover{color:var(--ink)}
+
+.carro-toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(14px);z-index:170;background:var(--ink);color:#fff;font-family:'Neulis',sans-serif;font-weight:800;font-size:14px;padding:11px 22px;border-radius:var(--r-pill);border:2.5px solid #fff;box-shadow:4px 4px 0 rgba(63,60,102,.4);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+.carro-toast.vis{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:640px){
+  .fila-pedir{flex-wrap:wrap}
+  .fila-pedir .pedir{flex:1 1 100%}
+  .add-cart{flex:1 1 100%;justify-content:center}
+  .carro-btn{right:14px;bottom:14px;width:58px;height:58px}
+  .carro-panel{right:12px;bottom:84px}
+}
 </style>
 </head>
 <body>
@@ -403,6 +455,10 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 <symbol id="ic-ig" viewBox="0 0 141.73 141.73"><path fill="currentColor" d="M130.62,40.93V100.8a1.54,1.54,0,0,0-.05.31,28.46,28.46,0,0,1-.34,3.33,31.09,31.09,0,0,1-27.48,26l-2,.18H40.93a1.54,1.54,0,0,0-.31-.05,31,31,0,0,1-29.5-30.91V42.09c0-.56,0-1.12,0-1.68A31,31,0,0,1,42.09,11.12H99.75a28.26,28.26,0,0,1,5.51.52,30.67,30.67,0,0,1,19.53,12.43A30.19,30.19,0,0,1,130.44,39C130.51,39.63,130.56,40.28,130.62,40.93Zm-10.15,30V42.2A20.79,20.79,0,0,0,99.58,21.34H42.26a21.67,21.67,0,0,0-4.17.41A20.86,20.86,0,0,0,21.34,42.08V99.56a21.51,21.51,0,0,0,.35,3.84,20.81,20.81,0,0,0,20.42,17.07q28.78,0,57.57,0a20.31,20.31,0,0,0,4.66-.53,20.82,20.82,0,0,0,16.13-20.42Z"/><path fill="currentColor" d="M70.93,41.18A29.74,29.74,0,1,1,41.19,70.72,29.78,29.78,0,0,1,70.93,41.18ZM91.59,70.91A20.67,20.67,0,1,0,70.9,91.59,20.7,20.7,0,0,0,91.59,70.91Z"/><path fill="currentColor" d="M103.9,44.68a6.85,6.85,0,1,1,6.87-6.81A6.83,6.83,0,0,1,103.9,44.68Z"/></symbol>
 <symbol id="ic-fb" viewBox="0 0 141.73 141.73"><path fill="currentColor" d="M70.72,127.91c-31.41.15-57.3-25.94-56.91-57.77a57.06,57.06,0,1,1,114.11,1.8C127.37,102.86,101.85,128.2,70.72,127.91Z"/><path fill="currentColor" d="M60.35,91c0-6,0-12.1,0-18.16,0-1.46-.45-2-1.95-1.86s-3.29.08-4.93.11c-.94,0-1.34-.37-1.33-1.38q.08-5.55,0-11.1c0-1.11.45-1.45,1.47-1.42,1.59,0,3.19-.13,4.75.06,1.76.22,2.18-.53,2.08-2.07a64.59,64.59,0,0,1,.15-10c.76-8.16,6.47-13.55,14.62-13.75,4.17-.1,8.34-.1,12.5-.22,1.39,0,1.84.45,1.8,1.84-.09,3.41-.07,6.82,0,10.23,0,1.19-.29,1.7-1.57,1.63-1.88-.1-3.76,0-5.64,0-3.49,0-5,1.33-5.25,4.76-.16,2-.06,4-.16,6-.06,1.19.42,1.52,1.55,1.5,3.05,0,6.11,0,9.16,0,1.33,0,1.76.39,1.61,1.73q-.62,5.52-1.06,11c-.09,1.1-.63,1.38-1.6,1.37-2.58,0-5.17.07-7.75,0-1.35-.06-1.64.38-1.63,1.68,0,11.93,0,23.85,0,35.78,0,2.45,0,2.48-2.46,2.48-4.17,0-8.34,0-12.5,0-1.48,0-1.95-.53-1.93-2C60.38,103.05,60.35,97,60.35,91Z"/></symbol>
 <symbol id="ic-mail" viewBox="0 0 141.73 141.73"><path fill="currentColor" d="M118.63,112.69H23.54a2.82,2.82,0,0,0-.31-.07,12.49,12.49,0,0,1-10.92-12.48q0-29.26,0-58.55A12.5,12.5,0,0,1,24.81,29q46.2,0,92.39,0a12.16,12.16,0,0,1,10.27,5.43,14.28,14.28,0,0,1,2,4.36V101.9c-.07.32-.15.63-.22.95A12.55,12.55,0,0,1,124.8,110,13.2,13.2,0,0,1,118.63,112.69ZM25.08,35.81c0,.27.22.37.35.5l44,43.91c1.19,1.19,2.21,1.18,3.42,0l43.91-43.9c.13-.13.34-.22.32-.48Zm6.1,70.45h79.25c-.21-.23-.33-.38-.46-.51Q96.82,92.6,83.68,79.44c-.43-.42-.64-.36-1,0q-4.8,4.84-9.64,9.66c-1.36,1.35-2.44,1.35-3.79,0l-9.9-10c-.58-.59-.58-.59-1.19,0Q44.88,92.41,31.65,105.66A1.33,1.33,0,0,0,31.18,106.26Zm91.72-67c-.16.15-.32.28-.47.43q-17.1,17.1-34.22,34.19c-.42.41-.38.63,0,1,3.18,3.15,6.34,6.34,9.51,9.51q10.5,10.51,21,21a1,1,0,0,0,1.31.24,4.83,4.83,0,0,0,2.56-2.8,9.34,9.34,0,0,0,.47-3.32q0-29.81,0-59.61C123,39.79,123.12,39.54,122.9,39.29Zm-103.39.27a1.9,1.9,0,0,0-.08.87v60.12c0,.31,0,.61,0,.91.12,1.58.48,3.06,1.92,4,.83.56.94.54,1.65-.17L53.51,74.76c.67-.67.67-.67,0-1.32L20.15,40.07A1.58,1.58,0,0,0,19.51,39.56Z"/></symbol>
+<symbol id="ic-cart" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.47 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></symbol>
+<symbol id="ic-cart-add" viewBox="0 0 24 24"><path fill="currentColor" d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-9.83-3.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/></symbol>
+<symbol id="ic-trash" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
+<symbol id="ic-check" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
 <symbol id="ic-hg" viewBox="252 122 336 290"><defs><linearGradient id="gradHG" x1="209.47" y1="267.16" x2="492.16" y2="267.16" gradientUnits="userSpaceOnUse"><stop offset="0.37" stop-color="#cdb9f9"/><stop offset="0.57" stop-color="#aac5f7"/><stop offset="0.86" stop-color="#7dd4f5"/><stop offset="1" stop-color="#6cdaf4"/></linearGradient></defs><path fill="#ffffff" d="M414.71,251.3V279a.9.9,0,0,1-.91.91h-6.73c-.18-1.81-.26-3.67-.26-5.53a60.2,60.2,0,0,1,4.91-23.94,9.26,9.26,0,0,0,1.84.19H414A.72.72,0,0,1,414.71,251.3Z"/><path fill="url(#gradHG)" d="M495.66,130c-31.85,0-59.68,22.23-74.72,47.87-15-25.64-42.86-47.87-74.71-47.87a86.52,86.52,0,0,0-86.56,86.56c0,125.65,161.27,187.86,161.27,187.86s29.35-11.32,63-34.05h0a314,314,0,0,0,34.77-27.08c33.87-30.65,63.5-72.86,63.5-126.72A86.56,86.56,0,0,0,495.66,130Z"/><path fill="#ffffff" d="M493.42,223v11.5a42.43,42.43,0,0,0-32.2-14,50,50,0,0,0-46.64,30.35,58.44,58.44,0,0,0-4.8,23.59c0,1.83.08,3.62.23,5.39,2.4,28.05,23.48,48.76,51.21,48.76a42.43,42.43,0,0,0,32.2-14V318c0,15.68-9.62,26.14-24.47,26.14-9.82,0-18.19-3.77-21.95-9.83H415.43c6.69,23.21,26.13,37.64,53.52,37.64a68.42,68.42,0,0,0,15-1.6h0a314,314,0,0,0,34.77-27.08A58.71,58.71,0,0,0,524,318.18V223Zm-26.14,77.79c-15,0-26.13-11.29-26.13-26.35,0-14.84,11.08-26.35,26.13-26.35s26.14,11.51,26.14,26.35C493.42,289.54,482.34,300.83,467.28,300.83Z"/><path fill="#ffffff" d="M406.81,274.33c0,1.87.08,3.72.26,5.54h-.87c-21.39,0-32.4-10.6-32.4-31.15v-26.8c0-11.43-6.39-19.26-16.4-20.88-13.71-2.21-26,9-26,22.84V279a.92.92,0,0,1-.92.92H302a.91.91,0,0,1-.91-.92V142.63a85.81,85.81,0,0,1,30.32-11.41V184a.91.91,0,0,0,1.57.63,40.18,40.18,0,0,1,29-13.12c23.17-.76,42.1,18.5,42.1,41.68v28a9.42,9.42,0,0,0,7.6,9.25A60.12,60.12,0,0,0,406.81,274.33Z"/></symbol>
 </svg>
 
@@ -661,10 +717,31 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
       <div class="m-bloque m-caja-var" hidden><span class="lab">Elige el tipo</span><div class="variantes m-variantes"></div></div>
       <div class="m-bloque"><span class="lab">Cantidad y precio</span><div class="tabla m-tabla"></div></div>
       <p class="m-notas"></p>
-      <a class="pedir m-pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> Pedir por WhatsApp</a>
+      <div class="fila-pedir">
+        <a class="pedir m-pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> Pedir por WhatsApp</a>
+        <button class="add-cart m-add-cart" type="button" title="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg> Agregar</button>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- ============ CARRITO ============ -->
+<button class="carro-btn" id="carroBtn" type="button" aria-label="Ver carrito" hidden>
+  <svg class="ic"><use href="#ic-cart"/></svg><span class="num" id="carroNum">0</span>
+</button>
+<div class="carro-panel" id="carroPanel" role="dialog" aria-label="Carrito de compras">
+  <div class="carro-cab">
+    <h3><svg class="ic"><use href="#ic-cart"/></svg> Tu pedido</h3>
+    <button class="carro-cerrar" type="button" aria-label="Cerrar carrito">✕</button>
+  </div>
+  <div class="carro-lista" id="carroLista"></div>
+  <div class="carro-pie">
+    <div class="carro-total"><small>Total</small><span class="tot" id="carroTotal">$0</span></div>
+    <a class="carro-enviar" id="carroEnviar" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> Enviar pedido por WhatsApp</a>
+    <button class="carro-vaciar" id="carroVaciar" type="button"><svg class="ic"><use href="#ic-trash"/></svg> Vaciar carrito</button>
+  </div>
+</div>
+<div class="carro-toast" id="carroToast"><svg class="ic"><use href="#ic-check"/></svg> Agregado al carrito</div>
 
 <script>
 /* ================= CONFIGURACIÓN =================
@@ -749,12 +826,99 @@ const ANCHO_MODAL = 1000;   /* .m-foto ocupa ~480px, x2 por retina */
 const ANCHO_THUMB = 120;    /* .m-thumb mide 56px */
 const ANCHO_LIGHTBOX = 1600;
 
-function waLink(p, variante, unidades, precio, color){
+/* Texto de un pedido: "Tazones (11 Onzas, 5 un., color Rojo)". La variante se
+   omite cuando es la única y se llama "Unidad(es)", igual que antes. */
+function descPedido(p, variante, unidades, color){
   const v = (p.vars.length > 1 || !/unidad/i.test(variante)) ? ` ${variante},` : "";
   const c = color ? `, color ${color}` : "";
-  const msg = `Hola Heart Graphic! 💜 Quiero pedir: ${p.n} (${v} ${unidades} un.${c}) — ${fmt(precio)}`;
+  return `${p.n} (${v} ${unidades} un.${c})`;
+}
+function waLink(p, variante, unidades, precio, color){
+  const msg = `Hola Heart Graphic! 💜 Quiero pedir: ${descPedido(p, variante, unidades, color)} — ${fmt(precio)}`;
   return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 }
+
+/* ============ CARRITO ============
+   Vive solo en memoria: al recargar la página se pierde, y está bien así.
+   Cada línea guarda el producto + variante + tramo de cantidad + color, y un
+   multiplicador "veces" por si piden 2 packs iguales. Al final todo sale
+   agrupado en un solo mensaje de WhatsApp con el total. */
+const CART = (() => {
+  const items = [];   /* {key, p, variante, un, pr, color, veces} */
+  const btn    = document.getElementById("carroBtn");
+  const num    = document.getElementById("carroNum");
+  const panel  = document.getElementById("carroPanel");
+  const lista  = document.getElementById("carroLista");
+  const totEl  = document.getElementById("carroTotal");
+  const enviar = document.getElementById("carroEnviar");
+  const toast  = document.getElementById("carroToast");
+  let toastT = null;
+
+  const total = () => items.reduce((s, x) => s + x.pr * x.veces, 0);
+  const bultos = () => items.reduce((s, x) => s + x.veces, 0);
+
+  function waCarrito(){
+    const lineas = items.map(it =>
+      `• ${descPedido(it.p, it.variante, it.un, it.color)} — ${fmt(it.pr)}` +
+      (it.veces > 1 ? ` ×${it.veces} = ${fmt(it.pr * it.veces)}` : ""));
+    const msg = `Hola Heart Graphic! 💜 Quiero pedir:\n${lineas.join("\n")}\n\nTotal: ${fmt(total())}`;
+    return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+  }
+
+  function pinta(){
+    num.textContent = bultos();
+    btn.hidden = !items.length && !panel.classList.contains("abierto");
+    lista.innerHTML = "";
+    if (!items.length){
+      lista.innerHTML = `<p class="carro-vacio">Tu carrito está vacío 💜<br>Agrégale productos con el botón <svg class="ic"><use href="#ic-cart-add"/></svg></p>`;
+    }
+    items.forEach((it, i) => {
+      const sub = [
+        (it.p.vars.length > 1 || !/unidad/i.test(it.variante)) ? it.variante : "",
+        `${it.un} un.`,
+        it.color ? `color ${it.color}` : ""
+      ].filter(Boolean).join(" · ");
+      const d = document.createElement("div");
+      d.className = "carro-item";
+      d.innerHTML = `<span class="emo">${it.p.e}</span>
+        <div class="inf"><b>${it.p.n}</b><span>${sub}</span></div>
+        <div class="veces"><button type="button" aria-label="Quitar uno">−</button><b>×${it.veces}</b><button type="button" aria-label="Agregar otro">+</button></div>
+        <span class="pr">${fmt(it.pr * it.veces)}</span>`;
+      const [menos, mas] = d.querySelectorAll(".veces button");
+      menos.addEventListener("click", () => { if (--it.veces < 1) items.splice(i, 1); pinta(); });
+      mas.addEventListener("click", () => { it.veces++; pinta(); });
+      lista.appendChild(d);
+    });
+    totEl.textContent = fmt(total());
+    enviar.href = waCarrito();
+  }
+
+  function add(p, variante, un, pr, color){
+    const key = `${p.id}|${variante}|${un}|${color}`;
+    const ya = items.find(x => x.key === key);
+    if (ya) ya.veces++;
+    else items.push({key, p, variante, un, pr, color, veces: 1});
+    pinta();
+    /* aviso: brinco del botón + toast breve */
+    btn.classList.remove("pop"); void btn.offsetWidth; btn.classList.add("pop");
+    toast.classList.add("vis");
+    clearTimeout(toastT);
+    toastT = setTimeout(() => toast.classList.remove("vis"), 1600);
+  }
+
+  const cierra = () => { panel.classList.remove("abierto"); pinta(); };
+  btn.addEventListener("click", () => {
+    panel.classList.toggle("abierto");
+    pinta();
+  });
+  panel.querySelector(".carro-cerrar").addEventListener("click", cierra);
+  document.getElementById("carroVaciar").addEventListener("click", () => { items.splice(0); pinta(); });
+  enviar.addEventListener("click", e => { if (!items.length) e.preventDefault(); });
+  addEventListener("keydown", e => { if (e.key === "Escape" && panel.classList.contains("abierto")) cierra(); });
+
+  pinta();
+  return { add };
+})();
 
 const esClaro = hex => {
   const h = String(hex || "").replace("#","");
@@ -875,7 +1039,10 @@ function renderProductos(){
         <div class="tabla"></div>
         <p class="notas">${p.notas}</p>
         ${htmlMateriales(p.mat)}
-        <a class="pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> Lo quiero</a>
+        <div class="fila-pedir">
+          <a class="pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> Lo quiero</a>
+          <button class="add-cart" type="button" title="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg> Agregar</button>
+        </div>
       </div>`;
     cont.appendChild(sec);
 
@@ -969,6 +1136,13 @@ function renderProductos(){
       varCont.innerHTML = `<span class="var-btn on" style="cursor:default">${p.vars[0].v}</span>`;
     }
     pintaTabla();
+
+    /* agrega al carrito lo que esté elegido en ese momento en la tarjeta */
+    sec.querySelector(".add-cart").addEventListener("click", () => {
+      const v = p.vars[varIdx];
+      const [un, pr] = v.p[Math.min(filaSel, v.p.length - 1)];
+      CART.add(p, v.v, un, pr, colorSel >= 0 ? paleta[colorSel].nom : "");
+    });
 
     const abre = () => abreModal(p, varIdx, filaSel);
     /* el botón vive dentro de .arte, que también abre la ficha: sin esto el
@@ -1152,6 +1326,14 @@ function abreModal(p, varIdx0 = 0, filaSel0 = 0){
     pedir.href = waLink(p, v.v, un, pr, colorSel >= 0 ? paleta[colorSel].nom : "");
   }
   pinta();
+
+  /* onclick (no addEventListener): el botón es uno solo y abreModal corre en
+     cada apertura; así el handler se reemplaza en vez de acumularse */
+  raiz.querySelector(".m-add-cart").onclick = () => {
+    const v = p.vars[varIdx];
+    const [un, pr] = v.p[Math.min(filaSel, v.p.length - 1)];
+    CART.add(p, v.v, un, pr, colorSel >= 0 ? paleta[colorSel].nom : "");
+  };
 
   raiz.classList.add("abierto");
   document.body.style.overflow = "hidden";
