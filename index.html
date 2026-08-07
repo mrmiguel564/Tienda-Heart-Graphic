@@ -449,7 +449,12 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 @media(max-width:640px){
   .fila-pedir .pedir{font-size:14.5px;padding:13px 10px}
   .carro-btn{right:14px;bottom:14px;width:58px;height:58px}
-  .carro-panel{right:12px;bottom:84px}
+  .carro-panel{right:12px;bottom:84px}}
+/* pantallas muy angostas: los 3 botones siguen en línea, solo con su ícono */
+@media(max-width:430px){
+  .fila-pedir .pedir .lbl{display:none}
+  .fila-pedir .pedir{padding:13px 8px}
+  .fila-pedir .pedir .ic{width:20px;height:20px}
 }
 </style>
 </head>
@@ -723,8 +728,8 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
       <div class="m-bloque"><span class="lab">Cantidad y precio</span><div class="tabla m-tabla"></div></div>
       <p class="m-notas"></p>
       <div class="fila-pedir">
-        <a class="pedir m-pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> WhatsApp</a>
-        <button class="pedir pedir-ig m-pedir-ig" type="button" title="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> Instagram</button>
+        <a class="pedir m-pedir" target="_blank" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
+        <button class="pedir pedir-ig m-pedir-ig" type="button" title="Pedir por Instagram" aria-label="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> <span class="lbl">Instagram</span></button>
         <button class="add-cart m-add-cart" type="button" title="Agregar al carrito" aria-label="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg></button>
       </div>
     </div>
@@ -1081,8 +1086,8 @@ function renderProductos(){
         <p class="notas">${p.notas}</p>
         ${htmlMateriales(p.mat)}
         <div class="fila-pedir">
-          <a class="pedir" target="_blank"><svg class="ic"><use href="#ic-wa"/></svg> WhatsApp</a>
-          <button class="pedir pedir-ig" type="button" title="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> Instagram</button>
+          <a class="pedir" target="_blank" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
+          <button class="pedir pedir-ig" type="button" title="Pedir por Instagram" aria-label="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> <span class="lbl">Instagram</span></button>
           <button class="add-cart" type="button" title="Agregar al carrito" aria-label="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg></button>
         </div>
       </div>`;
