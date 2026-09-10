@@ -29,6 +29,17 @@ mockups\ ...................... Capturas y versiones de exploración del diseño
 _para_borrar\ ................. Archivos que ya no se usan. Elimina esta carpeta cuando quieras
                                 (el puente de Claude no puede borrar archivos de tu equipo).
 
+FOTOS EN CLOUDINARY (peso de las imágenes)
+  Sube las fotos a Cloudinary y pega en la planilla la URL TAL CUAL te la da
+  (ej: https://res.cloudinary.com/tu_cuenta/image/upload/v1712345/carnet.png).
+  No hay que editarla ni achicar la foto antes: el sitio le agrega solo las
+  transformaciones f_auto (WebP/AVIF), q_auto (calidad automática) y w_### con
+  el ancho justo de cada lugar (tarjeta, carrusel, modal, miniatura, lightbox),
+  y además ofrece varios anchos para que el celular no descargue la versión de
+  escritorio. Una PNG de 8 MB termina pesando decenas de KB.
+  Las fotos locales, las de otro hosting y las URLs de Cloudinary que ya
+  traigan transformaciones propias se usan intactas.
+
 CONFIGURACIÓN RÁPIDA (al inicio del <script> en index.html):
   WHATSAPP     → número de pedidos (hoy: 56946910637)
   SHEET_ID     → ID de la planilla publicada (vacío = usa el catálogo embebido)

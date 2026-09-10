@@ -427,6 +427,32 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 .carro-item .inf b{display:block;font-size:14px;color:var(--ink);line-height:1.15}
 .carro-item .inf span{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-top:2px}
 .carro-item .pr{font-family:'Neulis',sans-serif;font-weight:900;font-size:14px;color:var(--celeste-deep);white-space:nowrap}
+/* ============ PRECIO CON DESCUENTO ============
+   Marcado: <span class="pr dc"><s class="pv">lista</s><b class="pn">final</b><em class="pd">-15%</em></span>
+   El precio con descuento ocupa EXACTAMENTE la caja del precio de siempre: encima
+   del precio nuevo, en letra chica y alineados a la derecha, van el precio de lista
+   tachado y la burbuja -N%. La caja crece hacia el relleno de la fila con
+   márgenes negativos, así la fila sigue midiendo 42px y nada más se mueve.
+   --dc es el color del precio (celeste en filas impares, lila en pares y en la ficha vet). */
+.fila .pr,.carro-item .pr{--dc:var(--celeste-deep)}
+.m-precio{--dc:var(--celeste-deep)}
+.prod:nth-child(even) .fila .pr,.modal-card.vet .fila .pr,.modal-card.vet .m-precio{--dc:var(--lila-deep)}
+.pr.dc{display:inline-grid;grid-template-columns:auto auto;grid-template-areas:"pv pd" "pn pn";justify-items:end;align-items:center;align-content:center;column-gap:4px;row-gap:3px;line-height:1;white-space:nowrap;color:var(--dc);margin:-7px 0}
+.fila .pr.dc{min-height:36px}   /* 22px de la caja original + 7px de margen negativo por lado */
+.pr.dc .pv{grid-area:pv;font-size:.58em;color:var(--ink-soft);font-weight:700;text-decoration:line-through;text-decoration-thickness:1.5px;text-decoration-color:rgba(63,60,102,.6)}
+.pr.dc .pd{grid-area:pd;font-style:normal;font-weight:900;font-size:.5em;line-height:1;white-space:nowrap;color:#fff;background:var(--dc);border-radius:var(--r-pill);padding:2px 5px}
+.pr.dc .pn{grid-area:pn;font-weight:900;line-height:1.05}
+/* carrito: misma idea, en chico */
+.carro-item .pr.dc{margin:-3px 0}
+/* ficha: el precio grande se reemplaza en su mismo lugar por la misma caja
+   (lista tachada + burbuja arriba, precio nuevo abajo); la línea chica de
+   arriba y el " · $x c/u" no cambian */
+.m-precio.dc{display:flex;flex-wrap:wrap;align-items:flex-end}
+.m-precio.dc small{flex-basis:100%}
+.m-precio.dc .pr.dc{margin:0;justify-items:start;row-gap:4px}
+.m-precio.dc .pr.dc .pv{font-size:13px}
+.m-precio.dc .pr.dc .pd{font-size:11px;padding:2px 7px}
+.m-precio.dc .unit{padding-bottom:6px}
 .carro-item .veces{display:flex;align-items:center;gap:6px}
 .carro-item .veces button{width:26px;height:26px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;color:var(--ink);font-weight:900;font-size:13px;cursor:pointer;display:grid;place-items:center;transition:.12s;padding:0}
 .carro-item .veces button:hover{background:var(--celeste);color:#fff}
@@ -763,9 +789,13 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
    WHATSAPP : número para pedidos (sin +)
    SHEET_ID : ID de la planilla Google publicada. Una sola hoja: "productos"
               (id, nombre, emoji, carrusel, descripcion, notas, material,
-              imagen_principal, galeria, colores, cantidades, activo).  Vacío = catálogo embebido aquí abajo.
+              imagen_principal, galeria, colores, cantidades, descuento, activo).
+              Vacío = catálogo embebido aquí abajo.
               La columna "carrusel" (si/no) decide qué productos alimentan el
               carrusel de "Especial Veterinarias" de más arriba.
+              La columna "descuento" (% entero, ej. 15) rebaja TODOS los tramos
+              del producto: precio de lista tachado + precio nuevo + etiqueta -15%,
+              redondeado a $10. Llega también al carrito y al mensaje de WhatsApp.
    IMG_BASE : prefijo para las fotos que NO son una URL completa. Si en la
               planilla escribes "https://..." se usa tal cual (caso normal);
               si escribes solo un nombre de archivo se le antepone esto.
@@ -848,8 +878,25 @@ function descPedido(p, variante, unidades, color){
   const c = color ? `, color ${color}` : "";
   return `${p.n} (${v} ${unidades} un.${c})`;
 }
+/* ============ DESCUENTO ============
+   p.dcto es el % por defecto del producto (columna 'descuento' de la planilla).
+   Los tramos de 'cantidades' guardan SIEMPRE el precio de lista; el precio con
+   descuento se calcula al mostrar/pedir, redondeado a los $10 más cercanos.
+   Así un 0 en la planilla vuelve todo a la normalidad sin tocar los precios. */
+const tieneDcto = p => Number(p.dcto) > 0;
+const precioFinal = (p, pr) => tieneDcto(p) ? Math.round(pr * (1 - p.dcto / 100) / 10) * 10 : pr;
+const etqDcto = p => `-${String(p.dcto).replace(".", ",")}%`;
+/* Precio para la tabla y el carrito: lista tachada + final + etiqueta -N% */
+const htmlPrecio = (p, pr, veces = 1) => tieneDcto(p)
+  ? `<s class="pv">${fmt(pr * veces)}</s><b class="pn">${fmt(precioFinal(p, pr) * veces)}</b><em class="pd">${etqDcto(p)}</em>`
+  : fmt(pr * veces);
+/* Precio en texto para los mensajes: "$3.400 (15% dcto, antes $4.000)" */
+const txtPrecio = (p, pr, veces = 1) => tieneDcto(p)
+  ? `${fmt(precioFinal(p, pr) * veces)} (${etqDcto(p).slice(1)} dcto, antes ${fmt(pr * veces)})`
+  : fmt(pr * veces);
+
 function msgPedido(p, variante, unidades, precio, color){
-  return `Hola Heart Graphic! 💜 Quiero pedir: ${descPedido(p, variante, unidades, color)} — ${fmt(precio)}`;
+  return `Hola Heart Graphic! 💜 Quiero pedir: ${descPedido(p, variante, unidades, color)} — ${txtPrecio(p, precio)}`;
 }
 function waLink(p, variante, unidades, precio, color){
   return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msgPedido(p, variante, unidades, precio, color))}`;
@@ -873,14 +920,19 @@ const CART = (() => {
   const toastTxt = document.getElementById("carroToastTxt");
   let toastT = null;
 
-  const total = () => items.reduce((s, x) => s + x.pr * x.veces, 0);
+  /* x.pr es el precio de lista; el descuento del producto se aplica aquí */
+  const finalDe = x => precioFinal(x.p, x.pr);
+  const total = () => items.reduce((s, x) => s + finalDe(x) * x.veces, 0);
+  const totalLista = () => items.reduce((s, x) => s + x.pr * x.veces, 0);
   const bultos = () => items.reduce((s, x) => s + x.veces, 0);
 
   function msgCarrito(){
     const lineas = items.map(it =>
-      `• ${descPedido(it.p, it.variante, it.un, it.color)} — ${fmt(it.pr)}` +
-      (it.veces > 1 ? ` ×${it.veces} = ${fmt(it.pr * it.veces)}` : ""));
-    return `Hola Heart Graphic! 💜 Quiero pedir:\n${lineas.join("\n")}\n\nTotal: ${fmt(total())}`;
+      `• ${descPedido(it.p, it.variante, it.un, it.color)} — ${txtPrecio(it.p, it.pr)}` +
+      (it.veces > 1 ? ` ×${it.veces} = ${fmt(finalDe(it) * it.veces)}` : ""));
+    const ahorro = totalLista() - total();
+    return `Hola Heart Graphic! 💜 Quiero pedir:\n${lineas.join("\n")}\n\nTotal: ${fmt(total())}` +
+           (ahorro > 0 ? ` (ahorro ${fmt(ahorro)})` : "");
   }
   const waCarrito = () => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msgCarrito())}`;
 
@@ -909,7 +961,7 @@ const CART = (() => {
       d.innerHTML = `<span class="emo">${it.p.e}</span>
         <div class="inf"><b>${it.p.n}</b><span>${sub}</span></div>
         <div class="veces"><button type="button" aria-label="Quitar uno">−</button><b>×${it.veces}</b><button type="button" aria-label="Agregar otro">+</button></div>
-        <span class="pr">${fmt(it.pr * it.veces)}</span>`;
+        <span class="pr${tieneDcto(it.p) ? " dc" : ""}">${htmlPrecio(it.p, it.pr, it.veces)}</span>`;
       const [menos, mas] = d.querySelectorAll(".veces button");
       menos.addEventListener("click", () => { if (--it.veces < 1) items.splice(i, 1); pinta(); });
       mas.addEventListener("click", () => { it.veces++; pinta(); });
@@ -1159,7 +1211,7 @@ function renderProductos(){
       v.p.forEach(([un, pr], i) => {
         const f = document.createElement("div");
         f.className = "fila" + (i === filaSel ? " sel" : "");
-        f.innerHTML = `<span class="chk">${i === filaSel ? "✓" : ""}</span><span class="un">${un} unidad${un==1?"":"es"}</span><span class="pr">${fmt(pr)}</span>`;
+        f.innerHTML = `<span class="chk">${i === filaSel ? "✓" : ""}</span><span class="un">${un} unidad${un==1?"":"es"}</span><span class="pr${tieneDcto(p) ? " dc" : ""}">${htmlPrecio(p, pr)}</span>`;
         f.addEventListener("click", () => { filaSel = i; pintaTabla(); });
         tabla.appendChild(f);
       });
@@ -1367,13 +1419,18 @@ function abreModal(p, varIdx0 = 0, filaSel0 = 0){
     v.p.forEach(([un, pr], i) => {
       const f = document.createElement("div");
       f.className = "fila" + (i === filaSel ? " sel" : "");
-      f.innerHTML = `<span class="chk">${i === filaSel ? "✓" : ""}</span><span class="un">${un} unidad${un==1?"":"es"}</span><span class="pr">${fmt(pr)}</span>`;
+      f.innerHTML = `<span class="chk">${i === filaSel ? "✓" : ""}</span><span class="un">${un} unidad${un==1?"":"es"}</span><span class="pr${tieneDcto(p) ? " dc" : ""}">${htmlPrecio(p, pr)}</span>`;
       f.addEventListener("click", () => { filaSel = i; pinta(); });
       tabla.appendChild(f);
     });
     const [un, pr] = v.p[filaSel];
-    const cu = Math.round(pr / un);
-    precio.innerHTML = `<small>${p.vars.length > 1 ? v.v + " · " : ""}${un} unidad${un==1?"":"es"}</small>${fmt(pr)}` +
+    const pf = precioFinal(p, pr);
+    const cu = Math.round(pf / un);
+    precio.classList.toggle("dc", tieneDcto(p));
+    /* con descuento el precio grande se reemplaza, en su mismo lugar, por la
+       caja lista tachada + burbuja -N% / precio nuevo (misma que en las filas) */
+    precio.innerHTML = `<small>${p.vars.length > 1 ? v.v + " · " : ""}${un} unidad${un==1?"":"es"}</small>` +
+                       (tieneDcto(p) ? `<span class="pr dc">${htmlPrecio(p, pr)}</span>` : fmt(pr)) +
                        (un > 1 ? `<span class="unit"> · ${fmt(cu)} c/u</span>` : "");
     pedir.href = waLink(p, v.v, un, pr, colorSel >= 0 ? paleta[colorSel].nom : "");
   }
@@ -1745,6 +1802,16 @@ function normCantidades(raw){
   return Object.entries(o).map(([v, a]) => ({v: String(v), p: tramos(a)})).filter(x => x.p.length);
 }
 
+/* Columna 'descuento': porcentaje por defecto del producto. Acepta "15", "15%",
+   "15,5" o 0.15 (formato porcentaje de la planilla). Vacío, 0 o basura = 0. */
+function normDcto(raw){
+  if (raw == null || raw === "") return 0;
+  let n = typeof raw === "number" ? raw : parseFloat(String(raw).replace("%", "").replace(",", ".").trim());
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  if (n < 1) n *= 100;                         /* celda con formato % (0.15 = 15%) */
+  return Math.min(90, Math.round(n * 10) / 10);
+}
+
 (async () => {
   if (!SHEET_ID) return;
   try {
@@ -1769,7 +1836,8 @@ function normCantidades(raw){
         img, fotos: normGaleria(col(r, "galeria"), img),
         mat: normMaterial(col(r, "material")),
         cols: normColores(col(r, "colores")),
-        vars: normCantidades(col(r, "cantidades"))
+        vars: normCantidades(col(r, "cantidades")),
+        dcto: normDcto(col(r, "descuento"))
       });
     });
     mapa.forEach(p => p.vars.forEach(v => v.p.sort((a,b) => a[0] - b[0])));
