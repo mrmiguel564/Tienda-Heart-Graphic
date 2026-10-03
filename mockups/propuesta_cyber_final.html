@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Day · propuesta final · Heart Graphic</title>
+<style>
+@font-face{font-family:'NeulisAlt';src:url('../assets/fuentes/NeulisAlt-Regular.otf');font-weight:400}
+@font-face{font-family:'NeulisAlt';src:url('../assets/fuentes/NeulisAlt-Bold.otf');font-weight:700}
+@font-face{font-family:'Neulis';src:url('../assets/fuentes/Neulis-Bold.otf');font-weight:700}
+@font-face{font-family:'Neulis';src:url('../assets/fuentes/Neulis-Black.otf');font-weight:900}
+:root{
+  --celeste:#6cdaf4; --lila:#cdb9f9;
+  --celeste-deep:#35b4e8; --lila-deep:#a78bef;
+  --btn-celeste:#3fc1e0; --btn-lila:#a88ee0;
+  --ink:#3f3c66; --ink-soft:#8886b0;
+  /* tonos oscuros para textos y números; fondo casi blanco */
+  --celeste-osc:#1f8cc4; --lila-osc:#7458d2;
+  --fondo-c:#d9f4fc; --fondo-l:#ebe3fd;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'NeulisAlt','Segoe UI',sans-serif;color:var(--ink);background:linear-gradient(160deg,#e3ecfb,#ece4fb 50%,#dff3fb);min-height:100vh}
+h1,h2,h3{font-family:'Neulis',sans-serif}
+img{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+s{color:var(--ink-soft)}
+
+.intro{padding:40px 16px 0;text-align:center}
+.intro h1{font-weight:900;font-size:clamp(28px,5vw,44px)}
+.intro p{color:var(--ink-soft);margin:8px auto 0;max-width:700px}
+.zona{overflow:hidden;padding:46px 0}
+
+/* ===== Layout I: fondo partido + ondas (sin brillo, fondo casi blanco) ===== */
+.cyber{position:relative;padding:96px 0;background:linear-gradient(115deg,var(--fondo-c) 0 52%,var(--fondo-l) 52% 100%)}
+.cyber::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='120'%3E%3Cpath d='M0 60 Q150 10 300 60 T600 60' fill='none' stroke='%2335b4e8' stroke-opacity='.35' stroke-width='3'/%3E%3C/svg%3E") 0 30%/600px 120px repeat-x,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='120'%3E%3Cpath d='M0 60 Q150 110 300 60 T600 60' fill='none' stroke='%23a78bef' stroke-opacity='.4' stroke-width='3'/%3E%3C/svg%3E") 0 78%/600px 120px repeat-x;
+  animation:ondas 30s linear infinite}
+@keyframes ondas{to{background-position:600px 30%,-600px 78%}}
+.grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media(max-width:860px){.grid{grid-template-columns:1fr;gap:56px}}
+
+/* ===== Cintas de la H ===== */
+.cinta{position:absolute;left:-5%;width:110%;z-index:3;background:var(--ink);color:#fff;font-family:'Neulis';font-weight:900;font-size:18px;letter-spacing:.08em;white-space:nowrap;overflow:hidden;padding:10px 0;border-block:3px solid var(--ink)}
+.cinta span{display:inline-block;animation:cinta 24s linear infinite}
+.cinta.rev span{animation-direction:reverse}
+.cinta i{font-style:normal;color:var(--celeste)}
+.cinta.abajo i{color:var(--lila)}
+@keyframes cinta{to{transform:translateX(-50%)}}
+.cinta.arriba{top:0;transform:translateY(-50%) rotate(-2deg)}
+.cinta.abajo{bottom:0;transform:translateY(50%) rotate(1.5deg)}
+
+.badge{display:inline-block;font-family:'Neulis';font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;background:#fff;border:3px solid var(--ink);border-radius:999px;padding:7px 18px;box-shadow:4px 4px 0 var(--ink)}
+.titulo{font-weight:900;font-size:clamp(44px,6.5vw,80px);line-height:.92;margin:16px 0;color:var(--ink);text-shadow:4px 4px 0 rgba(63,60,102,.18)}
+.titulo em{font-style:normal;color:var(--celeste-osc)}
+.titulo i{font-style:normal;color:var(--lila-osc)}
+.bajada{font-size:18px;font-weight:700;margin-bottom:22px;max-width:460px}
+
+/* ===== Contador de la J ===== */
+.barra{display:inline-flex;align-items:center;gap:6px;background:#fff;border:4px solid var(--ink);border-radius:26px;padding:10px 18px;box-shadow:8px 8px 0 var(--ink);margin-bottom:28px}
+.barra div{min-width:64px;text-align:center}
+.barra b{display:block;font-family:'Neulis';font-weight:900;font-size:clamp(32px,4.4vw,48px);line-height:1;font-variant-numeric:tabular-nums}
+.barra div:nth-child(4n+1) b{color:var(--celeste-deep)}
+.barra div:nth-child(4n+3) b{color:var(--lila-deep)}
+.barra small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.barra .sep{min-width:0;font-family:'Neulis';font-weight:900;font-size:32px;color:var(--ink-soft);padding-bottom:18px}
+@media(max-width:420px){.barra{padding:8px 10px;gap:2px}.barra div{min-width:52px}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Neulis';font-weight:700;font-size:16px;text-decoration:none;color:#fff;background:var(--btn-celeste);border:3px solid var(--ink);border-radius:999px;padding:13px 26px;box-shadow:5px 5px 0 var(--ink);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+
+/* ===== Tarjeta de la K ===== */
+.estrella{position:relative;background:#fff;border:4px solid var(--ink);border-radius:28px;padding:14px;box-shadow:10px 10px 0 var(--ink);max-width:430px;justify-self:center;width:100%}
+.estrella .lbl{position:absolute;top:-18px;left:22px;z-index:2;background:var(--ink);color:#fff;font-family:'Neulis';font-weight:700;font-size:13px;letter-spacing:.14em;border-radius:999px;padding:6px 14px}
+.estrella .foto{position:relative;aspect-ratio:4/3;border-radius:18px;overflow:hidden}
+.estrella .foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .6s,transform .6s}
+.estrella .foto img.on{opacity:1;transform:none}
+.estrella .pie{padding:14px 6px 4px}
+.estrella h3{font-weight:700;font-size:18px}
+.estrella .pp b{font-family:'Neulis';font-weight:900;font-size:28px;color:var(--lila-deep)}
+.puntos{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.puntos i{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:#fff;cursor:pointer}
+.puntos i.on{background:var(--ink)}
+.burbuja{position:absolute;top:-30px;right:-24px;z-index:2;width:98px;height:98px;border-radius:50%;background:var(--celeste-deep);border:4px solid var(--ink);box-shadow:5px 5px 0 rgba(63,60,102,.25);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(10deg);animation:bote 2.4s ease-in-out infinite;transition:background .4s}
+.burbuja.l{background:var(--lila-deep)}
+.burbuja small{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.burbuja b{font-family:'Neulis';font-weight:900;font-size:28px;letter-spacing:-.02em}
+@keyframes bote{50%{transform:rotate(4deg) scale(1.07)}}
+@media(max-width:860px){.burbuja{right:6px;width:84px;height:84px}.burbuja b{font-size:23px}}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.nota{max-width:1180px;margin:10px auto 50px;padding:18px 20px;background:#fff;border:3px dashed var(--ink-soft);border-radius:18px;font-size:14px;line-height:1.55}
+.nota b{font-family:'Neulis'}
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <h1>Cyber Day · propuesta final</h1>
+  <p>Layout de la <b>I</b> sin brillo y con fondo casi blanco · cintas de la <b>H</b> · contador de la <b>J</b> · tarjeta de la <b>K</b>.</p>
+</header>
+
+<div class="zona">
+  <section class="cyber">
+    <div class="cinta arriba"><span data-cinta><i>✦</i> CYBER DAY · HASTA -25% · DISEÑO GRATIS · </span></div>
+    <div class="wrap grid">
+      <div>
+        <span class="badge">cyber day</span>
+        <h2 class="titulo"><em>CYBER</em> <i>DAY</i><br>RELÁMPAGO</h2>
+        <p class="bajada">Cada producto con su precio más bajo del año. Cuando se acaba, se acaba.</p>
+        <div class="barra" data-barra></div><br>
+        <a class="btn" href="#">Lo quiero</a>
+      </div>
+      <div class="estrella" data-estrella></div>
+    </div>
+    <div class="cinta abajo rev"><span data-cinta><i>✦</i> OFERTAS POR TIEMPO LIMITADO <i>✦</i> HEART GRAPHIC </span></div>
+  </section>
+</div>
+
+<div class="nota">
+  <b>Al pasarla al sitio:</b> los productos serían los con <b>carrusel = si</b> en la planilla y la burbuja mostraría su <b>descuento</b>;
+  "hasta -N%" de la cinta se calcularía con el mayor descuento, y el contador leería una constante con la fecha de término.
+  Productos y precios de lista son los reales del catálogo; los % son de ejemplo.
+</div>
+
+<script>
+const P = [
+  {n:"Carnet de Vacunación", img:"../assets/productos/07_carnet_de_vacunacion.webp", pr:16000, d:20},
+  {n:"Talonario / Recetario", img:"../assets/productos/06_talonario_recetario.webp", pr:10000, d:15},
+  {n:"Tarjetas Cliente Frecuente", img:"../assets/productos/10_tarjetas_cliente_frecuente.webp", pr:19500, d:25},
+  {n:"Sticker de Envío", img:"../assets/productos/11_sticker_de_envio.webp", pr:13000, d:10},
+];
+const fmt = n => "$" + n.toLocaleString("es-CL");
+const fin = p => Math.round(p.pr * (1 - p.d/100) / 10) * 10;
+
+/* contador de ejemplo: 2 días y 14 horas desde que abres la página */
+const FIN = Date.now() + (2*24 + 14) * 3600e3;
+const barra = document.querySelector("[data-barra]");
+function tic(){
+  const s = Math.max(0, Math.floor((FIN - Date.now())/1000));
+  const v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60].map(x => String(x).padStart(2,"0"));
+  barra.innerHTML = ["días","hrs","min","seg"].map((l,i) => `<div><b>${v[i]}</b><small>${l}</small></div>`).join('<div class="sep">:</div>');
+}
+tic(); setInterval(tic, 1000);
+
+document.querySelectorAll("[data-cinta]").forEach(s => s.innerHTML = s.innerHTML.repeat(8));
+
+/* tarjeta estrella: rota cada 3,2 s; los puntos permiten elegir */
+const card = document.querySelector("[data-estrella]");
+card.innerHTML = `<span class="lbl">★ OFERTA ESTRELLA</span>
+  <span class="burbuja"><small>descuento</small><b></b></span>
+  <div class="foto">${P.map(p => `<img src="${p.img}" alt="${p.n}">`).join("")}</div>
+  <div class="pie"><h3></h3><div class="pp"></div></div>
+  <div class="puntos">${P.map(() => "<i></i>").join("")}</div>`;
+const puntos = [...card.querySelectorAll(".puntos i")], burbuja = card.querySelector(".burbuja");
+let k = 0, t;
+function muestra(i){
+  k = i; const p = P[i];
+  card.querySelectorAll(".foto img").forEach((im,j) => im.classList.toggle("on", j === i));
+  puntos.forEach((d,j) => d.classList.toggle("on", j === i));
+  card.querySelector("h3").textContent = p.n;
+  card.querySelector(".pp").innerHTML = `<b>${fmt(fin(p))}</b> <s>${fmt(p.pr)}</s>`;
+  burbuja.querySelector("b").textContent = `-${p.d}%`;
+  burbuja.classList.toggle("l", i % 2 === 1);
+}
+const auto = () => { clearInterval(t); t = setInterval(() => muestra((k + 1) % P.length), 3200); };
+puntos.forEach((d,j) => d.addEventListener("click", () => { muestra(j); auto(); }));
+muestra(0); auto();
+</script>
+</body>
+</html>

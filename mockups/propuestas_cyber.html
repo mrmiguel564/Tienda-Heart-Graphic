@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Propuestas Cyber Day · Heart Graphic</title>
+<style>
+@font-face{font-family:'NeulisAlt';src:url('../assets/fuentes/NeulisAlt-Regular.otf');font-weight:400}
+@font-face{font-family:'NeulisAlt';src:url('../assets/fuentes/NeulisAlt-Bold.otf');font-weight:700}
+@font-face{font-family:'Neulis';src:url('../assets/fuentes/Neulis-Bold.otf');font-weight:700}
+@font-face{font-family:'Neulis';src:url('../assets/fuentes/Neulis-Black.otf');font-weight:900}
+:root{
+  --celeste:#6cdaf4; --lila:#cdb9f9;
+  --celeste-deep:#35b4e8; --lila-deep:#a78bef;
+  --btn-celeste:#3fc1e0; --ink:#3f3c66; --ink-soft:#8886b0;
+  --noche:#221f3d; --neon-c:#5ee6ff; --neon-l:#c9a8ff; --rosa:#ff7ac8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'NeulisAlt','Segoe UI',sans-serif;color:var(--ink);background:linear-gradient(160deg,#e3ecfb,#ece4fb 50%,#dff3fb);min-height:100vh}
+h1,h2,h3,.neu{font-family:'Neulis',sans-serif}
+img{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* ---------- cabecera de la página de propuestas ---------- */
+.intro{padding:40px 0 10px;text-align:center}
+.intro h1{font-weight:900;font-size:clamp(28px,5vw,46px)}
+.intro p{color:var(--ink-soft);margin:8px auto 18px;max-width:640px}
+.saltos{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.saltos a{font-family:'Neulis';font-weight:700;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:8px 16px;box-shadow:3px 3px 0 var(--ink)}
+.saltos a:hover{background:var(--celeste)}
+.rotulo{max-width:1180px;margin:56px auto 14px;padding:0 16px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.rotulo b{font-family:'Neulis';font-weight:900;font-size:22px;background:var(--ink);color:#fff;border-radius:12px;padding:4px 12px}
+.rotulo span{font-weight:700;font-size:18px}
+.rotulo small{color:var(--ink-soft);font-size:14px;flex-basis:100%}
+
+/* ---------- piezas comunes ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Neulis';font-weight:700;font-size:16px;text-decoration:none;color:#fff;background:var(--btn-celeste);border:3px solid var(--ink);border-radius:999px;padding:13px 26px;box-shadow:5px 5px 0 var(--ink);transition:transform .15s,box-shadow .15s;cursor:pointer}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.reloj{display:flex;gap:8px}
+.reloj div{min-width:62px;text-align:center;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:6px 4px;box-shadow:3px 3px 0 var(--ink)}
+.reloj b{display:block;font-family:'Neulis';font-weight:900;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.reloj small{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+s{color:var(--ink-soft)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* carrusel vertical (el mismo del sitio, versión corta) */
+.cols{display:flex;gap:16px;justify-content:center;height:460px;overflow:hidden;
+  -webkit-mask:linear-gradient(180deg,transparent,#000 14%,#000 86%,transparent);mask:linear-gradient(180deg,transparent,#000 14%,#000 86%,transparent)}
+.col{display:flex;flex-direction:column;gap:16px;width:190px;flex:0 0 auto}
+.col.up{animation:up 26s linear infinite}.col.down{animation:down 30s linear infinite}
+@keyframes up{to{transform:translateY(-50%)}}@keyframes down{from{transform:translateY(-50%)}to{transform:none}}
+.item{position:relative;background:#fff;border:3.5px solid var(--ink);border-radius:18px;padding:7px;box-shadow:5px 5px 0 rgba(63,60,102,.22)}
+.item img{border-radius:10px;width:100%;aspect-ratio:1;object-fit:cover}
+.tag{position:absolute;left:8px;bottom:8px;right:8px;background:#fff;border:2.5px solid var(--ink);border-radius:12px;padding:4px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.tag b{font-family:'Neulis';font-weight:900;font-size:15px}
+.tag em{font-style:normal;font-family:'Neulis';font-weight:900;color:#fff;background:var(--rosa);border-radius:999px;padding:1px 7px;font-size:12px}
+@media(max-width:760px){.cols{height:auto;-webkit-mask:none;mask:none;overflow-x:auto}.col.down{display:none}.col.up{flex-direction:row;animation:none;width:auto}.col.up .item{width:170px;flex:0 0 auto}}
+
+/* ============ A · NEÓN NOCTURNO ============ */
+.pA{position:relative;background:var(--noche);color:#fff;overflow:hidden;border-block:4px solid var(--ink)}
+.pA::before{content:"";position:absolute;inset:0;background:
+  linear-gradient(rgba(94,230,255,.07) 1px,transparent 1px) 0 0/40px 40px,
+  linear-gradient(90deg,rgba(201,168,255,.07) 1px,transparent 1px) 0 0/40px 40px;
+  -webkit-mask:radial-gradient(ellipse at 30% 50%,#000,transparent 75%);mask:radial-gradient(ellipse at 30% 50%,#000,transparent 75%)}
+.pA .grid{position:relative;display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center;padding:56px 16px}
+@media(max-width:860px){.pA .grid{grid-template-columns:1fr}}
+.pA .pill{display:inline-block;font-family:'Neulis';font-weight:700;letter-spacing:.18em;font-size:13px;border:2px solid var(--neon-c);color:var(--neon-c);border-radius:999px;padding:6px 14px;box-shadow:0 0 14px rgba(94,230,255,.5),inset 0 0 10px rgba(94,230,255,.25)}
+.pA h2{font-weight:900;font-size:clamp(56px,9vw,112px);line-height:.88;margin:18px 0 14px;letter-spacing:-.01em}
+.pA h2 .c{color:var(--neon-c);text-shadow:0 0 8px var(--neon-c),0 0 30px rgba(94,230,255,.7);animation:parpadeo 5s infinite}
+.pA h2 .l{color:var(--neon-l);text-shadow:0 0 8px var(--neon-l),0 0 30px rgba(201,168,255,.7)}
+@keyframes parpadeo{0%,92%,100%{opacity:1}93%{opacity:.35}94%{opacity:1}96%{opacity:.5}97%{opacity:1}}
+.pA p.sub{font-size:18px;color:#d9d6f5;margin-bottom:22px}
+.pA p.sub b{color:var(--rosa);font-family:'Neulis';font-size:24px}
+.pA .reloj div{background:transparent;border-color:var(--neon-l);color:#fff;box-shadow:0 0 12px rgba(201,168,255,.45)}
+.pA .fila{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:24px}
+.pA .btn{background:var(--rosa);border-color:#fff;box-shadow:0 0 22px rgba(255,122,200,.6),5px 5px 0 #fff}
+.pA .item{border-color:var(--neon-c);box-shadow:0 0 18px rgba(94,230,255,.35)}
+.pA .col.down .item{border-color:var(--neon-l);box-shadow:0 0 18px rgba(201,168,255,.35)}
+
+/* ============ B · STICKER GIGANTE + CINTA ============ */
+.pB{position:relative;overflow:hidden;padding:70px 0 80px;background:linear-gradient(90deg,rgba(108,218,244,.18),rgba(205,185,249,.25))}
+.cinta{position:absolute;left:-5%;width:110%;background:var(--ink);color:#fff;font-family:'Neulis';font-weight:900;font-size:18px;letter-spacing:.08em;white-space:nowrap;overflow:hidden;padding:9px 0;z-index:2}
+.cinta.t{top:18px;transform:rotate(-2deg)}.cinta.b{bottom:18px;transform:rotate(1.5deg);background:var(--celeste-deep)}
+.cinta span{display:inline-block;animation:cinta 22s linear infinite}
+.cinta.b span{animation-direction:reverse}
+@keyframes cinta{to{transform:translateX(-50%)}}
+.pB .grid{position:relative;display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center;padding:30px 16px}
+@media(max-width:860px){.pB .grid{grid-template-columns:1fr}}
+.pB h2{font-weight:900;font-size:clamp(46px,7vw,88px);line-height:.9}
+.pB h2 em{font-style:normal;color:var(--celeste-deep);text-shadow:4px 4px 0 var(--ink)}
+.pB h2 i{font-style:normal;color:var(--lila-deep);text-shadow:4px 4px 0 var(--ink)}
+.pB .txt{position:relative}
+.sello{position:absolute;right:0;top:-30px;width:170px;height:170px;display:grid;place-items:center;border-radius:50%;background:var(--rosa);border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);transform:rotate(12deg);color:#fff;text-align:center;animation:sello 2.6s ease-in-out infinite}
+.sello svg{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);animation:gira 14s linear infinite}
+.sello svg text{font-family:'Neulis';font-weight:700;font-size:11.5px;letter-spacing:2.6px;fill:#fff}
+.sello b{font-family:'Neulis';font-weight:900;font-size:44px;line-height:.9}
+.sello small{display:block;font-weight:700;font-size:12px;letter-spacing:.14em}
+@keyframes gira{to{transform:rotate(360deg)}}
+@keyframes sello{0%,100%{transform:rotate(12deg) scale(1)}50%{transform:rotate(8deg) scale(1.06)}}
+@media(max-width:860px){.sello{position:relative;top:auto;margin:0 0 18px auto;width:140px;height:140px}.sello b{font-size:36px}}
+.pB ul{list-style:none;margin:20px 0 24px;display:grid;gap:8px}
+.pB li{display:flex;gap:10px;align-items:center}
+.pB li::before{content:"⚡";flex:0 0 28px;height:28px;display:grid;place-items:center;background:#fff;border:2.5px solid var(--ink);border-radius:50%;font-size:13px}
+
+/* ============ C · VITRINA DE OFERTAS ============ */
+.pC{padding:50px 0 60px;background:#fff;border-block:4px solid var(--ink)}
+.pC .cab{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+.pC .cab small{font-family:'Neulis';font-weight:700;letter-spacing:.16em;color:var(--rosa)}
+.pC h2{font-weight:900;font-size:clamp(34px,5vw,58px);line-height:.95}
+.pC h2 em{font-style:normal;color:var(--celeste-deep)}
+.pC .reloj-lbl{font-size:13px;font-weight:700;margin-bottom:6px;text-align:right}
+.vitrina{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:960px){.vitrina{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:250px;overflow-x:auto;padding:4px 4px 16px;scroll-snap-type:x mandatory}.vitrina>*{scroll-snap-align:start}}
+.of{position:relative;border:3.5px solid var(--ink);border-radius:22px;padding:10px 10px 14px;background:#fff;box-shadow:6px 6px 0 var(--celeste);display:flex;flex-direction:column;transition:transform .18s}
+.of:nth-child(even){box-shadow:6px 6px 0 var(--lila)}
+.of:hover{transform:translateY(-6px) rotate(-1deg)}
+.of img{border-radius:14px;aspect-ratio:1;object-fit:cover;width:100%}
+.of .pct{position:absolute;top:-14px;right:-12px;width:64px;height:64px;border-radius:50%;background:var(--rosa);border:3px solid var(--ink);color:#fff;display:grid;place-items:center;font-family:'Neulis';font-weight:900;font-size:19px;transform:rotate(10deg);box-shadow:3px 3px 0 var(--ink)}
+.of h3{font-weight:700;font-size:16px;margin:12px 4px 2px}
+.of .det{font-size:13px;color:var(--ink-soft);margin:0 4px 8px}
+.of .precios{display:flex;gap:8px;align-items:baseline;margin:0 4px 10px}
+.of .precios b{font-family:'Neulis';font-weight:900;font-size:24px;color:var(--celeste-deep)}
+.of:nth-child(even) .precios b{color:var(--lila-deep)}
+.stock{margin:0 4px 12px;font-size:12px;font-weight:700}
+.stock i{display:block;height:9px;border:2px solid var(--ink);border-radius:9px;margin-top:4px;background:linear-gradient(90deg,var(--rosa) var(--q),#f1eefb var(--q))}
+.of .btn{justify-content:center;margin-top:auto;padding:10px 14px;font-size:14px;box-shadow:3px 3px 0 var(--ink)}
+
+/* ============ D · RELÁMPAGO (oferta estrella) ============ */
+.pD{position:relative;overflow:hidden;padding:60px 0;background:linear-gradient(115deg,var(--celeste) 0 52%,var(--lila) 52% 100%)}
+.pD .fondo{position:absolute;right:-2%;top:50%;transform:translateY(-50%);font-family:'Neulis';font-weight:900;font-size:clamp(180px,32vw,420px);line-height:1;color:transparent;-webkit-text-stroke:3px rgba(63,60,102,.18);pointer-events:none;user-select:none}
+.pD .grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media(max-width:860px){.pD .grid{grid-template-columns:1fr}}
+.rayo{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:18px;background:#ffe066;border:3.5px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-size:34px;animation:flash 1.6s steps(2) infinite}
+@keyframes flash{50%{background:#fff}}
+.pD h2{font-weight:900;font-size:clamp(44px,6.5vw,80px);line-height:.9;color:#fff;text-shadow:4px 4px 0 var(--ink);-webkit-text-stroke:2px var(--ink);margin:16px 0}
+.pD p{font-size:18px;font-weight:700;margin-bottom:20px}
+.estrella{position:relative;background:#fff;border:4px solid var(--ink);border-radius:28px;padding:14px;box-shadow:10px 10px 0 var(--ink);max-width:430px;justify-self:center;width:100%}
+.estrella .lbl{position:absolute;top:-18px;left:22px;background:var(--ink);color:#fff;font-family:'Neulis';font-weight:700;font-size:13px;letter-spacing:.14em;border-radius:999px;padding:6px 14px}
+.estrella .foto{position:relative;aspect-ratio:4/3;border-radius:18px;overflow:hidden}
+.estrella .foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .6s,transform .6s}
+.estrella .foto img.on{opacity:1;transform:none}
+.estrella .pie{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 6px 4px}
+.estrella h3{font-weight:700;font-size:18px}
+.estrella .pp b{font-family:'Neulis';font-weight:900;font-size:28px;color:var(--rosa)}
+.estrella .pct{font-family:'Neulis';font-weight:900;font-size:22px;background:var(--rosa);color:#fff;border:3px solid var(--ink);border-radius:14px;padding:4px 10px;transform:rotate(-6deg)}
+.puntos{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.puntos i{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:#fff}
+.puntos i.on{background:var(--ink)}
+
+.nota{max-width:1180px;margin:60px auto 50px;padding:18px 20px;background:#fff;border:3px dashed var(--ink-soft);border-radius:18px;font-size:14px;line-height:1.55}
+.nota b{font-family:'Neulis'}
+</style>
+</head>
+<body>
+
+<header class="intro wrap">
+  <h1>⚡ Propuestas Cyber Day</h1>
+  <p>Cuatro formas de hacer más llamativa la Sección OFERTAS. Productos y precios de lista son los del catálogo; los % de descuento son de ejemplo.</p>
+  <nav class="saltos"><a href="#A">A · Neón nocturno</a><a href="#B">B · Sticker gigante</a><a href="#C">C · Vitrina de ofertas</a><a href="#D">D · Oferta relámpago</a></nav>
+</header>
+
+<!-- ================= A ================= -->
+<div class="rotulo" id="A"><b>A</b><span>Neón nocturno</span><small>Rompe con el fondo pastel del sitio: bloque oscuro con letras de neón y cuenta regresiva. El contraste lo hace imposible de pasar por alto. Mantiene el carrusel actual, con precio en cada foto.</small></div>
+<section class="pA">
+  <div class="wrap grid">
+    <div>
+      <span class="pill">⚡ SOLO POR 3 DÍAS</span>
+      <h2><span class="c">CYBER</span><br><span class="l">DAY</span></h2>
+      <p class="sub">Descuentos de <b>hasta -25%</b> en productos seleccionados + diseño gratis.</p>
+      <div class="reloj" data-reloj></div>
+      <div class="fila"><a class="btn" href="#">⚡ Ver ofertas</a></div>
+    </div>
+    <div class="cols" data-cols></div>
+  </div>
+</section>
+
+<!-- ================= B ================= -->
+<div class="rotulo" id="B"><b>B</b><span>Sticker gigante + cinta</span><small>Mantiene la estética de stickers de la marca, pero con dos cintas "CYBER DAY" cruzando la sección y un sello giratorio "hasta -25%". Es el cambio más suave respecto a lo que hay hoy.</small></div>
+<section class="pB">
+  <div class="cinta t"><span data-cinta>⚡ CYBER DAY · HASTA -25% · DISEÑO GRATIS · </span></div>
+  <div class="wrap grid">
+    <div class="txt">
+      <div class="sello">
+        <svg viewBox="0 0 100 100"><defs><path id="circ" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0"/></defs><text><textPath href="#circ">CYBER DAY ✦ CYBER DAY ✦ CYBER DAY ✦</textPath></text></svg>
+        <div><small>HASTA</small><b>-25%</b></div>
+      </div>
+      <h2><em>Cyber</em><br><i>Day</i> 💜</h2>
+      <ul>
+        <li><span><b>Descuentos especiales</b> en productos seleccionados</span></li>
+        <li><span><b>Diseño gratis</b> en todos tus pedidos</span></li>
+        <li><span><b>Despacho</b> a todo Chile</span></li>
+      </ul>
+      <a class="btn" href="#">Aprovechar oferta</a>
+    </div>
+    <div class="cols" data-cols></div>
+  </div>
+  <div class="cinta b"><span data-cinta>✦ OFERTAS POR TIEMPO LIMITADO ✦ HEART GRAPHIC </span></div>
+</section>
+
+<!-- ================= C ================= -->
+<div class="rotulo" id="C"><b>C</b><span>Vitrina de ofertas</span><small>Cambia el carrusel por tarjetas con precio tachado, precio nuevo y una barra de "stock". Se entiende la oferta sin hacer clic, y cada tarjeta pide directo. En celular se desliza de lado.</small></div>
+<section class="pC">
+  <div class="wrap">
+    <div class="cab">
+      <div><small>⚡ CYBER DAY</small><h2>Ofertas <em>que vuelan</em></h2></div>
+      <div><div class="reloj-lbl">Termina en</div><div class="reloj" data-reloj></div></div>
+    </div>
+    <div class="vitrina" data-vitrina></div>
+  </div>
+</section>
+
+<!-- ================= D ================= -->
+<div class="rotulo" id="D"><b>D</b><span>Oferta relámpago</span><small>Fondo partido celeste/lila y un "-25%" gigante de fondo. Muestra un solo producto estrella a la vez, grande y con su precio, que va rotando. Es la más directa: una oferta, un precio, un botón.</small></div>
+<section class="pD">
+  <div class="fondo">-25%</div>
+  <div class="wrap grid">
+    <div>
+      <span class="rayo">⚡</span>
+      <h2>CYBER DAY<br>RELÁMPAGO</h2>
+      <p>Cada producto con su precio más bajo del año. Cuando se acaba, se acaba.</p>
+      <div class="reloj" data-reloj style="margin-bottom:22px"></div>
+      <a class="btn" href="#">Lo quiero ⚡</a>
+    </div>
+    <div class="estrella">
+      <span class="lbl">★ OFERTA ESTRELLA</span>
+      <div class="foto" data-est-fotos></div>
+      <div class="pie"><div><h3 data-est-n></h3><div class="pp" data-est-p></div></div><span class="pct" data-est-pct></span></div>
+      <div class="puntos" data-est-puntos></div>
+    </div>
+  </div>
+</section>
+
+<div class="nota">
+  <b>Cómo se conectaría con el sitio:</b> todas usan los mismos datos que hoy —productos con <b>carrusel = si</b> y su <b>descuento</b> de la planilla—, así que no hay que mantener nada aparte.
+  Lo único nuevo sería la <b>fecha de término</b> para la cuenta regresiva (A, C y D), que iría como una constante al inicio del script.
+  La barra de stock de la C es decorativa si no hay inventario real; se puede quitar.
+</div>
+
+<script>
+/* Datos: productos y precios de lista reales del catálogo; % de ejemplo */
+const P = [
+  {n:"Carnet de Vacunación", det:"Mini 20x14,5 · 50 un.", img:"../assets/productos/07_carnet_de_vacunacion.webp", pr:16000, d:20, q:"72%"},
+  {n:"Talonario / Recetario", det:"Media carta · 2 un.", img:"../assets/productos/06_talonario_recetario.webp", pr:10000, d:15, q:"45%"},
+  {n:"Tarjetas Cliente Frecuente", det:"Tarjeta + stickers · 100 un.", img:"../assets/productos/10_tarjetas_cliente_frecuente.webp", pr:19500, d:25, q:"83%"},
+  {n:"Sticker de Envío", det:"10 x 8 cm · 100 un.", img:"../assets/productos/11_sticker_de_envio.webp", pr:13000, d:10, q:"30%"},
+];
+const EXTRA = [1,3,5,7,9].map(i => ({n:"Carnet veterinario", img:`../assets/productos/carnets_veterinarios/carnet_0${i}.webp`}));
+const fmt = n => "$" + n.toLocaleString("es-CL");
+const fin = p => Math.round(p.pr * (1 - p.d/100) / 10) * 10;
+
+/* cuenta regresiva de ejemplo: 2 días y 14 horas desde que abres la página */
+const FIN = Date.now() + (2*24 + 14) * 3600e3;
+const relojes = [...document.querySelectorAll("[data-reloj]")];
+function tic(){
+  let s = Math.max(0, Math.floor((FIN - Date.now())/1000));
+  const v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60].map(x => String(x).padStart(2,"0"));
+  const html = ["días","hrs","min","seg"].map((l,i) => `<div><b>${v[i]}</b><small>${l}</small></div>`).join("");
+  relojes.forEach(r => r.innerHTML = html);
+}
+tic(); setInterval(tic, 1000);
+
+/* carruseles (A y B) */
+const item = p => `<div class="item"><img src="${p.img}" alt="${p.n}" loading="lazy">${p.pr ? `<div class="tag"><span><s>${fmt(p.pr)}</s> <b>${fmt(fin(p))}</b></span><em>-${p.d}%</em></div>` : ""}</div>`;
+document.querySelectorAll("[data-cols]").forEach(c => {
+  const a = [P[0], EXTRA[0], P[2], EXTRA[1]], b = [P[1], EXTRA[2], P[3], EXTRA[3]];
+  const col = (arr, cls) => `<div class="col ${cls}">${arr.concat(arr).map(item).join("")}</div>`;
+  c.innerHTML = col(a, "up") + col(b, "down");
+});
+document.querySelectorAll("[data-cinta]").forEach(s => s.textContent = s.textContent.repeat(8));
+
+/* vitrina (C) */
+document.querySelector("[data-vitrina]").innerHTML = P.map(p => `
+  <article class="of"><span class="pct">-${p.d}%</span><img src="${p.img}" alt="${p.n}" loading="lazy">
+    <h3>${p.n}</h3><div class="det">${p.det}</div>
+    <div class="precios"><b>${fmt(fin(p))}</b><s>${fmt(p.pr)}</s></div>
+    <div class="stock">¡Quedan pocos! <i style="--q:${p.q}"></i></div>
+    <a class="btn" href="#">Pedir por WhatsApp</a></article>`).join("");
+
+/* oferta estrella (D) */
+const fotos = document.querySelector("[data-est-fotos]"), puntos = document.querySelector("[data-est-puntos]");
+fotos.innerHTML = P.map(p => `<img src="${p.img}" alt="${p.n}">`).join("");
+puntos.innerHTML = P.map(() => "<i></i>").join("");
+let k = 0;
+function muestra(i){
+  k = i; const p = P[i];
+  fotos.querySelectorAll("img").forEach((im,j) => im.classList.toggle("on", j === i));
+  puntos.querySelectorAll("i").forEach((d,j) => d.classList.toggle("on", j === i));
+  document.querySelector("[data-est-n]").textContent = p.n;
+  document.querySelector("[data-est-p]").innerHTML = `<b>${fmt(fin(p))}</b> <s>${fmt(p.pr)}</s>`;
+  document.querySelector("[data-est-pct]").textContent = `-${p.d}%`;
+}
+muestra(0);
+setInterval(() => muestra((k + 1) % P.length), 3200);
+</script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Propuestas Cyber Day 2 · Heart Graphic</title>
+<style>
+@font-face{font-family:'NeulisAlt';src:url('../assets/fuentes/NeulisAlt-Regular.otf');font-weight:400}
+@font-face{font-family:'NeulisAlt';src:url('../assets/fuentes/NeulisAlt-Bold.otf');font-weight:700}
+@font-face{font-family:'Neulis';src:url('../assets/fuentes/Neulis-Bold.otf');font-weight:700}
+@font-face{font-family:'Neulis';src:url('../assets/fuentes/Neulis-Black.otf');font-weight:900}
+:root{
+  --celeste:#6cdaf4; --lila:#cdb9f9;
+  --celeste-deep:#35b4e8; --lila-deep:#a78bef;
+  --btn-celeste:#3fc1e0; --ink:#3f3c66; --ink-soft:#8886b0;
+  --noche:#2a2748; --noche-2:#35305c; --neon-c:#5ee6ff; --neon-l:#c9a8ff; --rosa:#ff7ac8; --rayo:#ffb03b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'NeulisAlt','Segoe UI',sans-serif;color:var(--ink);background:linear-gradient(160deg,#e3ecfb,#ece4fb 50%,#dff3fb);min-height:100vh}
+h1,h2,h3{font-family:'Neulis',sans-serif}
+img{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+s{color:var(--ink-soft)}
+
+/* ---------- página de propuestas ---------- */
+.intro{padding:40px 16px 10px;text-align:center}
+.intro h1{font-weight:900;font-size:clamp(28px,5vw,46px)}
+.intro p{color:var(--ink-soft);margin:8px auto 18px;max-width:680px}
+.saltos{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.saltos a{font-family:'Neulis';font-weight:700;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:8px 16px;box-shadow:3px 3px 0 var(--ink)}
+.saltos a:hover{background:var(--celeste)}
+.rotulo{max-width:1180px;margin:56px auto 0;padding:0 16px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.rotulo b{font-family:'Neulis';font-weight:900;font-size:22px;background:var(--ink);color:#fff;border-radius:12px;padding:4px 12px}
+.rotulo span{font-weight:700;font-size:18px}
+.rotulo small{color:var(--ink-soft);font-size:14px;flex-basis:100%}
+
+/* zona que contiene cada propuesta: recorta las cintas (más anchas que la
+   pantalla) sin generar scroll lateral, y deja aire para que asomen */
+.zona{overflow:hidden;padding:46px 0}
+
+/* ---------- piezas comunes ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Neulis';font-weight:700;font-size:16px;text-decoration:none;color:#fff;background:var(--btn-celeste);border:3px solid var(--ink);border-radius:999px;padding:13px 26px;box-shadow:5px 5px 0 var(--ink);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.reloj{display:flex;gap:8px;margin-bottom:22px}
+.reloj div{min-width:62px;text-align:center;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:6px 4px;box-shadow:3px 3px 0 var(--ink)}
+.reloj b{display:block;font-family:'Neulis';font-weight:900;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.reloj small{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+
+/* cintas rescatadas de la propuesta B */
+.cinta{position:absolute;left:-5%;width:110%;z-index:3;background:var(--ink);color:#fff;font-family:'Neulis';font-weight:900;font-size:18px;letter-spacing:.08em;white-space:nowrap;overflow:hidden;padding:10px 0;border-block:3px solid var(--ink)}
+.cinta span{display:inline-block;animation:cinta 24s linear infinite}
+.cinta.rev span{animation-direction:reverse}
+.cinta i{font-style:normal;color:var(--rayo)}
+@keyframes cinta{to{transform:translateX(-50%)}}
+.cinta.celeste{background:var(--celeste);color:var(--ink)}
+.cinta.lila{background:var(--lila);color:var(--ink)}
+.cinta.celeste i,.cinta.lila i{color:var(--ink)}
+
+/* rayo, título y % gigante de la propuesta D */
+.rayo{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:18px;background:#ffe066;border:3.5px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-size:34px;animation:flash 1.6s steps(2) infinite}
+@keyframes flash{50%{background:#fff}}
+.titulo{font-weight:900;font-size:clamp(44px,6.5vw,80px);line-height:.9;margin:16px 0}
+.bajada{font-size:18px;font-weight:700;margin-bottom:20px}
+.fondo-pct{position:absolute;right:-2%;top:50%;transform:translateY(-50%);font-family:'Neulis';font-weight:900;font-size:clamp(180px,32vw,420px);line-height:1;color:transparent;-webkit-text-stroke:3px rgba(63,60,102,.18);pointer-events:none;user-select:none;transition:opacity .4s}
+.grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+/* tarjeta del producto estrella (igual que la D) */
+.estrella{position:relative;color:var(--ink);background:#fff;border:4px solid var(--ink);border-radius:28px;padding:14px;box-shadow:10px 10px 0 var(--ink);max-width:430px;justify-self:center;width:100%}
+.estrella .lbl{position:absolute;top:-18px;left:22px;z-index:1;background:var(--ink);color:#fff;font-family:'Neulis';font-weight:700;font-size:13px;letter-spacing:.14em;border-radius:999px;padding:6px 14px}
+.estrella .foto{position:relative;aspect-ratio:4/3;border-radius:18px;overflow:hidden}
+.estrella .foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .6s,transform .6s}
+.estrella .foto img.on{opacity:1;transform:none}
+.estrella .pie{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 6px 4px}
+.estrella h3{font-weight:700;font-size:18px}
+.estrella .pp b{font-family:'Neulis';font-weight:900;font-size:28px;color:var(--rosa)}
+.estrella .pct{font-family:'Neulis';font-weight:900;font-size:22px;background:var(--rosa);color:#fff;border:3px solid var(--ink);border-radius:14px;padding:4px 10px;transform:rotate(-6deg)}
+.puntos{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.puntos i{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:#fff;cursor:pointer}
+.puntos i.on{background:var(--ink)}
+
+/* ============ E · NEÓN ENTRE CINTAS ============
+   El bloque oscuro queda "encerrado" por dos cintas pastel que montan sobre
+   sus bordes: hacen de quiebre entre el sitio claro y la noche del Cyber. */
+.pE{position:relative;background:
+   linear-gradient(115deg,var(--noche) 0 52%,var(--noche-2) 52% 100%);color:#fff;padding:96px 0}
+.pE::before{content:"";position:absolute;inset:0;background:
+  linear-gradient(rgba(94,230,255,.07) 1px,transparent 1px) 0 0/40px 40px,
+  linear-gradient(90deg,rgba(201,168,255,.07) 1px,transparent 1px) 0 0/40px 40px;
+  -webkit-mask:radial-gradient(ellipse at 30% 50%,#000,transparent 75%);mask:radial-gradient(ellipse at 30% 50%,#000,transparent 75%)}
+.pE .cinta.arriba{top:0;transform:translateY(-50%) rotate(-2deg)}
+.pE .cinta.abajo{bottom:0;transform:translateY(50%) rotate(1.5deg)}
+.pE .fondo-pct{-webkit-text-stroke:2px rgba(94,230,255,.35);filter:drop-shadow(0 0 10px rgba(94,230,255,.45))}
+.pE .titulo .c{color:var(--neon-c);text-shadow:0 0 8px var(--neon-c),0 0 30px rgba(94,230,255,.7);animation:parpadeo 5s infinite}
+.pE .titulo .l{color:var(--neon-l);text-shadow:0 0 8px var(--neon-l),0 0 30px rgba(201,168,255,.7)}
+@keyframes parpadeo{0%,92%,100%{opacity:1}93%{opacity:.35}94%{opacity:1}96%{opacity:.5}97%{opacity:1}}
+.pE .bajada{color:#d9d6f5}
+.pE .bajada b{color:var(--rosa)}
+.pE .reloj div{background:rgba(255,255,255,.04);border-color:var(--neon-l);color:#fff;box-shadow:0 0 12px rgba(201,168,255,.45)}
+.pE .btn{background:var(--rosa);border-color:#fff;box-shadow:0 0 22px rgba(255,122,200,.55),5px 5px 0 #fff}
+.pE .estrella{border-color:var(--neon-c);box-shadow:0 0 0 3px var(--noche),0 0 30px rgba(94,230,255,.55)}
+.pE .estrella .lbl{background:var(--neon-c);color:var(--noche)}
+.pE .estrella .pp s{color:var(--ink-soft)}
+
+/* ============ F · RELÁMPAGO PASTEL CON BRILLO ============
+   El fondo de la D tal cual, cintas arriba/abajo y el neón traducido a
+   "brillo pastel": glow suave en título, contador y tarjeta. */
+.pF{position:relative;padding:96px 0;background:linear-gradient(115deg,var(--celeste) 0 52%,var(--lila) 52% 100%)}
+.pF .cinta.arriba{top:0;transform:translateY(-50%) rotate(-2deg)}
+.pF .cinta.abajo{bottom:0;transform:translateY(50%) rotate(1.5deg);background:var(--celeste-deep)}
+.pF .titulo{color:#fff;-webkit-text-stroke:2px var(--ink);text-shadow:4px 4px 0 var(--ink),0 0 26px rgba(255,255,255,.9)}
+.pF .titulo span{animation:brillo 2.8s ease-in-out infinite}
+@keyframes brillo{50%{text-shadow:4px 4px 0 var(--ink),0 0 40px #fff,0 0 70px rgba(255,255,255,.8)}}
+.pF .reloj div{box-shadow:3px 3px 0 var(--ink),0 0 18px rgba(255,255,255,.9)}
+.pF .estrella{animation:halo 2.6s ease-in-out infinite}
+@keyframes halo{50%{box-shadow:10px 10px 0 var(--ink),0 0 34px rgba(255,255,255,.95)}}
+.pF .btn{background:var(--rosa)}
+
+/* ============ G · CARTEL LUMINOSO ============
+   Fondo de la D; el neón vive solo dentro de un cartel oscuro con ampolletas,
+   como letrero de feria. Las cintas enmarcan la sección. */
+.pG{position:relative;padding:96px 0;background:linear-gradient(115deg,var(--celeste) 0 52%,var(--lila) 52% 100%)}
+.pG .cinta.arriba{top:0;transform:translateY(-50%) rotate(1.5deg)}
+.pG .cinta.abajo{bottom:0;transform:translateY(50%) rotate(-2deg)}
+.cartel{position:relative;background:var(--noche);border:4px solid var(--ink);border-radius:30px;padding:34px 30px 30px;box-shadow:10px 10px 0 var(--ink);color:#fff;
+  background-image:radial-gradient(circle,#ffe7a3 0 3.5px,transparent 4.5px);background-size:26px 26px;background-position:0 0;
+  -webkit-mask:none}
+.cartel::before{content:"";position:absolute;inset:14px;border-radius:20px;background:var(--noche)}
+.cartel>*{position:relative}
+.cartel{animation:ampolletas 1.2s steps(2) infinite}
+@keyframes ampolletas{50%{background-position:13px 13px}}
+.cartel .titulo{margin-top:0}
+.cartel .titulo .c{color:var(--neon-c);text-shadow:0 0 8px var(--neon-c),0 0 26px rgba(94,230,255,.7);animation:parpadeo 5s infinite}
+.cartel .titulo .l{color:var(--neon-l);text-shadow:0 0 8px var(--neon-l),0 0 26px rgba(201,168,255,.7)}
+.cartel .bajada{color:#d9d6f5}
+.cartel .reloj div{background:transparent;border-color:var(--neon-c);color:#fff;box-shadow:0 0 12px rgba(94,230,255,.5)}
+.cartel .btn{background:var(--rosa);border-color:#fff;box-shadow:0 0 18px rgba(255,122,200,.55),4px 4px 0 #fff}
+.pG .rayo{position:absolute;top:-30px;right:-18px;transform:rotate(12deg)}
+.thumbs{display:flex;gap:10px;justify-content:center;margin-top:12px}
+.thumbs img{width:62px;height:62px;object-fit:cover;border-radius:12px;border:3px solid var(--ink);opacity:.5;cursor:pointer;transition:.2s}
+.thumbs img.on{opacity:1;transform:translateY(-4px);box-shadow:3px 3px 0 var(--rosa)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.nota{max-width:1180px;margin:30px auto 50px;padding:18px 20px;background:#fff;border:3px dashed var(--ink-soft);border-radius:18px;font-size:14px;line-height:1.55}
+.nota b{font-family:'Neulis'}
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <h1>⚡ Propuestas Cyber Day · ronda 2</h1>
+  <p>Base: fondo, contador y producto estrella de la <b>Relámpago</b> + las <b>cintas</b> de la B. El neón aparece en tres dosis distintas; donde hay fondo oscuro, las cintas lo encierran y hacen la transición con el sitio.</p>
+  <nav class="saltos"><a href="#E">E · Neón entre cintas</a><a href="#F">F · Relámpago con brillo</a><a href="#G">G · Cartel luminoso</a></nav>
+</header>
+
+<!-- ================= E ================= -->
+<div class="rotulo" id="E"><b>E</b><span>Neón entre cintas</span><small>Neón completo, pero contenido: dos cintas pastel montan sobre los bordes del bloque oscuro y lo separan del resto del sitio. Dentro va la Relámpago: fondo partido (en versión noche), % gigante con brillo, contador y producto estrella.</small></div>
+<div class="zona">
+  <section class="pE">
+    <div class="cinta celeste arriba"><span data-cinta>⚡ CYBER DAY · HASTA -25% · DISEÑO GRATIS · </span></div>
+    <div class="fondo-pct" data-pct-fondo>-20%</div>
+    <div class="wrap grid">
+      <div>
+        <span class="rayo">⚡</span>
+        <h2 class="titulo"><span class="c">CYBER</span><br><span class="l">DAY</span></h2>
+        <p class="bajada">Descuentos de <b>hasta -25%</b> en productos seleccionados + diseño gratis.</p>
+        <div class="reloj" data-reloj></div>
+        <a class="btn" href="#">Lo quiero ⚡</a>
+      </div>
+      <div class="estrella" data-estrella></div>
+    </div>
+    <div class="cinta lila abajo rev"><span data-cinta>✦ OFERTAS POR TIEMPO LIMITADO ✦ HEART GRAPHIC </span></div>
+  </section>
+</div>
+
+<!-- ================= F ================= -->
+<div class="rotulo" id="F"><b>F</b><span>Relámpago con brillo</span><small>La más fiel al sitio: la Relámpago original enmarcada por las cintas. El neón se traduce a un brillo blanco que late en el título, el contador y la tarjeta.</small></div>
+<div class="zona">
+  <section class="pF">
+    <div class="cinta arriba"><span data-cinta><i>⚡</i> CYBER DAY · HASTA -25% · DISEÑO GRATIS · </span></div>
+    <div class="fondo-pct" data-pct-fondo>-20%</div>
+    <div class="wrap grid">
+      <div>
+        <span class="rayo">⚡</span>
+        <h2 class="titulo"><span>CYBER DAY</span><br><span>RELÁMPAGO</span></h2>
+        <p class="bajada">Cada producto con su precio más bajo del año. Cuando se acaba, se acaba.</p>
+        <div class="reloj" data-reloj></div>
+        <a class="btn" href="#">Lo quiero ⚡</a>
+      </div>
+      <div class="estrella" data-estrella></div>
+    </div>
+    <div class="cinta abajo rev"><span data-cinta>✦ OFERTAS POR TIEMPO LIMITADO ✦ HEART GRAPHIC </span></div>
+  </section>
+</div>
+
+<!-- ================= G ================= -->
+<div class="rotulo" id="G"><b>G</b><span>Cartel luminoso</span><small>Fondo pastel de la Relámpago, y el neón metido en un cartel oscuro con ampolletas, como letrero de feria. El producto estrella suma miniaturas para elegir cuál ver.</small></div>
+<div class="zona">
+  <section class="pG">
+    <div class="cinta arriba"><span data-cinta><i>⚡</i> CYBER DAY · HASTA -25% · DISEÑO GRATIS · </span></div>
+    <div class="fondo-pct" data-pct-fondo>-20%</div>
+    <div class="wrap grid">
+      <div class="cartel">
+        <span class="rayo">⚡</span>
+        <h2 class="titulo"><span class="c">CYBER</span> <span class="l">DAY</span></h2>
+        <p class="bajada">Hasta -25% en productos seleccionados + diseño gratis.</p>
+        <div class="reloj" data-reloj></div>
+        <a class="btn" href="#">Lo quiero ⚡</a>
+      </div>
+      <div class="estrella" data-estrella data-thumbs></div>
+    </div>
+    <div class="cinta celeste abajo rev"><span data-cinta>✦ OFERTAS POR TIEMPO LIMITADO ✦ HEART GRAPHIC </span></div>
+  </section>
+</div>
+
+<div class="nota">
+  <b>En las tres:</b> el % gigante del fondo cambia junto con el producto estrella, y el contador y la rotación son los de la Relámpago.
+  Conectadas al sitio, usarían los productos con <b>carrusel = si</b> y su <b>descuento</b> de la planilla, más una constante con la fecha de término.
+  Productos y precios de lista son los reales del catálogo; los % son de ejemplo.
+</div>
+
+<script>
+const P = [
+  {n:"Carnet de Vacunación", img:"../assets/productos/07_carnet_de_vacunacion.webp", pr:16000, d:20},
+  {n:"Talonario / Recetario", img:"../assets/productos/06_talonario_recetario.webp", pr:10000, d:15},
+  {n:"Tarjetas Cliente Frecuente", img:"../assets/productos/10_tarjetas_cliente_frecuente.webp", pr:19500, d:25},
+  {n:"Sticker de Envío", img:"../assets/productos/11_sticker_de_envio.webp", pr:13000, d:10},
+];
+const fmt = n => "$" + n.toLocaleString("es-CL");
+const fin = p => Math.round(p.pr * (1 - p.d/100) / 10) * 10;
+
+/* contador de ejemplo: 2 días y 14 horas desde que abres la página */
+const FIN = Date.now() + (2*24 + 14) * 3600e3;
+const relojes = [...document.querySelectorAll("[data-reloj]")];
+function tic(){
+  const s = Math.max(0, Math.floor((FIN - Date.now())/1000));
+  const v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60].map(x => String(x).padStart(2,"0"));
+  const html = ["días","hrs","min","seg"].map((l,i) => `<div><b>${v[i]}</b><small>${l}</small></div>`).join("");
+  relojes.forEach(r => r.innerHTML = html);
+}
+tic(); setInterval(tic, 1000);
+
+document.querySelectorAll("[data-cinta]").forEach(s => s.innerHTML = s.innerHTML.repeat(8));
+
+/* producto estrella: rota cada 3,2 s; puntos o miniaturas permiten elegir */
+document.querySelectorAll("[data-estrella]").forEach(card => {
+  const conThumbs = card.hasAttribute("data-thumbs");
+  const fondo = card.closest("section").querySelector("[data-pct-fondo]");
+  card.innerHTML = `<span class="lbl">★ OFERTA ESTRELLA</span>
+    <div class="foto">${P.map(p => `<img src="${p.img}" alt="${p.n}">`).join("")}</div>
+    <div class="pie"><div><h3></h3><div class="pp"></div></div><span class="pct"></span></div>
+    ${conThumbs ? `<div class="thumbs">${P.map(p => `<img src="${p.img}" alt="">`).join("")}</div>`
+                : `<div class="puntos">${P.map(() => "<i></i>").join("")}</div>`}`;
+  const sel = [...card.querySelectorAll(conThumbs ? ".thumbs img" : ".puntos i")];
+  let k = 0, t;
+  function muestra(i){
+    k = i; const p = P[i];
+    card.querySelectorAll(".foto img").forEach((im,j) => im.classList.toggle("on", j === i));
+    sel.forEach((d,j) => d.classList.toggle("on", j === i));
+    card.querySelector("h3").textContent = p.n;
+    card.querySelector(".pp").innerHTML = `<b>${fmt(fin(p))}</b> <s>${fmt(p.pr)}</s>`;
+    card.querySelector(".pct").textContent = `-${p.d}%`;
+    fondo.textContent = `-${p.d}%`;
+  }
+  const auto = () => { clearInterval(t); t = setInterval(() => muestra((k + 1) % P.length), 3200); };
+  sel.forEach((d,j) => d.addEventListener("click", () => { muestra(j); auto(); }));
+  muestra(0); auto();
+});
+</script>
+</body>
+</html>
