@@ -1,18 +1,20 @@
 TIENDA HEART GRAPHIC — ESTRUCTURA DE LA CARPETA
 ================================================
 
-index.html .................... EL SITIO COMPLETO (un solo archivo, listo para subir a cualquier hosting).
-                                Es una SPA: incluye la tienda y la vista de Políticas, con transición
-                                deslizante entre ambas. Fuentes Neulis, logos, íconos y fotos van
-                                embebidos adentro, así que funciona sin depender de otras carpetas.
+index.html .................... MARCADO DEL SITIO. Es una SPA: incluye la tienda y la vista de
+                                Políticas, con transición deslizante entre ambas. Carga sus estilos
+                                de assets\css\tienda.css y su script de assets\js\tienda.js, así que
+                                se sube junto con la carpeta assets\.
                                 Al llamarse index.html, el hosting lo abre solo al entrar al dominio.
 
 catalogo_heart_graphic.xlsx ... Catálogo de productos y precios. Subirlo a Google Sheets,
                                 publicarlo (Archivo → Compartir → Publicar en la web) y pegar
-                                el ID de la planilla en la constante SHEET_ID al inicio del
-                                <script> de index.html. Instrucciones en la hoja "leeme".
+                                el ID de la planilla en la constante SHEET_ID al inicio de
+                                assets\js\tienda.js. Instrucciones en la hoja "leeme".
 
 assets\
+  css\ ........................ tienda.css: estilos del sitio (con Neulis embebida).
+  js\ ......................... tienda.js: configuración, catálogo, carrito, ofertas y router.
   logos\ ...................... SVG de marca (logo completo, isotipo corazón, corazón blanco).
   iconos\ ..................... Íconos de contacto (WhatsApp, Instagram, Facebook, correo).
                                 WhatsApp e Instagram ya integrados; Facebook y correo disponibles.
@@ -40,7 +42,7 @@ FOTOS EN CLOUDINARY (peso de las imágenes)
   Las fotos locales, las de otro hosting y las URLs de Cloudinary que ya
   traigan transformaciones propias se usan intactas.
 
-CONFIGURACIÓN RÁPIDA (al inicio del <script> en index.html):
+CONFIGURACIÓN RÁPIDA (al inicio de assets/js/tienda.js):
   WHATSAPP     → número de pedidos (hoy: 56946910637)
   SHEET_ID     → ID de la planilla publicada (vacío = usa el catálogo embebido)
   IMG_BASE     → URL base si subes las imágenes a Cloudinary/ImgBB

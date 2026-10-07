@@ -1,7 +1,7 @@
 # Heart Graphic · Tienda de diseños personalizados
 
 Sitio de la tienda **Heart Graphic** (tazones, stickers, tarjetas, carnets, talonarios y más).
-Es una página de un solo archivo: los pedidos se hacen por **WhatsApp** y el catálogo se lee desde una **planilla de Google Sheets**, así que cambiar precios o productos no requiere tocar código.
+Es una página estática (HTML + CSS + JS, sin build): los pedidos se hacen por **WhatsApp** y el catálogo se lee desde una **planilla de Google Sheets**, así que cambiar precios o productos no requiere tocar código.
 
 - Instagram: [@heartgraphic_](https://www.instagram.com/heartgraphic_)
 - Hosting: Netlify, con deploy automático desde GitHub
@@ -11,10 +11,12 @@ Es una página de un solo archivo: los pedidos se hacen por **WhatsApp** y el ca
 ## Estructura
 
 ```
-index.html                    El sitio completo (tienda + vista de Políticas). Fuentes, logos,
-                              íconos y fotos base van embebidos; funciona sin otras carpetas.
+index.html                    Marcado del sitio (tienda + vista de Políticas). Logos e íconos
+                              van como SVG en línea.
 catalogo_heart_graphic.xlsx   Plantilla del catálogo para subir a Google Sheets (trae hoja "leeme").
 assets/
+  css/tienda.css              Estilos del sitio (trae embebidas Neulis Alt Regular y Neulis Bold)
+  js/tienda.js                Script del sitio: configuración, catálogo, carrito, ofertas, router
   logos/                      SVG de marca
   iconos/                     WhatsApp, Instagram, Facebook, correo
   fuentes/                    Tipografías Neulis (OTF con licencia)
@@ -26,7 +28,7 @@ LEEME.txt                     Guía rápida original
 
 ## Configuración
 
-Todo se ajusta en constantes al inicio del `<script>` de `index.html`:
+Todo se ajusta en constantes al inicio de `assets/js/tienda.js`:
 
 | Constante | Qué hace |
 |---|---|
