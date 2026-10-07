@@ -65,14 +65,33 @@ const FOCO = 'a[href],button:not([disabled]),input:not([disabled]):not([type="hi
 document.querySelectorAll("[data-pl-precio]").forEach(el => { el.textContent = fmt(PRECIOS[el.dataset.plPrecio]); });
 
 /* =========================================================
-   PESTAÑAS DEL CATÁLOGO: Catálogo ↔ Planner
-   El panel que sale se desvanece rápido y el que entra aparece subiendo;
-   la bajada cambia con el mismo fundido y el título elegido crece (CSS).
+   SWITCH DEL CATÁLOGO: Catálogo ↔ Planner
+   La pastilla tinta se estira como gota hasta cubrir ambas opciones y se
+   recoge en la elegida, cuyo corazón late al llegar. El contenido sale hacia
+   el costado contrario y el nuevo entra desde el lado al que se movió el switch.
    ========================================================= */
 const PANELES = { catalogo: $("listaProductos"), planners: $("plPanel") };
 const TABS = { catalogo: $("tabCatalogo"), planners: $("tabPlanners") };
+const SWITCH = $("plSwitch");
 const cambian = [$("bajadaSec")];
-let vista = "catalogo", vistaT = null;
+let vista = "catalogo", vistaT = null, gotaT = null;
+
+function laten(tab){
+  const c = tab.querySelector(".hg-title");
+  c.classList.remove("late");
+  void c.getBoundingClientRect();   /* reinicia la animación si ya había latido */
+  c.classList.add("late");
+}
+function mueveSwitch(v){
+  clearTimeout(gotaT);
+  if (menosMov()){ SWITCH.dataset.vista = v; return; }
+  SWITCH.classList.add("estira");
+  gotaT = setTimeout(() => {
+    SWITCH.dataset.vista = v;
+    SWITCH.classList.remove("estira");
+    gotaT = setTimeout(() => laten(TABS[v]), 240);   /* cuando la pastilla ya se recogió */
+  }, 240);
+}
 
 function muestraVista(v, enfoca){
   if (v === vista) return;
@@ -83,6 +102,8 @@ function muestraVista(v, enfoca){
     t.tabIndex = k === v ? 0 : -1;
   });
   if (enfoca) TABS[v].focus();
+  mueveSwitch(v);
+  $("productos").style.setProperty("--pl-dir", v === "planners" ? "1" : "-1");
   history.replaceState(null, "", v === "planners" ? "#planners" : "#productos");
   const cabecera = document.querySelector("#productos .titulo-sec");
   const cambia = () => {

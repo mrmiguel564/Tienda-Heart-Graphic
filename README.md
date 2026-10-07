@@ -88,7 +88,7 @@ Está completa pero comentada en el HTML, con su carrusel vertical; su módulo `
 
 ## Sección PLANNERS
 
-Pestaña del Catálogo: los títulos **Catálogo** y **Planner** van lado a lado y son botones; el elegido se ve grande y el otro más chico. Al tocar Planner el catálogo se desvanece rápido, cambia la bajada y aparecen las agendas y planners. El enlace **Planners** del menú (o entrar con `#planners`) abre esa pestaña y baja hasta ella; **Productos** vuelve al catálogo. No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
+Pestaña del Catálogo: bajo el título hay un switch **Catálogo / Planner** (cápsula blanca con el corazón hg en ambas opciones). La pastilla oscura se estira como gota hasta la opción elegida, su corazón late al llegar, y el contenido sale hacia el costado mientras el nuevo entra desde el lado al que se movió el switch. El enlace **Planners** del menú (o entrar con `#planners`) abre esa pestaña y baja hasta ella; **Productos** vuelve al catálogo. No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
 
 - **Agenda Atrévete 2027:** valor único, portada burdeo o lila y visor **Ve el interior** con los pliegos que giran (anillado al centro).
 - **Planner Semanal:** valor único, mockup con la portada elegida, galería de 10 portadas, visor con anillado arriba (tiro = planificación semanal, retiro = hábitos) y **Personalizar portada** (+ recargo): el cliente sube su imagen y la ve en perspectiva sobre el mockup; aparece el total con el recargo. La imagen no viaja: el mensaje le pide enviarla por WhatsApp.

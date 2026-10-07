@@ -5,30 +5,41 @@
    .notas, .materiales/.mat, .ver-mas, .fila-pedir/.pedir/.add-cart y .m-cerrar.
    Aquí va solo lo propio: portadas, mockup, visores, galería y personalización.
    Los anillos (portada, visor y mockup) son SIEMPRE blancos. */
-/* ---------- títulos del catálogo como pestañas: Catálogo ↔ Planner ----------
-   Mismo look que .titulo-sec h2; el elegido va en tamaño completo y el otro
-   queda más chico y apagado. El tamaño se anima. */
-.pl-titulos{display:flex;justify-content:center;align-items:center;gap:clamp(14px,2.6vw,28px);flex-wrap:wrap}
-.pl-titulo{font-family:'Neulis',sans-serif;font-weight:900;line-height:1.12;color:var(--ink-soft);cursor:pointer;
-  display:inline-flex;align-items:center;gap:.22em;font-size:clamp(20px,3vw,34px);padding:7px 24px;
-  background:rgba(255,255,255,.75);border:4px solid var(--ink);border-radius:30px;box-shadow:5px 5px 0 rgba(63,60,102,.18);
-  transition:font-size .3s ease,padding .3s ease,color .2s ease,background .2s ease,box-shadow .3s ease,transform .15s ease}
-.pl-titulo[aria-selected="true"]{font-size:clamp(36px,6.4vw,72px);padding:10px 34px;color:var(--ink);background:#fff;
-  box-shadow:8px 8px 0 var(--celeste);cursor:default}
-.pl-titulo-planner[aria-selected="true"]{box-shadow:8px 8px 0 var(--lila)}
-.pl-titulo[aria-selected="false"]:hover{color:var(--ink);background:#fff;transform:translateY(-3px);box-shadow:5px 8px 0 var(--lila)}
-#tabCatalogo[aria-selected="false"]:hover{box-shadow:5px 8px 0 var(--celeste)}
-.pl-titulo:focus-visible{outline:4px solid var(--celeste-deep);outline-offset:5px}
+/* ---------- switch Catálogo ↔ Planner ----------
+   Cápsula blanca con una pastilla tinta detrás de la opción elegida. Al cambiar,
+   la pastilla se estira como gota hasta cubrir las dos opciones (.estira) y se
+   recoge en la nueva (data-vista); nunca sale de la cápsula. La sombra toma el
+   color de la sección. --p es a la vez el relleno y el espacio entre opciones. */
+.pl-switch{--p:8px;position:relative;display:inline-grid;grid-template-columns:1fr 1fr;gap:var(--p);padding:var(--p);
+  background:#fff;border:4px solid var(--ink);border-radius:var(--r-pill);box-shadow:8px 8px 0 var(--celeste);transition:box-shadow .35s ease}
+.pl-switch[data-vista="planners"]{box-shadow:8px 8px 0 var(--lila)}
+.pl-switch-pastilla{position:absolute;top:var(--p);bottom:var(--p);left:var(--p);width:calc((100% - 3 * var(--p)) / 2);
+  border-radius:var(--r-pill);background:var(--ink);
+  transition:left .24s cubic-bezier(.5,0,.3,1),width .24s cubic-bezier(.5,0,.3,1)}
+.pl-switch[data-vista="planners"] .pl-switch-pastilla{left:calc(50% + var(--p) / 2)}
+.pl-switch.estira .pl-switch-pastilla{left:var(--p);width:calc(100% - 2 * var(--p))}
+.pl-switch-op{position:relative;z-index:1;width:min(300px,calc((100vw - 96px) / 2));height:84px;border:0;border-radius:var(--r-pill);
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.3em;
+  font-family:'Neulis',sans-serif;font-weight:900;font-size:30px;line-height:1;color:#5d5985;
+  transition:font-size .3s ease,color .2s ease}
+.pl-switch-op .hg-title{width:1.15em;height:1em;vertical-align:0;flex:0 0 auto}
+.pl-switch-op[aria-selected="true"]{font-size:40px;color:#fff;cursor:default}
+.pl-switch-op[aria-selected="false"]:hover{color:var(--ink)}
+.pl-switch.estira .pl-switch-op{color:#fff}
+.pl-switch-op:focus-visible{outline:4px solid var(--celeste-deep);outline-offset:4px}
+/* el corazón de la opción elegida late una vez al llegar la pastilla (latido de tienda.css, ≤1.18: queda dentro) */
+.pl-switch-op .hg-title.late{animation:latido .8s ease}
 @media(max-width:520px){
-  .pl-titulos{gap:10px}
-  .pl-titulo{font-size:16px;padding:6px 14px;border-width:3px;border-radius:22px}
-  .pl-titulo[aria-selected="true"]{font-size:27px;padding:8px 18px}
+  .pl-switch{--p:6px;border-width:3px;box-shadow:6px 6px 0 var(--celeste)}
+  .pl-switch[data-vista="planners"]{box-shadow:6px 6px 0 var(--lila)}
+  .pl-switch-op{height:58px;font-size:18px}
+  .pl-switch-op[aria-selected="true"]{font-size:23px}
 }
-/* fundido rápido entre el catálogo y los planners */
-.pl-vista,.pl-cambia,#listaProductos.pl-vista{transition:opacity .2s ease,transform .3s ease}
-#listaProductos.pl-entra{transition:none}
-.pl-fuera{opacity:0;transform:translateY(10px)}
-.pl-entra{opacity:0;transform:translateY(18px);transition:none}
+/* el contenido sale hacia el costado contrario y el nuevo entra desde el lado al que
+   se movió el switch: --pl-dir es 1 (hacia Planner) o -1 (hacia Catálogo) */
+.pl-vista,.pl-cambia,#listaProductos.pl-vista{transition:opacity .3s ease,transform .35s cubic-bezier(.2,.7,.3,1)}
+.pl-fuera,#listaProductos.pl-fuera{opacity:0;transform:translateX(calc(-70px * var(--pl-dir,1)));transition:opacity .2s ease,transform .2s ease-in}
+.pl-entra,#listaProductos.pl-entra{opacity:0;transform:translateX(calc(70px * var(--pl-dir,1)));transition:none}
 
 .pl-oculto{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 .pl-lab{font-family:'Neulis',sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);display:block;margin-bottom:8px}
@@ -212,8 +223,8 @@
 /* ---------- menos movimiento ---------- */
 @media (prefers-reduced-motion: reduce){
   .pl-agenda-btn,.pl-mockup,.pl-mockup>img,.pl-libro,.pl-hoja,.pl-bloc,.pl-bhoja,.pl-sombra,
-  .pl-visor,.pl-galeria,.pl-galeria-hoja,.pl-portada,.pl-nav,.pl-titulo,.pl-vista,.pl-cambia{transition-duration:.01s!important}
-  .pl-titulo[aria-selected="false"]:hover{transform:none}
+  .pl-visor,.pl-galeria,.pl-galeria-hoja,.pl-portada,.pl-nav,.pl-switch,.pl-switch-pastilla,.pl-switch-op,.pl-vista,.pl-cambia{transition-duration:.01s!important}
+  .pl-switch-op .hg-title.late{animation:none}
   .pl-agenda-btn:hover{transform:rotate(-4deg)}
   .pl-mockup:hover,.pl-portada:hover{transform:none}
 }
