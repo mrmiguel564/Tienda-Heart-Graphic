@@ -56,7 +56,10 @@ nav a.wa:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
 nav a.ig-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--btn-celeste);border:2px solid var(--ink);color:#fff;box-shadow:3px 3px 0 var(--ink);transition:.15s;flex:0 0 auto;margin-left:6px}
 nav a.ig-btn .ic{width:20px;height:20px}
 nav a.ig-btn:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
-@media(max-width:640px){nav a.link{display:none}
+/* tablets: los 4 enlaces se compactan; bajo 760px se esconden (no caben) */
+@media(max-width:900px){nav a.link{padding:9px 9px;font-size:13px}}
+@media(max-width:760px){nav a.link{display:none}}
+@media(max-width:640px){
 nav{padding:6px 7px;gap:2px}
 nav .brand{font-size:17px;padding:0 7px}
 nav .brand-ico{height:30px;width:35px;vertical-align:-8px;margin-right:2px}

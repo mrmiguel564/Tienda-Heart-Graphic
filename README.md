@@ -17,10 +17,12 @@ catalogo_heart_graphic.xlsx   Plantilla del catálogo para subir a Google Sheets
 assets/
   css/tienda.css              Estilos del sitio (trae embebidas Neulis Alt Regular y Neulis Bold)
   js/tienda.js                Script del sitio: configuración, catálogo, carrito, ofertas, router
+  css/planners.css            Estilos de la Sección PLANNERS
+  js/planners.js              Sección PLANNERS: precios, rutas de imágenes, visores, galería
   logos/                      SVG de marca
   iconos/                     WhatsApp, Instagram, Facebook, correo
   fuentes/                    Tipografías Neulis (OTF con licencia)
-  productos/                  Fotos de productos y carnets_veterinarios/
+  productos/                  Fotos de productos, carnets_veterinarios/ y planners/
   referencias/                Catálogo PDF, logo.ai y JPG del logo
 mockups/                      Exploraciones de diseño (no forman parte del sitio)
 LEEME.txt                     Guía rápida original
@@ -83,6 +85,25 @@ Está completa pero comentada en el HTML, con su carrusel vertical; su módulo `
 
 1. Descomentar la sección `Especial veterinarias` y comentar la de `Cyber Day` (ambas marcadas con `Seccion OFERTAS`).
 2. Cambiar `OFERTA_WA` por el mensaje de veterinarias (está anotado al lado).
+
+## Sección PLANNERS
+
+Bloque entre el Catálogo y los Testimonios (`#planners`, con enlace en el menú). No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
+
+- **Agenda Atrévete 2027:** portada burdeo o lila y visor **Ve el interior** con los pliegos que giran (anillado al centro).
+- **Planner Semanal:** mockup con la portada elegida, galería de 10 portadas, visor con anillado arriba (tiro = planificación semanal, retiro = hábitos) y **Personalizar portada**: el cliente sube su imagen y la ve en perspectiva sobre el mockup. La imagen no viaja: el mensaje le pide enviarla por WhatsApp.
+- Cada producto tiene WhatsApp (mensaje con la elección y el total), Instagram y carrito, igual que el catálogo.
+- Visores y galería: Esc cierra, flechas del teclado pasan las hojas, el foco queda dentro del diálogo y respetan `prefers-reduced-motion`. Los anillos son siempre blancos.
+
+| Constante (`planners.js`) | Qué hace |
+|---|---|
+| `WA_NUM` | Número de pedidos de planners. Hoy usa `WHATSAPP` (**TODO**) |
+| `PRECIOS` | Precio de cada portada de la agenda, del planner por cantidad y recargo por personalizar (**TODO**: precios reales) |
+| `PL_IMG`, `AGENDA`, `SEMANAL` | Rutas de las imágenes, títulos de los pliegos y hojas del visor |
+
+**Imágenes (temporal):** se sirven desde `assets/productos/planners/` (`agenda/` con portadas y pliegos `pliego-NN-izq|der.jpg`; `semanal/` con `portadas/`, `mockups/`, hojas de tiro y retiro y la capa de anillos). Cuando se migren a un servicio externo, basta con cambiar `PL_IMG` o las rutas de la configuración.
+
+Quedan con **TODO** en `index.html`: el tamaño y las hojas del planner y la ficha "Anillado metálico" de ambos productos.
 
 ## Ramas y despliegue (Netlify)
 
