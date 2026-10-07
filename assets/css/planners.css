@@ -5,21 +5,28 @@
    .notas, .materiales/.mat, .ver-mas, .fila-pedir/.pedir/.add-cart y .m-cerrar.
    Aquí va solo lo propio: portadas, mockup, visores, galería y personalización.
    Los anillos (portada, visor y mockup) son SIEMPRE blancos. */
-/* ---------- pestañas del catálogo: Catálogo ↔ Planner ---------- */
-.pl-tabs{display:inline-flex;gap:12px;margin-top:22px;padding:6px;background:#fff;border:3px solid var(--ink);border-radius:var(--r-pill);
-  box-shadow:5px 5px 0 rgba(63,60,102,.18)}
-.pl-tab{font-family:'Neulis',sans-serif;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
-  display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:2.5px solid transparent;border-radius:var(--r-pill);
-  background:transparent;cursor:pointer;transition:background .2s ease,box-shadow .2s ease,transform .15s ease}
-.pl-tab .ic{width:17px;height:17px;fill:none;stroke:currentColor}
-.pl-tab:hover{background:#f4eeff}
-.pl-tab[aria-selected="true"]{background:var(--celeste);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
-.pl-tab-planner[aria-selected="true"]{background:var(--lila)}
-.pl-tab:focus-visible{outline:3px solid var(--celeste-deep);outline-offset:3px}
+/* ---------- títulos del catálogo como pestañas: Catálogo ↔ Planner ----------
+   Mismo look que .titulo-sec h2; el elegido va en tamaño completo y el otro
+   queda más chico y apagado. El tamaño se anima. */
+.pl-titulos{display:flex;justify-content:center;align-items:center;gap:clamp(14px,2.6vw,28px);flex-wrap:wrap}
+.pl-titulo{font-family:'Neulis',sans-serif;font-weight:900;line-height:1.12;color:var(--ink-soft);cursor:pointer;
+  display:inline-flex;align-items:center;gap:.22em;font-size:clamp(20px,3vw,34px);padding:7px 24px;
+  background:rgba(255,255,255,.75);border:4px solid var(--ink);border-radius:30px;box-shadow:5px 5px 0 rgba(63,60,102,.18);
+  transition:font-size .3s ease,padding .3s ease,color .2s ease,background .2s ease,box-shadow .3s ease,transform .15s ease}
+.pl-titulo[aria-selected="true"]{font-size:clamp(36px,6.4vw,72px);padding:10px 34px;color:var(--ink);background:#fff;
+  box-shadow:8px 8px 0 var(--celeste);cursor:default}
+.pl-titulo-planner[aria-selected="true"]{box-shadow:8px 8px 0 var(--lila)}
+.pl-titulo[aria-selected="false"]:hover{color:var(--ink);background:#fff;transform:translateY(-3px);box-shadow:5px 8px 0 var(--lila)}
+#tabCatalogo[aria-selected="false"]:hover{box-shadow:5px 8px 0 var(--celeste)}
+.pl-titulo:focus-visible{outline:4px solid var(--celeste-deep);outline-offset:5px}
+@media(max-width:520px){
+  .pl-titulos{gap:10px}
+  .pl-titulo{font-size:16px;padding:6px 14px;border-width:3px;border-radius:22px}
+  .pl-titulo[aria-selected="true"]{font-size:27px;padding:8px 18px}
+}
 /* fundido rápido entre el catálogo y los planners */
 .pl-vista,.pl-cambia,#listaProductos.pl-vista{transition:opacity .2s ease,transform .3s ease}
 #listaProductos.pl-entra{transition:none}
-span.pl-cambia{display:inline-block}
 .pl-fuera{opacity:0;transform:translateY(10px)}
 .pl-entra{opacity:0;transform:translateY(18px);transition:none}
 
@@ -43,6 +50,8 @@ span.pl-cambia{display:inline-block}
 .pl-op-check .chk{border-radius:7px}
 .pl-op .pr{white-space:nowrap}
 .pl-dos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pl-dos .fila{gap:8px;padding:8px 12px}
+.pl-dos .un{white-space:nowrap}
 /* valor único del producto */
 .pl-precio{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;padding:11px 20px;
   background:linear-gradient(135deg,#eefaff 0%,#f4eeff 100%);border:2.5px solid var(--ink);border-radius:var(--r-pill);box-shadow:3px 3px 0 rgba(63,60,102,.16)}
@@ -203,7 +212,8 @@ span.pl-cambia{display:inline-block}
 /* ---------- menos movimiento ---------- */
 @media (prefers-reduced-motion: reduce){
   .pl-agenda-btn,.pl-mockup,.pl-mockup>img,.pl-libro,.pl-hoja,.pl-bloc,.pl-bhoja,.pl-sombra,
-  .pl-visor,.pl-galeria,.pl-galeria-hoja,.pl-portada,.pl-nav,.pl-tab,.pl-vista,.pl-cambia{transition-duration:.01s!important}
+  .pl-visor,.pl-galeria,.pl-galeria-hoja,.pl-portada,.pl-nav,.pl-titulo,.pl-vista,.pl-cambia{transition-duration:.01s!important}
+  .pl-titulo[aria-selected="false"]:hover{transform:none}
   .pl-agenda-btn:hover{transform:rotate(-4deg)}
   .pl-mockup:hover,.pl-portada:hover{transform:none}
 }

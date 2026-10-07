@@ -21,10 +21,10 @@ const PRECIOS = {
   perso:   1000     /* recargo por portada personalizada del planner semanal */
 };
 
-/* textos de la cabecera del catálogo según la pestaña */
+/* bajada bajo los títulos del catálogo según la pestaña */
 const VISTAS = {
-  catalogo: { titulo: "Catálogo",      bajada: "Toca la cantidad que quieras y pídela directo por WhatsApp" },
-  planners: { titulo: "Planners 2027", bajada: "Agendas y planners anillados, diseñados por nosotros. Toca la portada para ver su interior" }
+  catalogo: { bajada: "Toca la cantidad que quieras y pídela directo por WhatsApp" },
+  planners: { bajada: "Agendas y planners anillados, diseñados por nosotros. Toca la portada para ver su interior" }
 };
 
 const AGENDA = {
@@ -67,11 +67,11 @@ document.querySelectorAll("[data-pl-precio]").forEach(el => { el.textContent = f
 /* =========================================================
    PESTAÑAS DEL CATÁLOGO: Catálogo ↔ Planner
    El panel que sale se desvanece rápido y el que entra aparece subiendo;
-   el título y la bajada de la cabecera cambian con el mismo fundido.
+   la bajada cambia con el mismo fundido y el título elegido crece (CSS).
    ========================================================= */
 const PANELES = { catalogo: $("listaProductos"), planners: $("plPanel") };
 const TABS = { catalogo: $("tabCatalogo"), planners: $("tabPlanners") };
-const cambian = [$("tituloSec"), $("bajadaSec")];
+const cambian = [$("bajadaSec")];
 let vista = "catalogo", vistaT = null;
 
 function muestraVista(v, enfoca){
@@ -91,7 +91,6 @@ function muestraVista(v, enfoca){
     const antes = cabecera.getBoundingClientRect().top;
     sale.hidden = true;
     sale.classList.remove("pl-fuera");
-    $("tituloSec").textContent = VISTAS[v].titulo;
     $("bajadaSec").textContent = VISTAS[v].bajada;
     entra.hidden = false;
     scrollBy({top: cabecera.getBoundingClientRect().top - antes, behavior: "instant"});

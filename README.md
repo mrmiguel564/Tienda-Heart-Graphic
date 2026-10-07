@@ -88,7 +88,7 @@ Está completa pero comentada en el HTML, con su carrusel vertical; su módulo `
 
 ## Sección PLANNERS
 
-Pestaña del Catálogo: bajo el título hay dos botones, **Catálogo** y **Planner**. Al tocar Planner el catálogo se desvanece rápido, el título cambia a "Planners 2027" y aparecen las agendas y planners. El enlace **Planners** del menú (o entrar con `#planners`) abre esa pestaña y baja hasta ella; **Productos** vuelve al catálogo. No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
+Pestaña del Catálogo: los títulos **Catálogo** y **Planner** van lado a lado y son botones; el elegido se ve grande y el otro más chico. Al tocar Planner el catálogo se desvanece rápido, cambia la bajada y aparecen las agendas y planners. El enlace **Planners** del menú (o entrar con `#planners`) abre esa pestaña y baja hasta ella; **Productos** vuelve al catálogo. No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
 
 - **Agenda Atrévete 2027:** valor único, portada burdeo o lila y visor **Ve el interior** con los pliegos que giran (anillado al centro).
 - **Planner Semanal:** valor único, mockup con la portada elegida, galería de 10 portadas, visor con anillado arriba (tiro = planificación semanal, retiro = hábitos) y **Personalizar portada** (+ recargo): el cliente sube su imagen y la ve en perspectiva sobre el mockup; aparece el total con el recargo. La imagen no viaja: el mensaje le pide enviarla por WhatsApp.
@@ -100,7 +100,7 @@ Pestaña del Catálogo: bajo el título hay dos botones, **Catálogo** y **Plann
 |---|---|
 | `WA_NUM` | Número de pedidos de planners. Hoy usa `WHATSAPP` (**TODO**) |
 | `PRECIOS` | Valor único de la agenda y del planner, y recargo por portada personalizada (**TODO**: precios reales) |
-| `VISTAS` | Título y bajada de la cabecera en cada pestaña |
+| `VISTAS` | Bajada bajo los títulos en cada pestaña |
 | `PL_IMG`, `AGENDA`, `SEMANAL` | Rutas de las imágenes, títulos de los pliegos y hojas del visor |
 
 **Imágenes (temporal):** se sirven desde `assets/productos/planners/` (`agenda/` con portadas y pliegos `pliego-NN-izq|der.jpg`; `semanal/` con `portadas/`, `mockups/`, hojas de tiro y retiro y la capa de anillos). Cuando se migren a un servicio externo, basta con cambiar `PL_IMG` o las rutas de la configuración.

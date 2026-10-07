@@ -117,13 +117,14 @@
 
 <main id="productos">
   <div class="titulo-sec reveal">
-    <h2><svg class="hg-title"><use href="#ic-hg"/></svg> <span class="pl-cambia" id="tituloSec">Catálogo</span></h2>
-    <p class="pl-cambia" id="bajadaSec">Toca la cantidad que quieras y pídela directo por WhatsApp</p>
-    <!-- Pestañas del catálogo: "Planner" desvanece el catálogo y muestra agendas y planners (assets/js/planners.js) -->
-    <div class="pl-tabs" role="tablist" aria-label="Qué quieres ver">
-      <button class="pl-tab" type="button" role="tab" id="tabCatalogo" aria-selected="true" aria-controls="listaProductos">Catálogo</button>
-      <button class="pl-tab pl-tab-planner" type="button" role="tab" id="tabPlanners" aria-selected="false" aria-controls="plPanel" tabindex="-1"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><path d="M8 5h12M8 12h12M8 19h12"/></g></svg> Planner</button>
+    <h2 class="pl-oculto">Catálogo</h2>
+    <!-- Los títulos son pestañas: el elegido se ve grande y el otro más chico.
+         "Planner" desvanece el catálogo y muestra agendas y planners (assets/js/planners.js) -->
+    <div class="pl-titulos" role="tablist" aria-label="Qué quieres ver">
+      <button class="pl-titulo" type="button" role="tab" id="tabCatalogo" aria-selected="true" aria-controls="listaProductos"><svg class="hg-title" aria-hidden="true"><use href="#ic-hg"/></svg> Catálogo</button>
+      <button class="pl-titulo pl-titulo-planner" type="button" role="tab" id="tabPlanners" aria-selected="false" aria-controls="plPanel" tabindex="-1">Planner</button>
     </div>
+    <p class="pl-cambia" id="bajadaSec">Toca la cantidad que quieras y pídela directo por WhatsApp</p>
   </div>
   <div id="listaProductos" class="pl-vista" role="tabpanel" aria-labelledby="tabCatalogo"></div>
 
