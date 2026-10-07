@@ -117,25 +117,24 @@
 
 <main id="productos">
   <div class="titulo-sec reveal">
-    <h2><svg class="hg-title"><use href="#ic-hg"/></svg> Catálogo</h2>
-    <p>Toca la cantidad que quieras y pídela directo por WhatsApp</p>
+    <h2><svg class="hg-title"><use href="#ic-hg"/></svg> <span class="pl-cambia" id="tituloSec">Catálogo</span></h2>
+    <p class="pl-cambia" id="bajadaSec">Toca la cantidad que quieras y pídela directo por WhatsApp</p>
+    <!-- Pestañas del catálogo: "Planner" desvanece el catálogo y muestra agendas y planners (assets/js/planners.js) -->
+    <div class="pl-tabs" role="tablist" aria-label="Qué quieres ver">
+      <button class="pl-tab" type="button" role="tab" id="tabCatalogo" aria-selected="true" aria-controls="listaProductos">Catálogo</button>
+      <button class="pl-tab pl-tab-planner" type="button" role="tab" id="tabPlanners" aria-selected="false" aria-controls="plPanel" tabindex="-1"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><path d="M8 5h12M8 12h12M8 19h12"/></g></svg> Planner</button>
+    </div>
   </div>
-  <div id="listaProductos"></div>
-</main>
+  <div id="listaProductos" class="pl-vista" role="tabpanel" aria-labelledby="tabCatalogo"></div>
 
-<!-- ============ Seccion PLANNERS ============
-     Agenda Atrévete 2027 (visor de pliegos, anillado al centro) y Planner Semanal
-     (galería de 10 portadas, visor con anillado arriba y portada personalizada).
-     Estilos en assets/css/planners.css. Lógica, precios, WA_NUM y rutas de las
-     imágenes en assets/js/planners.js (hoy apuntan a assets/productos/planners/;
-     se migrarán a un servicio externo). Los diálogos van más abajo, junto al modal. -->
-<section id="planners">
-  <div class="titulo-sec reveal">
-    <h2><svg class="hg-title"><use href="#ic-hg"/></svg> Planners 2027</h2>
-    <p>Agendas anilladas diseñadas por nosotros. Toca la portada para ver su interior</p>
-  </div>
-
-  <div class="pl-lista">
+  <!-- ============ Seccion PLANNERS ============
+       Panel del catálogo que se muestra con la pestaña "Planner" (o el enlace #planners).
+       Agenda Atrévete 2027 (visor de pliegos, anillado al centro) y Planner Semanal
+       (galería de 10 portadas, visor con anillado arriba y portada personalizada).
+       Estilos en assets/css/planners.css. Lógica, precios, WA_NUM y rutas de las
+       imágenes en assets/js/planners.js (hoy apuntan a assets/productos/planners/;
+       se migrarán a un servicio externo). Los diálogos van más abajo, junto al modal. -->
+  <div class="pl-lista pl-vista" id="plPanel" role="tabpanel" aria-labelledby="tabPlanners" hidden>
     <!-- Agenda Atrévete 2027 -->
     <article class="prod pl-prod reveal" id="plAgenda">
       <div class="pl-arte">
@@ -149,10 +148,11 @@
         <span class="badge">planner 01</span>
         <h3>Agenda Atrévete 2027</h3>
         <p class="desc">Agenda mes a mes con calendario, metas, control de gastos, ahorro y semana a la vista.</p>
+        <div class="pl-precio"><span>Valor único</span><b data-pl-precio="agenda"></b></div>
         <span class="pl-lab">Elige la portada</span>
-        <div class="tabla" role="radiogroup" aria-label="Portada de la agenda">
-          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plAgendaPortada" value="burdeo" checked><span class="chk" aria-hidden="true"></span><span class="un"><span class="pl-sw" style="background:#7d1f3a"></span>Portada burdeo</span><span class="pr" data-pl-precio="agenda.burdeo"></span></label>
-          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plAgendaPortada" value="lila"><span class="chk" aria-hidden="true"></span><span class="un"><span class="pl-sw" style="background:#e4c3e8"></span>Portada lila</span><span class="pr" data-pl-precio="agenda.lila"></span></label>
+        <div class="tabla pl-dos" role="radiogroup" aria-label="Portada de la agenda">
+          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plAgendaPortada" value="burdeo" checked><span class="chk" aria-hidden="true"></span><span class="un"><span class="pl-sw" style="background:#7d1f3a"></span>Burdeo</span></label>
+          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plAgendaPortada" value="lila"><span class="chk" aria-hidden="true"></span><span class="un"><span class="pl-sw" style="background:#e4c3e8"></span>Lila</span></label>
         </div>
         <p class="notas">Tamaño B5 de 17,6 × 25 cm, 100 hojas (200 páginas) anilladas</p>
         <div class="materiales">
@@ -187,11 +187,7 @@
           <div><small>Portada elegida</small><strong id="plElegida">N° 1</strong></div>
           <button class="ver-mas" type="button" id="plVerPortadas" aria-haspopup="dialog">Ver las 10 portadas</button>
         </div>
-        <span class="pl-lab">Cantidad</span>
-        <div class="tabla" role="radiogroup" aria-label="Cantidad de planners">
-          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plSemanalCant" value="1" checked><span class="chk" aria-hidden="true"></span><span class="un">1 planner</span><span class="pr" data-pl-precio="semanal.1"></span></label>
-          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plSemanalCant" value="2"><span class="chk" aria-hidden="true"></span><span class="un">2 planners</span><span class="pr" data-pl-precio="semanal.2"></span></label>
-        </div>
+        <div class="pl-precio"><span>Valor único</span><b data-pl-precio="semanal"></b></div>
         <div class="pl-perso">
           <label class="fila pl-op pl-op-check"><input class="pl-oculto" type="checkbox" id="plPerso" aria-controls="plPersoBox"><span class="chk" aria-hidden="true"></span><span class="un">Personalizar portada</span><span class="pr" id="plPersoPrecio"></span></label>
           <div class="pl-perso-box" id="plPersoBox" hidden>
@@ -204,12 +200,12 @@
             <small id="plAyuda" aria-live="polite">Tu imagen será la portada. Usa una foto o diseño horizontal en buena resolución (JPG o PNG).</small>
           </div>
         </div>
-        <div class="pl-total"><span>Total</span><b id="plTotal" aria-live="polite"></b></div>
+        <div class="pl-total" id="plTotalFila" hidden><span>Total con portada personalizada</span><b id="plTotal" aria-live="polite"></b></div>
         <!-- TODO: completar con el tamaño y la cantidad de hojas reales del planner -->
         <p class="notas">Tamaño y hojas: completa con los datos reales</p>
         <div class="materiales">
           <!-- TODO: confirmar material y terminación del planner -->
-          <div class="mat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><path d="M5 8v12M12 8v12M19 8v12"/></g></svg></span><b>Anillado metálico</b><i>Full color</i></div>
+          <div class="mat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><path d="M8 5h12M8 12h12M8 19h12"/></g></svg></span><b>Anillado metálico</b><i>Full color</i></div>
         </div>
         <div class="fila-pedir">
           <a class="pedir" id="plSemanalWa" target="_blank" rel="noopener" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
@@ -219,7 +215,7 @@
       </div>
     </article>
   </div>
-</section>
+</main>
 
 
 

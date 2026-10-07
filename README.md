@@ -88,17 +88,19 @@ Está completa pero comentada en el HTML, con su carrusel vertical; su módulo `
 
 ## Sección PLANNERS
 
-Bloque entre el Catálogo y los Testimonios (`#planners`, con enlace en el menú). No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
+Pestaña del Catálogo: bajo el título hay dos botones, **Catálogo** y **Planner**. Al tocar Planner el catálogo se desvanece rápido, el título cambia a "Planners 2027" y aparecen las agendas y planners. El enlace **Planners** del menú (o entrar con `#planners`) abre esa pestaña y baja hasta ella; **Productos** vuelve al catálogo. No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
 
-- **Agenda Atrévete 2027:** portada burdeo o lila y visor **Ve el interior** con los pliegos que giran (anillado al centro).
-- **Planner Semanal:** mockup con la portada elegida, galería de 10 portadas, visor con anillado arriba (tiro = planificación semanal, retiro = hábitos) y **Personalizar portada**: el cliente sube su imagen y la ve en perspectiva sobre el mockup. La imagen no viaja: el mensaje le pide enviarla por WhatsApp.
+- **Agenda Atrévete 2027:** valor único, portada burdeo o lila y visor **Ve el interior** con los pliegos que giran (anillado al centro).
+- **Planner Semanal:** valor único, mockup con la portada elegida, galería de 10 portadas, visor con anillado arriba (tiro = planificación semanal, retiro = hábitos) y **Personalizar portada** (+ recargo): el cliente sube su imagen y la ve en perspectiva sobre el mockup; aparece el total con el recargo. La imagen no viaja: el mensaje le pide enviarla por WhatsApp.
+- Más unidades se suman en el carrito con +/−.
 - Cada producto tiene WhatsApp (mensaje con la elección y el total), Instagram y carrito, igual que el catálogo.
 - Visores y galería: Esc cierra, flechas del teclado pasan las hojas, el foco queda dentro del diálogo y respetan `prefers-reduced-motion`. Los anillos son siempre blancos.
 
 | Constante (`planners.js`) | Qué hace |
 |---|---|
 | `WA_NUM` | Número de pedidos de planners. Hoy usa `WHATSAPP` (**TODO**) |
-| `PRECIOS` | Precio de cada portada de la agenda, del planner por cantidad y recargo por personalizar (**TODO**: precios reales) |
+| `PRECIOS` | Valor único de la agenda y del planner, y recargo por portada personalizada (**TODO**: precios reales) |
+| `VISTAS` | Título y bajada de la cabecera en cada pestaña |
 | `PL_IMG`, `AGENDA`, `SEMANAL` | Rutas de las imágenes, títulos de los pliegos y hojas del visor |
 
 **Imágenes (temporal):** se sirven desde `assets/productos/planners/` (`agenda/` con portadas y pliegos `pliego-NN-izq|der.jpg`; `semanal/` con `portadas/`, `mockups/`, hojas de tiro y retiro y la capa de anillos). Cuando se migren a un servicio externo, basta con cambiar `PL_IMG` o las rutas de la configuración.

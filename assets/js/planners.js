@@ -1,5 +1,5 @@
 /* ================= Seccion PLANNERS =================
-   Agenda Atrévete 2027 y Planner Semanal (marcado en index.html → #planners y
+   Agenda Atrévete 2027 y Planner Semanal (marcado en index.html → pestaña Planner #plPanel y
    diálogos pl-*, estilos en assets/css/planners.css).
    Usa de assets/js/tienda.js (se carga antes): WHATSAPP, fmt y CART.
 
@@ -13,11 +13,18 @@
 const PL_IMG = "assets/productos/planners/";
 const WA_NUM = WHATSAPP;   /* TODO: confirmar el número de pedidos de planners (sin +). Hoy usa el de la tienda */
 
-/* TODO: completar con los precios reales (CLP) */
+/* TODO: completar con los precios reales (CLP). Cada producto tiene valor único;
+   más unidades se suman en el carrito (+/−). */
 const PRECIOS = {
-  agenda:  { burdeo: 24990, lila: 24990 },
-  semanal: { 1: 9990, 2: 17990 },   /* por cantidad de planners */
-  perso:   1000                     /* recargo por portada personalizada, por planner */
+  agenda:  24990,   /* cualquiera de las dos portadas */
+  semanal: 9990,
+  perso:   1000     /* recargo por portada personalizada del planner semanal */
+};
+
+/* textos de la cabecera del catálogo según la pestaña */
+const VISTAS = {
+  catalogo: { titulo: "Catálogo",      bajada: "Toca la cantidad que quieras y pídela directo por WhatsApp" },
+  planners: { titulo: "Planners 2027", bajada: "Agendas y planners anillados, diseñados por nosotros. Toca la portada para ver su interior" }
 };
 
 const AGENDA = {
@@ -55,9 +62,74 @@ const menosMov = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const waHref = msg => `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
 const FOCO = 'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]):not([hidden]),[tabindex]:not([tabindex="-1"])';
 
-document.querySelectorAll("[data-pl-precio]").forEach(el => {
-  const [prod, clave] = el.dataset.plPrecio.split(".");
-  el.textContent = fmt(PRECIOS[prod][clave]);
+document.querySelectorAll("[data-pl-precio]").forEach(el => { el.textContent = fmt(PRECIOS[el.dataset.plPrecio]); });
+
+/* =========================================================
+   PESTAÑAS DEL CATÁLOGO: Catálogo ↔ Planner
+   El panel que sale se desvanece rápido y el que entra aparece subiendo;
+   el título y la bajada de la cabecera cambian con el mismo fundido.
+   ========================================================= */
+const PANELES = { catalogo: $("listaProductos"), planners: $("plPanel") };
+const TABS = { catalogo: $("tabCatalogo"), planners: $("tabPlanners") };
+const cambian = [$("tituloSec"), $("bajadaSec")];
+let vista = "catalogo", vistaT = null;
+
+function muestraVista(v, enfoca){
+  if (v === vista) return;
+  const sale = PANELES[vista], entra = PANELES[v];
+  vista = v;
+  Object.entries(TABS).forEach(([k, t]) => {
+    t.setAttribute("aria-selected", String(k === v));
+    t.tabIndex = k === v ? 0 : -1;
+  });
+  if (enfoca) TABS[v].focus();
+  history.replaceState(null, "", v === "planners" ? "#planners" : "#productos");
+  const cabecera = document.querySelector("#productos .titulo-sec");
+  const cambia = () => {
+    /* la cabecera no se mueve: al ocultar el catálogo el navegador re-ancla el
+       scroll a otro elemento y la página salta; se compensa la diferencia */
+    const antes = cabecera.getBoundingClientRect().top;
+    sale.hidden = true;
+    sale.classList.remove("pl-fuera");
+    $("tituloSec").textContent = VISTAS[v].titulo;
+    $("bajadaSec").textContent = VISTAS[v].bajada;
+    entra.hidden = false;
+    scrollBy({top: cabecera.getBoundingClientRect().top - antes, behavior: "instant"});
+    entra.querySelectorAll(".reveal").forEach(el => el.classList.add("vis"));
+    [entra, ...cambian].forEach(el => el.classList.add("pl-entra"));
+    void entra.offsetWidth;
+    [entra, ...cambian].forEach(el => el.classList.remove("pl-entra", "pl-fuera"));
+  };
+  clearTimeout(vistaT);
+  if (menosMov()) return cambia();
+  [sale, ...cambian].forEach(el => el.classList.add("pl-fuera"));
+  vistaT = setTimeout(cambia, 200);
+}
+Object.entries(TABS).forEach(([k, t]) => {
+  t.addEventListener("click", () => muestraVista(k));
+  /* flechas entre pestañas (patrón tablist) */
+  t.addEventListener("keydown", e => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    muestraVista(k === "catalogo" ? "planners" : "catalogo", true);
+  });
+});
+
+/* el enlace "Planners" del menú (y #planners al cargar) abre la pestaña y baja al catálogo */
+function irAPlanners(){
+  const desdePoliticas = document.body.classList.contains("en-politicas");
+  muestraVista("planners");
+  /* se baja cuando el cambio de panel ya terminó (su ajuste de scroll cortaría el desplazamiento suave) */
+  setTimeout(() => $("productos").scrollIntoView({behavior: menosMov() ? "instant" : "smooth", block: "start"}),
+             (desdePoliticas ? 450 : 0) + (menosMov() ? 0 : 240));
+}
+document.querySelectorAll('a[href="#planners"]').forEach(a => a.addEventListener("click", e => {
+  if (location.hash === "#planners"){ e.preventDefault(); irAPlanners(); }
+}));
+document.querySelectorAll('a[href="#productos"]').forEach(a => a.addEventListener("click", () => muestraVista("catalogo")));
+addEventListener("hashchange", () => {
+  if (location.hash === "#planners") irAPlanners();
+  else if (location.hash === "#productos") muestraVista("catalogo");
 });
 
 /* Diálogo accesible: Esc cierra, el foco queda atrapado adentro y vuelve al
@@ -173,7 +245,7 @@ const agWa = $("plAgendaWa");
 const agSel = () => AGENDA.portadas[document.querySelector('input[name="plAgendaPortada"]:checked').value];
 const agMsg = () => {
   const c = agSel();
-  return `Hola Heart Graphic! 💜 Quiero pedir: ${AGENDA.nombre} (portada ${c.nom}) — ${fmt(PRECIOS.agenda[c.nom])}`;
+  return `Hola Heart Graphic! 💜 Quiero pedir: ${AGENDA.nombre} (portada ${c.nom}) — ${fmt(PRECIOS.agenda)}`;
 };
 function agPinta(){
   const c = agSel();
@@ -185,7 +257,7 @@ document.querySelectorAll('input[name="plAgendaPortada"]').forEach(r => r.addEve
 $("plAgendaIg").addEventListener("click", () => CART.pedirIg(agMsg()));
 $("plAgendaCarro").addEventListener("click", () => {
   const c = agSel();
-  CART.add(P_AGENDA, `Portada ${c.nom}`, 1, PRECIOS.agenda[c.nom], "");
+  CART.add(P_AGENDA, `Portada ${c.nom}`, 1, PRECIOS.agenda, "");
 });
 agPinta();
 
@@ -235,14 +307,12 @@ let semSel = 0;            /* portada elegida (índice) */
 let propia = null;         /* imagen subida por el cliente (object URL, solo vista previa) */
 let propiaCmyk = false;
 
-$("plPersoPrecio").textContent = `+${fmt(PRECIOS.perso)} por planner`;
+$("plPersoPrecio").textContent = `+${fmt(PRECIOS.perso)}`;
 
-const semCant = () => +document.querySelector('input[name="plSemanalCant"]:checked').value;
-const semTotal = () => PRECIOS.semanal[semCant()] + (perso.checked ? PRECIOS.perso * semCant() : 0);
+const semTotal = () => PRECIOS.semanal + (perso.checked ? PRECIOS.perso : 0);
 const semPortadaTxt = () => perso.checked ? "portada personalizada" : `portada N° ${semSel + 1}`;
 function semMsg(){
-  const q = semCant();
-  return `Hola Heart Graphic! 💜 Quiero pedir: ${q === 1 ? "1 Planner Semanal" : q + " Planners Semanales"} con ${semPortadaTxt()}` +
+  return `Hola Heart Graphic! 💜 Quiero pedir: ${SEMANAL.nombre} con ${semPortadaTxt()}` +
          (perso.checked ? " (te envío la imagen por aquí)" : "") + `. Total: ${fmt(semTotal())}`;
 }
 function avisa(m){ ayuda.textContent = m; ayuda.classList.add("aviso"); }
@@ -258,6 +328,7 @@ function faltaImagen(){
 function semPinta(){
   const conPropia = perso.checked && !!propia;
   $("plTotal").textContent = fmt(semTotal());
+  $("plTotalFila").hidden = !perso.checked;
   $("plCustom").hidden = !conPropia;
   $("plElegida").textContent = conPropia ? "Tu imagen" : `N° ${semSel + 1}`;
   $("plElegidaImg").src = conPropia ? propia : src(SEMANAL.portadas[semSel]);
@@ -294,14 +365,13 @@ function eligePortada(i, instantaneo){
   semPinta();
 }
 
-document.querySelectorAll('input[name="plSemanalCant"]').forEach(r => r.addEventListener("change", semPinta));
 perso.addEventListener("change", () => { $("plPersoBox").hidden = !perso.checked; ayudaNormal(); semPinta(); });
 semWa.addEventListener("click", e => { if (faltaImagen()) e.preventDefault(); });
 $("plSemanalIg").addEventListener("click", () => { if (!faltaImagen()) CART.pedirIg(semMsg()); });
 $("plSemanalCarro").addEventListener("click", () => {
   if (faltaImagen()) return;
   const v = perso.checked ? "Portada personalizada (imagen por WhatsApp)" : `Portada N° ${semSel + 1}`;
-  CART.add(P_SEMANAL, v, semCant(), semTotal(), "");
+  CART.add(P_SEMANAL, v, 1, semTotal(), "");
 });
 
 /* ---- imagen personalizada: se proyecta en perspectiva sobre la portada del mockup ---- */
@@ -407,5 +477,8 @@ const visorSemanal = visor($("plVisorSemanal"), {
   }
 });
 document.querySelectorAll('[data-pl-abre="semanal"]').forEach(b => b.addEventListener("click", visorSemanal.abre));
+
+/* entrar directo con #planners en la URL */
+if (location.hash === "#planners") irAPlanners();
 
 })();
