@@ -120,16 +120,7 @@ const AGENDAS = [
     portadas: [{ nom: "Turquesa", retiro: true }, { nom: "Coral", retiro: true }],
     paginas: [D, CAL(2025), CAL(2026), "Mi mes", "Ingresos y gastos fijos", par("Gastos hormiga"), "Mis ahorros",
       "Balance mensual", "Notas y observaciones"] },
-  /* Planner Semanal Largo Happy (vertical angosto): la imagen 2 es la página izquierda del pliego y la 1 la derecha */
-  { id: "semanal-happy", nombre: "Planner Semanal Largo · Happy", precio: null, ratio: .384, formato: "Formato largo · anillado",
-    desc: "“I'm a happy planner”: semana a la vista en formato largo. Elige entre 2 portadas.",
-    portadas: [{ nom: "Degradé", retiro: true }, { nom: "Ondas", retiro: true }],
-    paginas: [pg(3, D), pg(4, "Hojas de puntos"), par(SEM, 2, 1), par(SEM, 2, 1), par(SEM, 2, 1)] },
   /* ---- anillado arriba ---- */
-  { id: "diario-horizontal", nombre: "Planner Diario Horizontal", precio: null, lomo: "arriba", ratio: 1.419, interiorPorPortada: true,
-    formato: "Tamaño A5 apaisado (21 × 14,8 cm) · anillado", desc: "Un día por página en formato apaisado. Elige entre 3 diseños.",
-    portadas: [{ nom: "Acuarela", retiro: true }, { nom: "Ondas pastel", retiro: true }, { nom: "Piñas", retiro: true }],
-    paginas: [DIA], repetir: 4 },
   /* Mini Planner Semanal: 6 portadas y 3 juegos de hojas (1 celeste y rosa, 2 lila, 3 rosa).
      TODO: confirmar qué juego de hojas va con cada portada (interior = número de juego) */
   { id: "mini-semanal", nombre: "Mini Planner Semanal", precio: null, lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
@@ -147,23 +138,6 @@ const AGENDAS = [
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "“Pequeños planes, grandes logros”: pendientes del día y calendario. Elige entre 3 diseños.",
     portadas: [{ nom: "Celeste", color: "#cfe0f3" }, { nom: "Rosa y morado", color: "#f6cfe0" }, { nom: "Verde", color: "#d7ebc6" }],
     paginas: [D, CAL(2025), CAL(2026), "Pendientes de hoy", pg(4, "Pendientes de hoy"), pg(4, "Pendientes de hoy")] },
-  { id: "semanal-largo", nombre: "Planner Semanal Largo", precio: null, lomo: "arriba", ratio: 2.607, interiorPorPortada: true,
-    formato: "Formato largo apaisado · anillado", desc: "Semana a la vista en formato largo, con notas, agua y tips al reverso. Elige entre 5 colores.",
-    portadas: ["Lila", "Celeste", "Rosa", "Verde", "Amarillo"].map(nom => ({ nom, retiro: true })),
-    paginas: [PSEM, "Notas, agua y tips"], repetir: 3 },
-  { id: "mensual", nombre: "Planner Mensual", precio: null, lomo: "arriba", ratio: 1.429, interiorPorPortada: true,
-    formato: "Tamaño A5 apaisado (21 × 14,8 cm) · anillado", desc: "Un mes por hoja, con hábitos, metas, tips e ideas al reverso. Elige entre 4 diseños.",
-    portadas: [{ nom: "Rosa", color: "#f9dbe6" }, { nom: "Lila", color: "#cbc3f0" }, { nom: "Girasoles", color: "#f8e9a6" }, { nom: "Turquesa", color: "#5fd0c5" }],
-    paginas: [MENS, "Hábitos, metas e ideas"], repetir: 3 },
-  /* Taco y To Do List: blocks sin tapa, lo primero que se ve es la hoja */
-  { id: "taco-mensual", nombre: "Taco Planner Mensual", precio: null, lomo: "arriba", ratio: .773,
-    formato: "Tamaño carta · anillado", desc: "Block de hojas mensuales en 8 colores pastel.",
-    portadas: [{ nom: "Colores", color: "#ffffff" }],
-    paginas: [pg(2, "Mes rosa"), "Mes verde", "Mes durazno", "Mes lila", "Mes coral", "Mes fucsia", "Mes menta"] },
-  { id: "todo", nombre: "Block To Do List", precio: null, lomo: "arriba", ratio: .771, interiorPorPortada: true,
-    formato: "Block anillado", desc: "Lista de pendientes para tachar lo hecho. Elige entre 6 diseños.",
-    portadas: ["Flores", "Lavanda", "Acuarela", "Gatitos", "Místico", "Gatos y patitas"].map(nom => ({ nom, color: "#ffffff" })),
-    paginas: ["To do list"], repetir: 4 },
   /* Planner Semanal apaisado, anillado arriba: cada portada trae su propio interior
      (pagina-K-01 = tiro: planificación semanal, pagina-K-02 = retiro: hábitos) */
   { id: "semanal", nombre: "Planner Semanal", precio: PRECIOS.semanal, lomo: "arriba", ratio: 1.42, interiorPorPortada: true,
