@@ -1,5 +1,5 @@
 /* ================= Seccion PLANNERS =================
-   Agenda Atrévete 2027 y Planner Semanal (marcado en index.html → pestaña Planner #plPanel y
+   Agendas (Atrévete y las demás, lista AGENDAS) y Planner Semanal (marcado en index.html → pestaña Planner #plPanel y
    diálogos pl-*, estilos en assets/css/planners.css).
    Usa de assets/js/tienda.js (se carga antes): WHATSAPP, fmt y CART.
 
@@ -14,9 +14,8 @@ const PL_IMG = "assets/productos/planners/";
 const WA_NUM = WHATSAPP;   /* TODO: confirmar el número de pedidos de planners (sin +). Hoy usa el de la tienda */
 
 /* TODO: completar con los precios reales (CLP). Cada producto tiene valor único;
-   más unidades se suman en el carrito (+/−). */
+   más unidades se suman en el carrito (+/−). Los precios de cada agenda van en AGENDAS. */
 const PRECIOS = {
-  agenda:  24990,   /* cualquiera de las dos portadas */
   semanal: 9990,
   perso:   1000     /* recargo por portada personalizada del planner semanal */
 };
@@ -27,18 +26,89 @@ const VISTAS = {
   planners: { bajada: "Agendas y planners anillados, diseñados por nosotros. Toca la portada para ver su interior" }
 };
 
-const AGENDA = {
-  nombre: "Agenda Atrévete 2027",
-  portadas: {
-    burdeo: { nom: "burdeo", img: "agenda/portada-burdeo.jpg", color: "#7d1f3a" },
-    lila:   { nom: "lila",   img: "agenda/portada-lila.jpg",   color: "#e4c3e8" }
-  },
-  /* un título por pliego (página izq + der), en orden */
-  pliegos: ["Datos personales","Calendarios","Calendario 2028 y feriados","Planificación anual",
-            "Metas y mi año en colores","Cumpleaños","Planificación mensual","Control de gastos y ahorro",
-            "Notas","Semana a la vista","Semana a la vista","Mis lecturas","Lista de deseos","Notas"]
+/* ---------- AGENDAS ----------
+   Cada agenda es un producto independiente con el mismo modelo que la Atrévete:
+   portada anillada (perforaciones rectangulares + alambre blanco) y visor de pliegos.
+   Imágenes en agendas/<id>/: portada-N.jpg, portada-N-mini.jpg, contratapa-N.jpg
+   (si la portada trae retiro) y pagina-NN.jpg en orden de lectura (izq, der, izq…).
+   - portadas: más de una = el cliente elige. color = contratapa lisa (sin retiro).
+   - paginas: un título por página; repetir = cuántas veces se muestra esa lista.
+   - ratio: ancho/alto de la página (A5 ≈ .705).
+   TODO: precios reales (null = "Consultar"), descripciones y cantidad de hojas. */
+const A5 = "Tamaño A5 (14,8 × 21 cm) · anillado", A6 = "Tamaño A6 (10,5 × 14,8 cm) · anillado", B5 = "Tamaño B5 (17,6 × 25 cm) · anillado";
+const D = "Datos personales", I = "Páginas interiores", CAL = a => "Calendario " + a;
+const SEM = "Semana a la vista", DIA = "Planificación diaria", PSEM = "Planificación semanal";
+const veces = (t, n) => Array(n).fill(t);
+const ATREVETE_PLIEGOS = ["Datos personales","Calendarios","Calendario 2028 y feriados","Planificación anual",
+  "Metas y mi año en colores","Cumpleaños","Planificación mensual","Control de gastos y ahorro",
+  "Notas","Semana a la vista","Semana a la vista","Mis lecturas","Lista de deseos","Notas"];
+const portadasN = n => Array.from({length: n}, (_, i) => ({ nom: "N° " + (i + 1), retiro: true }));
+const AGENDAS = [
+  { id: "atrevete", nombre: "Agenda Atrévete 2027", precio: 24990, ratio: .6416,
+    desc: "Agenda mes a mes con calendario, metas, control de gastos, ahorro y semana a la vista.",
+    formato: "Tamaño B5 de 17,6 × 25 cm, 100 hojas (200 páginas) anilladas",
+    portadas: [{ nom: "Burdeo", color: "#7d1f3a" }, { nom: "Lila", color: "#e4c3e8" }],
+    paginas: ATREVETE_PLIEGOS.flatMap(t => [t, t]) },
+  { id: "mi-planner-1", nombre: "Mi Planner · Diseño 1", precio: null, desc: "Planner con datos personales, calendario y semana a la vista.", formato: A5,
+    portadas: [{ nom: "Mi Planner", retiro: true }], paginas: [D, CAL(2026), ...veces(SEM, 6)] },
+  { id: "mi-planner-2", nombre: "Mi Planner · Diseño 2", precio: null, desc: "Planner con datos personales, calendario y semana a la vista.", formato: A5,
+    portadas: [{ nom: "Mi Planner", retiro: true }], paginas: [D, CAL(2026), ...veces(SEM, 6)] },
+  { id: "mi-planner-3", nombre: "Mi Planner · Diseño 3", precio: null, desc: "Planner con datos personales, calendario y semana a la vista.", formato: A5,
+    portadas: [{ nom: "Mi Planner", retiro: true }], paginas: [D, CAL(2026), ...veces(SEM, 6)] },
+  { id: "levantate-brilla", nombre: "Planner Levántate & Brilla", precio: null, desc: "Planner con calendarios 2026-2027 y planificación semanal.", formato: A5,
+    portadas: [{ nom: "Levántate & Brilla", retiro: true }], paginas: [D, CAL(2026), CAL(2027), ...veces(PSEM, 7)] },
+  { id: "brilla-universo", nombre: "Planner Brilla", precio: null, desc: "“Brilla como si todo el Universo fuera tuyo”: calendarios 2026-2027 y planificación semanal.", formato: A5,
+    portadas: [{ nom: "Brilla", retiro: true }], paginas: [D, CAL(2026), CAL(2027), ...veces(PSEM, 7)] },
+  { id: "docente-heroes", nombre: "Planner Docente · Héroes", precio: null, desc: "Planner para profes: organiza clases, cursos y semanas.", formato: A5,
+    portadas: [{ nom: "Héroes", retiro: true }], paginas: veces(I, 5) },
+  { id: "docente-inspirar", nombre: "Planner Docente · Enseñar es Inspirar", precio: null, desc: "Planner para profes con calendarios 2026-2027.", formato: A5,
+    portadas: [{ nom: "Enseñar es Inspirar", retiro: true }], paginas: [I, CAL(2026), CAL(2027), ...veces(I, 9)] },
+  { id: "docente-corazon", nombre: "Planner Docente · Gran Corazón", precio: null, desc: "Planner para profes con calendarios 2026-2027.", formato: A5,
+    portadas: [{ nom: "Gran Corazón", retiro: true }], paginas: [I, CAL(2026), CAL(2027), ...veces(I, 9)] },
+  { id: "universitario", nombre: "Planner Universitario", precio: null, desc: "Planner para la U con calendario 2027. Elige entre 8 portadas.", formato: A5,
+    portadas: [1, 2, 3, 4, 5, 6, 7, 8].map(n => ({ nom: "N° " + n, retiro: n === 5 || n === 6 || n === 8 })),
+    paginas: [D, CAL(2027), ...veces(I, 8)] },
+  { id: "diario-1", nombre: "Planner Diario · Diseño 1", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
+  { id: "diario-2", nombre: "Planner Diario · Diseño 2", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
+  { id: "diario-3", nombre: "Planner Diario · Diseño 3", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
+  { id: "diario-4", nombre: "Planner Diario · Diseño 4", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
+  { id: "diario-5", nombre: "Planner Diario · Diseño 5", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
+  { id: "diario-6", nombre: "Planner Diario · Diseño 6", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
+  { id: "semanal-diario-potencial", nombre: "Planner Semanal Diario · Potencial", precio: null, desc: "Planificación semanal y diaria con calendario 2026.", formato: A5,
+    portadas: [{ nom: "Potencial", retiro: true }], paginas: [D, CAL(2026), ...veces(PSEM, 6)] },
+  { id: "semanal-diario-buen-dia", nombre: "Planner Semanal Diario · Buen Día", precio: null, desc: "Planificación semanal y diaria con calendarios 2026-2027.", formato: A5,
+    portadas: [{ nom: "Buen Día", retiro: true }], paginas: [D, CAL(2026), "Calendario 2026-2027", ...veces(PSEM, 6)] },
+  { id: "suena-azul", nombre: "Planner Sueña en Grande · Azul", precio: null, desc: "Planner tipo cuaderno con calendario 2026.", formato: A5,
+    portadas: [{ nom: "Sueña en Grande", retiro: true }], paginas: [D, CAL(2026), ...veces(I, 3)] },
+  { id: "suena-atardecer", nombre: "Planner Sueña en Grande · Atardecer", precio: null, desc: "Planner tipo cuaderno con calendarios 2026-2027.", formato: A5,
+    portadas: [{ nom: "Sueña en Grande", retiro: true }], paginas: [D, CAL(2026), CAL(2027), ...veces(I, 3)] },
+  { id: "xl", nombre: "Planner XL", precio: null, ratio: .704, desc: "Formato grande para planificar con espacio de sobra.", formato: B5,
+    portadas: [{ nom: "La meta", retiro: true }], paginas: veces(I, 11) },
+  { id: "gratitud", nombre: "Diario de Gratitud", precio: null, desc: "Diario para agradecer cada día. Elige entre 2 portadas.", formato: A5,
+    portadas: [{ nom: "Noche", retiro: true }, { nom: "Rosa", retiro: true }], paginas: [D, CAL(2026), ...veces(I, 3)] },
+  { id: "mini-diario", nombre: "Mini Planner Diario", precio: null, ratio: .709, desc: "Planner diario de bolsillo. Elige entre 5 portadas.", formato: A6,
+    portadas: portadasN(5), paginas: [DIA, DIA], repetir: 2 },
+  { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: null, ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
+    portadas: portadasN(4), paginas: ["Hojas de líneas"], repetir: 4 }
+];
+/* ruta de cada imagen de una agenda */
+const agImg = {
+  portada:    (a, k) => `agendas/${a.id}/portada-${k + 1}.jpg`,
+  mini:       (a, k) => `agendas/${a.id}/portada-${k + 1}-mini.jpg`,
+  contratapa: (a, k) => `agendas/${a.id}/contratapa-${k + 1}.jpg`,
+  pagina:     (a, i) => `agendas/${a.id}/pagina-${String(i + 1).padStart(2, "0")}.jpg`
 };
-const pliego = (i, lado) => `agenda/pliego-${String(i + 1).padStart(2, "0")}-${lado}.jpg`;
+/* páginas en orden de lectura: [{src, t}] (repite la lista si la agenda lo pide) */
+const paginasDe = a => {
+  const una = a.paginas.map((t, i) => ({ src: agImg.pagina(a, i), t }));
+  return Array.from({length: a.repetir || 1}, () => una).flat();
+};
 
 const SEMANAL = {
   nombre: "Planner Semanal",
@@ -52,7 +122,7 @@ const SEMANAL = {
 };
 
 /* productos "virtuales" para el carrito de la tienda */
-const P_AGENDA  = {id: "pl-agenda",  n: AGENDA.nombre,  e: "📒", vars: [{v: "", p: []}], dcto: 0};
+const pCarro = a => ({id: "pl-" + a.id, n: a.nombre, e: "📒", vars: [{v: "", p: []}], dcto: 0});
 const P_SEMANAL = {id: "pl-semanal", n: SEMANAL.nombre, e: "🗓️", vars: [{v: "", p: []}], dcto: 0};
 
 /* ---------- utilidades ---------- */
@@ -257,52 +327,125 @@ const hojaHTML = (cara, frente, dorso, claseDorso = "") =>
   `<div class="${cara} frente">${frente}</div><div class="${cara} dorso ${claseDorso}">${dorso}</div><div class="pl-sombra"></div>`;
 const imgHTML = (ruta, alt) => `<img src="${src(ruta)}" alt="${alt}" draggable="false" loading="lazy">`;
 
-/* =========================================================
-   AGENDA ATRÉVETE 2027
-   ========================================================= */
-const agPortada = $("plAgendaPortada");
-const agWa = $("plAgendaWa");
-const agSel = () => AGENDA.portadas[document.querySelector('input[name="plAgendaPortada"]:checked').value];
-const agMsg = () => {
-  const c = agSel();
-  return `Hola Heart Graphic! 💜 Quiero pedir: ${AGENDA.nombre} (portada ${c.nom}) — ${fmt(PRECIOS.agenda)}`;
-};
-function agPinta(){
-  const c = agSel();
-  agPortada.src = src(c.img);
-  agPortada.alt = `Portada ${c.nom} de la ${AGENDA.nombre}`;
-  agWa.href = waHref(agMsg());
-}
-document.querySelectorAll('input[name="plAgendaPortada"]').forEach(r => r.addEventListener("change", agPinta));
-$("plAgendaIg").addEventListener("click", () => CART.pedirIg(agMsg()));
-$("plAgendaCarro").addEventListener("click", () => {
-  const c = agSel();
-  CART.add(P_AGENDA, `Portada ${c.nom}`, 1, PRECIOS.agenda, "");
-});
-agPinta();
 
+/* =========================================================
+   AGENDAS (Atrévete y las demás)
+   Cada una se arma desde AGENDAS con el mismo modelo: tarjeta con la portada
+   anillada (perforaciones rectangulares + alambre blanco) y un visor compartido
+   donde las hojas giran sobre el anillado del centro.
+   ========================================================= */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const LIBRO_SVG = '<svg class="ic pl-ic-libro" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1v14c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6v14"/></svg>';
+const ANILLO_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><path d="M8 5h12M8 12h12M8 19h12"/></g></svg>';
+const agSel = new Map();   /* id → índice de la portada elegida */
+const ratioDe = a => a.ratio || .705;
+
+function agMsg(a){
+  const k = agSel.get(a.id) || 0;
+  const portada = a.portadas.length > 1 ? ` (portada ${a.portadas[k].nom})` : "";
+  return a.precio
+    ? `Hola Heart Graphic! 💜 Quiero pedir: ${a.nombre}${portada} — ${fmt(a.precio)}`
+    : `Hola Heart Graphic! 💜 Quiero consultar por: ${a.nombre}${portada}`;
+}
+
+function tarjetaAgenda(a){
+  const art = document.createElement("article");
+  art.className = "prod pl-prod reveal";
+  art.id = "ag-" + a.id;
+  const nombre = esc(a.nombre);
+  const elegir = a.portadas.length > 1
+    ? `<span class="pl-lab">Elige la portada</span>
+       <div class="pl-portadas-ag" role="radiogroup" aria-label="Portada de ${nombre}">
+         ${a.portadas.map((p, k) => `<label class="pl-pt"><input class="pl-oculto" type="radio" name="ag-${a.id}" value="${k}"${k ? "" : " checked"}><img src="${src(agImg.mini(a, k))}" alt="" width="160" height="${Math.round(160 / ratioDe(a))}" loading="lazy"><span>${esc(p.nom)}</span></label>`).join("")}
+       </div>`
+    : "";
+  art.innerHTML = `
+    <div class="pl-arte">
+      <button class="pl-agenda-btn" type="button" data-ag="${a.id}" aria-label="Ver el interior de ${nombre}">
+        <span class="pl-cantos" aria-hidden="true"></span>
+        <img class="pl-agenda-portada" src="${src(agImg.portada(a, 0))}" alt="Portada de ${nombre}" loading="lazy">
+      </button>
+      <button class="ver-mas" type="button" data-ag="${a.id}">${LIBRO_SVG} Ve el interior</button>
+    </div>
+    <div class="tarjeta">
+      <span class="badge">planner</span>
+      <h3>${nombre}</h3>
+      <p class="desc">${esc(a.desc)}</p>
+      <div class="pl-precio"><span>Valor único</span><b>${a.precio ? fmt(a.precio) : "Consultar"}</b></div>
+      ${elegir}
+      <p class="notas">${esc(a.formato)}</p>
+      <div class="materiales">
+        <div class="mat"><span class="ico">${ANILLO_SVG}</span><b>Anillado metálico</b><i>Full color</i></div>
+      </div>
+      <div class="fila-pedir">
+        <a class="pedir" target="_blank" rel="noopener" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
+        <button class="pedir pedir-ig" type="button" title="Pedir por Instagram" aria-label="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> <span class="lbl">Instagram</span></button>
+        ${a.precio ? `<button class="add-cart" type="button" title="Agregar al carrito" aria-label="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg></button>` : ""}
+      </div>
+    </div>`;
+  art.style.setProperty("--pag", ratioDe(a));
+
+  const portada = art.querySelector(".pl-agenda-portada");
+  const wa = art.querySelector(".pedir:not(.pedir-ig)");
+  const pinta = () => {
+    const k = agSel.get(a.id) || 0;
+    portada.src = src(agImg.portada(a, k));
+    portada.alt = `Portada ${a.portadas.length > 1 ? a.portadas[k].nom + " " : ""}de ${a.nombre}`;
+    wa.href = waHref(agMsg(a));
+  };
+  art.querySelectorAll(`input[name="ag-${a.id}"]`).forEach(r => r.addEventListener("change", () => { agSel.set(a.id, +r.value); pinta(); }));
+  art.querySelector(".pedir-ig").addEventListener("click", () => CART.pedirIg(agMsg(a)));
+  const carro = art.querySelector(".add-cart");
+  if (carro) carro.addEventListener("click", () => {
+    const k = agSel.get(a.id) || 0;
+    CART.add(pCarro(a), a.portadas.length > 1 ? `Portada ${a.portadas[k].nom}` : "Valor único", 1, a.precio, "");
+  });
+  art.querySelectorAll("[data-ag]").forEach(b => b.addEventListener("click", () => abreAgenda(a)));
+  pinta();
+  return art;
+}
+
+/* las agendas van antes del Planner Semanal; luego se numeran todas las tarjetas del panel */
+const semanalArt = $("plSemanal");
+AGENDAS.forEach(a => semanalArt.before(tarjetaAgenda(a)));
+document.querySelectorAll("#plPanel > .prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
+
+/* ---- visor compartido de las agendas ---- */
+const visorAgEl = $("plVisorAgenda");
 const libroAg = $("plLibroAgenda");
-const visorAgenda = visor($("plVisorAgenda"), {
+let agActual = AGENDAS[0], agPags = [];
+const visorAgenda = visor(visorAgEl, {
   libro: libroAg,
-  /* hoja 0: portada → su dorso es la página izq del pliego 1
-     hoja k: frente = der del pliego k-1, dorso = izq del pliego k
-     última: frente = der del último pliego, dorso = contratapa */
+  /* hoja 0: portada → su dorso es la primera página (izquierda del pliego 1)
+     hoja k: frente = página 2k-1 (derecha), dorso = página 2k (izquierda del siguiente)
+     la última hoja termina en la contratapa (retiro de la portada, o su color liso) */
   arma(){
-    const c = agSel(), P = AGENDA.pliegos, n = P.length;
-    const defs = [{f: `<div class="pl-tapa">${imgHTML(c.img, `Portada ${c.nom}`)}</div>`, d: imgHTML(pliego(0, "izq"), "Interior de la tapa")}];
-    for (let k = 1; k < n; k++) defs.push({f: imgHTML(pliego(k - 1, "der"), P[k - 1]), d: imgHTML(pliego(k, "izq"), P[k])});
-    defs.push({f: imgHTML(pliego(n - 1, "der"), "Interior de la contratapa"), d: "", cd: "contratapa"});
+    const a = agActual, k = agSel.get(a.id) || 0, c = a.portadas[k];
+    const P = agPags = paginasDe(a), m = P.length;
+    const img = (p, alt) => `<img src="${src(p.src)}" alt="${esc(alt || p.t)}" draggable="false" loading="lazy">`;
+    const contra = c.retiro ? img({ src: agImg.contratapa(a, k) }, "Contratapa") : "";
+    const defs = [{ f: `<div class="pl-tapa"><img src="${src(agImg.portada(a, k))}" alt="Portada" draggable="false"></div>`, d: img(P[0]) }];
+    for (let i = 1; i < m; i += 2) defs.push({ f: img(P[i]), d: P[i + 1] ? img(P[i + 1]) : contra, cd: P[i + 1] ? "" : "contratapa" });
+    if (m % 2 === 1) defs.push({ f: "", d: contra, cd: "contratapa" });   /* número impar: hoja final en blanco */
     libroAg.innerHTML = "";
-    libroAg.style.setProperty("--tapa", c.color);
-    return defs.map(x => {
+    libroAg.style.setProperty("--tapa", c.color || "#e8e2d8");
+    const hojas = defs.map(x => {
       const h = document.createElement("div");
       h.className = "pl-hoja";
       h.innerHTML = hojaHTML("pl-cara", x.f, x.d, x.cd);
       libroAg.appendChild(h);
       return h;
     });
+    /* anillado del lomo: perforaciones a cada lado + alambre doble blanco, siempre encima */
+    libroAg.insertAdjacentHTML("beforeend", '<span class="pl-anillado" aria-hidden="true"></span>');
+    return hojas;
   },
-  rotulo: (cur, n) => cur === 0 ? "Portada" : cur === n ? "Contratapa" : (AGENDA.pliegos[cur - 1] || ""),
+  rotulo(cur, n){
+    if (cur === 0) return "Portada";
+    if (cur === n) return "Contratapa";
+    const izq = agPags[2 * cur - 2], der = agPags[2 * cur - 1];
+    return (izq || der || {}).t || "";
+  },
   alEstado(cur, n){
     libroAg.classList.toggle("cerrado-frente", cur === 0);
     libroAg.classList.toggle("cerrado-atras", cur === n);
@@ -312,7 +455,12 @@ const visorAgenda = visor($("plVisorAgenda"), {
     return e.clientX > mid ? 1 : -1;
   }
 });
-document.querySelectorAll('[data-pl-abre="agenda"]').forEach(b => b.addEventListener("click", visorAgenda.abre));
+function abreAgenda(a){
+  agActual = a;
+  $("plVisorAgendaTit").textContent = "Interior " + a.nombre;
+  visorAgEl.style.setProperty("--pag", ratioDe(a));
+  visorAgenda.abre();
+}
 
 /* =========================================================
    PLANNER SEMANAL

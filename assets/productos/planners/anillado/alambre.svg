@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40">
+  <!-- Alambre doble (wire-o) blanco que cruza el lomo de un agujero al otro. Un módulo por anillo. -->
+  <g stroke-linecap="round">
+    <path d="M36 18.4H64M36 22.8H64" stroke="#8d88a3" stroke-width="3.4" opacity=".55"/>
+    <path d="M36 17.6H64M36 22H64" stroke="#b8b3c9" stroke-width="2.6"/>
+    <path d="M36.6 17.4H63.4M36.6 21.8H63.4" stroke="#ffffff" stroke-width="1.6"/>
+  </g>
+</svg>

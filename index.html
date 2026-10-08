@@ -138,37 +138,8 @@
        imágenes en assets/js/planners.js (hoy apuntan a assets/productos/planners/;
        se migrarán a un servicio externo). Los diálogos van más abajo, junto al modal. -->
   <div class="pl-lista pl-vista" id="plPanel" role="tabpanel" aria-labelledby="tabPlanners" hidden>
-    <!-- Agenda Atrévete 2027 -->
-    <article class="prod pl-prod reveal" id="plAgenda">
-      <div class="pl-arte">
-        <button class="pl-agenda-btn" type="button" data-pl-abre="agenda" aria-label="Ver el interior de la Agenda Atrévete 2027">
-          <span class="pl-cantos" aria-hidden="true"></span>
-          <img class="pl-agenda-portada" id="plAgendaPortada" src="assets/productos/planners/agenda/portada-burdeo.jpg" alt="Portada burdeo de la Agenda Atrévete 2027" width="720" height="1019">
-        </button>
-        <button class="ver-mas" type="button" data-pl-abre="agenda"><svg class="ic pl-ic-libro" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1v14c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6v14"/></svg> Ve el interior</button>
-      </div>
-      <div class="tarjeta">
-        <span class="badge">planner 01</span>
-        <h3>Agenda Atrévete 2027</h3>
-        <p class="desc">Agenda mes a mes con calendario, metas, control de gastos, ahorro y semana a la vista.</p>
-        <div class="pl-precio"><span>Valor único</span><b data-pl-precio="agenda"></b></div>
-        <span class="pl-lab">Elige la portada</span>
-        <div class="tabla pl-dos" role="radiogroup" aria-label="Portada de la agenda">
-          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plAgendaPortada" value="burdeo" checked><span class="chk" aria-hidden="true"></span><span class="un"><span class="pl-sw" style="background:#7d1f3a"></span>Burdeo</span></label>
-          <label class="fila pl-op"><input class="pl-oculto" type="radio" name="plAgendaPortada" value="lila"><span class="chk" aria-hidden="true"></span><span class="un"><span class="pl-sw" style="background:#e4c3e8"></span>Lila</span></label>
-        </div>
-        <p class="notas">Tamaño B5 de 17,6 × 25 cm, 100 hojas (200 páginas) anilladas</p>
-        <div class="materiales">
-          <!-- TODO: confirmar material y terminación de la agenda -->
-          <div class="mat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><path d="M8 5h12M8 12h12M8 19h12"/></g></svg></span><b>Anillado metálico</b><i>Full color</i></div>
-        </div>
-        <div class="fila-pedir">
-          <a class="pedir" id="plAgendaWa" target="_blank" rel="noopener" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
-          <button class="pedir pedir-ig" id="plAgendaIg" type="button" title="Pedir por Instagram" aria-label="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> <span class="lbl">Instagram</span></button>
-          <button class="add-cart" id="plAgendaCarro" type="button" title="Agregar al carrito" aria-label="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg></button>
-        </div>
-      </div>
-    </article>
+    <!-- Agendas (Atrévete y las demás): las tarjetas las arma assets/js/planners.js desde
+         su lista AGENDAS, todas con el mismo modelo (portada anillada + visor de pliegos). -->
 
     <!-- Planner Semanal -->
     <article class="prod pl-prod reveal" id="plSemanal">
@@ -428,7 +399,7 @@
      semanal (anillado arriba) y galería de portadas. Los arma assets/js/planners.js. -->
 <div class="pl-visor" id="plVisorAgenda" role="dialog" aria-modal="true" aria-labelledby="plVisorAgendaTit" hidden>
   <div class="pl-visor-cab">
-    <h3 id="plVisorAgendaTit">Interior Agenda Atrévete</h3>
+    <h3 id="plVisorAgendaTit">Interior de la agenda</h3>
     <button class="m-cerrar pl-cerrar" type="button" aria-label="Cerrar visor">&#10005;</button>
   </div>
   <div class="pl-libro-marco"><div class="pl-libro cerrado-frente" id="plLibroAgenda"></div></div>

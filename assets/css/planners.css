@@ -1,5 +1,5 @@
 /* ============ Seccion PLANNERS ============
-   Agenda Atrévete 2027 + Planner Semanal (marcado en index.html → pestaña Planner del catálogo #plPanel y
+   Agendas y Planner Semanal (marcado en index.html → pestaña Planner del catálogo #plPanel y
    diálogos pl-*, lógica en assets/js/planners.js).
    Reutiliza de tienda.css: .titulo-sec, .prod, .tarjeta, .badge, .tabla/.fila,
    .notas, .materiales/.mat, .ver-mas, .fila-pedir/.pedir/.add-cart y .m-cerrar.
@@ -60,27 +60,44 @@
 .pl-op:has(input:focus-visible){outline:3px solid var(--celeste-deep);outline-offset:3px}
 .pl-op-check .chk{border-radius:7px}
 .pl-op .pr{white-space:nowrap}
-.pl-dos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pl-dos .fila{gap:8px;padding:8px 12px}
-.pl-dos .un{white-space:nowrap}
 /* valor único del producto */
 .pl-precio{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;padding:11px 20px;
   background:linear-gradient(135deg,#eefaff 0%,#f4eeff 100%);border:2.5px solid var(--ink);border-radius:var(--r-pill);box-shadow:3px 3px 0 rgba(63,60,102,.16)}
 .pl-precio span{font-family:'Neulis',sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
 .pl-precio b{font-family:'Neulis',sans-serif;font-weight:900;font-size:clamp(24px,3vw,30px);line-height:1;color:var(--celeste-deep)}
 .pl-lista .prod:nth-child(even) .pl-precio b{color:var(--lila-deep)}
-.pl-sw{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);vertical-align:-2px;margin-right:8px}
 
 /* ---------- agenda en la página ---------- */
-.pl-agenda-btn{position:relative;display:block;width:min(290px,68vw,88%);aspect-ratio:720/1019;padding:0;border:0;background:none;cursor:pointer;
+/* --pag = ancho/alto de la página de cada agenda (lo pone planners.js) */
+.pl-agenda-btn{position:relative;display:block;width:min(290px,68vw,88%);aspect-ratio:var(--pag,.705);padding:0;border:0;background:none;cursor:pointer;
   border-radius:6px 14px 14px 6px;transform:rotate(-4deg);transition:transform .35s ease}
 .pl-agenda-btn:hover{transform:rotate(-1.5deg) translateY(-6px)}
 .pl-agenda-btn:focus-visible{outline:4px solid var(--celeste-deep);outline-offset:10px}
 .pl-agenda-portada{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
   border:3px solid var(--ink);border-radius:4px 12px 12px 4px;box-shadow:12px 14px 0 var(--lila)}
-/* anillado de la portada: aros blancos con contorno suave */
-.pl-agenda-btn::before,.pl-tapa::before{content:"";position:absolute;z-index:2;left:3px;top:3px;bottom:3px;width:7%;pointer-events:none;
-  background:radial-gradient(circle at 70% 50%,#fff 0 25%,#a9a3ba 27% 33%,transparent 36%) 0 0/100% 3.4% repeat-y}
+/* ANILLADO (wire-o): perforaciones rectangulares + alambre doble blanco, 18 anillos.
+   Cada módulo SVG (100×40) tiene el lomo al centro: alambre de un agujero al otro.
+   En la portada cerrada solo hay perforación del lado de la tapa y el alambre
+   sobresale del borde, como si diera la vuelta al lomo. */
+.pl-agenda-btn::before{content:"";position:absolute;z-index:2;left:-10%;width:20%;top:2%;bottom:2%;pointer-events:none;
+  background:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-der.svg);
+  background-size:100% 5.5556%;background-repeat:repeat-y;background-position:center top}
+/* el mismo anillado en el lomo del visor, siempre por encima de las hojas */
+.pl-anillado{position:absolute;z-index:300;left:45%;width:10%;top:2%;bottom:2%;pointer-events:none;
+  background:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-der.svg),url(../productos/planners/anillado/hoyo-izq.svg);
+  background-size:100% 5.5556%;background-repeat:repeat-y;background-position:center top}
+.pl-libro.cerrado-frente .pl-anillado{background-image:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-der.svg)}
+.pl-libro.cerrado-atras .pl-anillado{background-image:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-izq.svg)}
+/* elegir portada: miniaturas */
+.pl-portadas-ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:10px;margin-bottom:14px}
+.pl-pt{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;
+  font-size:11.5px;font-weight:700;color:var(--ink-soft);text-align:center;line-height:1.15}
+.pl-pt img{width:100%;height:auto;aspect-ratio:var(--pag,.705);object-fit:cover;display:block;border-radius:8px;
+  border:2.5px solid #fff;box-shadow:0 0 0 1px #d8d3ee;transition:transform .15s ease}
+.pl-pt:hover img{transform:translateY(-2px)}
+.pl-pt:has(input:checked) img{border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.pl-pt:has(input:checked){color:var(--ink)}
+.pl-pt:has(input:focus-visible) img{outline:3px solid var(--celeste-deep);outline-offset:2px}
 /* cantos de las hojas asomando por la derecha */
 .pl-cantos{position:absolute;right:-7px;top:7px;bottom:7px;width:11px;z-index:-1;border-radius:0 6px 6px 0;
   border:2px solid var(--ink);border-left:0;background:repeating-linear-gradient(90deg,#fff 0 2px,#ece6dc 2px 3px)}
@@ -150,8 +167,8 @@
 .pl-visor-nota{font-size:13px;font-weight:600;color:#ece5fd;text-align:center}
 
 /* libro de la agenda: pliegos con anillado al centro, las hojas giran hacia la izquierda */
-.pl-libro-marco{perspective:2600px;width:min(1100px,96vw,calc((100vh - 200px) * 1.389))}
-.pl-libro{position:relative;width:100%;aspect-ratio:1577/1135;transition:transform .7s cubic-bezier(.4,.1,.2,1);touch-action:pan-y}
+.pl-libro-marco{perspective:2600px;width:min(1100px,96vw,calc((100vh - 200px) * 2 * var(--pag,.705)))}
+.pl-libro{position:relative;width:100%;aspect-ratio:calc(2 * var(--pag,.705));transition:transform .7s cubic-bezier(.4,.1,.2,1);touch-action:pan-y}
 .pl-libro.cerrado-frente{transform:translateX(-25%)}
 .pl-libro.cerrado-atras{transform:translateX(25%)}
 .pl-libro::after{content:"";position:absolute;left:4%;right:4%;bottom:-18px;height:24px;border-radius:50%;background:rgba(20,16,50,.35);filter:blur(10px);z-index:-1}

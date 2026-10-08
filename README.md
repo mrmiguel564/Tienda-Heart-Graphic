@@ -90,7 +90,8 @@ Está completa pero comentada en el HTML, con su carrusel vertical; su módulo `
 
 Pestaña del Catálogo: bajo el título hay un switch **Catálogo / Planner** (cápsula blanca con el corazón hg en ambas opciones). La pastilla oscura se estira como gota hasta la opción elegida, su corazón late al llegar, y el contenido sale hacia el costado mientras el nuevo entra desde el lado al que se movió el switch. El enlace **Planners** del menú (o entrar con `#planners`) abre esa pestaña y baja hasta ella; **Productos** vuelve al catálogo. No sale de la planilla: sus datos están al inicio de `assets/js/planners.js`.
 
-- **Agenda Atrévete 2027:** valor único, portada burdeo o lila y visor **Ve el interior** con los pliegos que giran (anillado al centro).
+- **Agendas (24):** Atrévete 2027, Mi Planner 1-3, Levántate & Brilla, Brilla, Planner Docente (Héroes, Enseñar es Inspirar, Gran Corazón), Universitario (8 portadas), Planner Diario 1-6, Semanal Diario (Potencial, Buen Día), Sueña en Grande (Azul, Atardecer), Planner XL, Diario de Gratitud (2 portadas), Mini Planner Diario (5 portadas) y Mini Agenda Líneas (4 portadas). Cada una es un producto con el mismo modelo: portada anillada, selector de portada cuando hay más de una y visor **Ve el interior** con las hojas girando sobre el lomo. Sin precio cargado muestran "Consultar" y el WhatsApp pide consulta (sin carrito).
+- **Anillado:** perforaciones rectangulares y alambre doble blanco (wire-o), dibujado con los SVG de `assets/productos/planners/anillado/`; en la portada cerrada el alambre sobresale del borde y en el visor abierto une las dos páginas.
 - **Planner Semanal:** valor único, mockup con la portada elegida, galería de 10 portadas, visor con anillado arriba (tiro = planificación semanal, retiro = hábitos) y **Personalizar portada** (+ recargo): el cliente sube su imagen y la ve en perspectiva sobre el mockup; aparece el total con el recargo. La imagen no viaja: el mensaje le pide enviarla por WhatsApp.
 - Más unidades se suman en el carrito con +/−.
 - Cada producto tiene WhatsApp (mensaje con la elección y el total), Instagram y carrito, igual que el catálogo.
@@ -99,13 +100,14 @@ Pestaña del Catálogo: bajo el título hay un switch **Catálogo / Planner** (c
 | Constante (`planners.js`) | Qué hace |
 |---|---|
 | `WA_NUM` | Número de pedidos de planners. Hoy usa `WHATSAPP` (**TODO**) |
-| `PRECIOS` | Valor único de la agenda y del planner, y recargo por portada personalizada (**TODO**: precios reales) |
+| `PRECIOS` | Valor único del Planner Semanal y recargo por portada personalizada (**TODO**: precios reales) |
 | `VISTAS` | Bajada bajo los títulos en cada pestaña |
-| `PL_IMG`, `AGENDA`, `SEMANAL` | Rutas de las imágenes, títulos de los pliegos y hojas del visor |
+| `AGENDAS` | Una entrada por agenda: nombre, precio (**TODO**, `null` = Consultar), descripción, formato, portadas, títulos de páginas y proporción de página |
+| `PL_IMG`, `SEMANAL` | Ruta base de las imágenes y datos del Planner Semanal |
 
-**Imágenes (temporal):** se sirven desde `assets/productos/planners/` (`agenda/` con portadas y pliegos `pliego-NN-izq|der.jpg`; `semanal/` con `portadas/`, `mockups/`, hojas de tiro y retiro y la capa de anillos). Cuando se migren a un servicio externo, basta con cambiar `PL_IMG` o las rutas de la configuración.
+**Imágenes (temporal):** se sirven desde `assets/productos/planners/` (`agendas/<id>/` con `portada-N.jpg`, `portada-N-mini.jpg`, `contratapa-N.jpg` y `pagina-NN.jpg` en orden de lectura, copiadas y achicadas desde la carpeta de diseño PLANNERS; `semanal/` con `portadas/`, `mockups/`, hojas de tiro y retiro y la capa de anillos). Cuando se migren a un servicio externo, basta con cambiar `PL_IMG` o las rutas de la configuración.
 
-Quedan con **TODO** en `index.html`: el tamaño y las hojas del planner y la ficha "Anillado metálico" de ambos productos.
+Quedan con **TODO**: el tamaño y las hojas del Planner Semanal y la ficha "Anillado metálico" (`index.html`), y los precios y descripciones de las agendas (`AGENDAS` en `planners.js`). Las páginas de la Atrévete se recortaron en el lomo para quitar el anillado redondo que traían dibujado.
 
 ## Ramas y despliegue (Netlify)
 
