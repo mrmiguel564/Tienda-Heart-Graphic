@@ -24,6 +24,9 @@
   transition:font-size .3s ease,color .2s ease}
 .pl-switch-op .hg-title{width:1.15em;height:1em;vertical-align:0;flex:0 0 auto}
 .pl-switch-op[aria-selected="true"]{font-size:40px;color:#fff;cursor:default}
+/* "Planners y agendas" en dos líneas para que quepa en la opción: la segunda, más chica */
+.pl-switch-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:.92;text-align:left}
+.pl-switch-txt small{font-size:.48em;font-weight:800;letter-spacing:.02em;margin-top:.12em}
 .pl-switch-op[aria-selected="false"]:hover{color:var(--ink)}
 .pl-switch.estira .pl-switch-op{color:#fff}
 .pl-switch-op:focus-visible{outline:4px solid var(--celeste-deep);outline-offset:4px}
@@ -34,6 +37,7 @@
   .pl-switch[data-vista="planners"]{box-shadow:6px 6px 0 var(--lila)}
   .pl-switch-op{height:58px;font-size:18px}
   .pl-switch-op[aria-selected="true"]{font-size:23px}
+  #tabPlanners[aria-selected="true"]{font-size:21px}   /* "Planners" es más largo que "Catálogo" */
 }
 /* el contenido sale hacia el costado contrario y el nuevo entra desde el lado al que
    se movió el switch: --pl-dir es 1 (hacia Planner) o -1 (hacia Catálogo) */
