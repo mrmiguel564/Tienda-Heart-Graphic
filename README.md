@@ -75,7 +75,7 @@ Bloque de campaña bajo el hero. Hay dos campañas y solo una va activa a la vez
 ### Cyber Day (activa)
 
 - **Oferta estrella:** tarjeta que rota por los productos marcados cada `ROTA_OFERTA` ms, con foto, variante, precio y burbuja **DESCUENTO -N%**. Los puntos permiten elegir y un clic abre la ficha del producto.
-- **Contador:** cuenta hasta `OFERTA_FIN` (hoy: miércoles 7 de octubre a medianoche, hora de Chile) y se oculta solo al llegar a cero. Vacío = sin contador.
+- **Contador:** cuenta hasta `OFERTA_FIN` (ofertas extendidas: sábado 11 de octubre a las 23:59, hora de Chile) y se oculta solo al llegar a cero, junto con el texto "Las ofertas terminan en". Vacío = sin contador. La etiqueta sobre el título dice "¡Extendemos las ofertas Cyber!".
 - **Cintas:** la de arriba calcula sola el "HASTA -N%" con el mayor descuento de los productos marcados.
 - **Botón "Lo quiero":** abre WhatsApp con el mensaje de `OFERTA_WA`.
 - Si ningún producto tiene `carrusel = si`, la sección completa se oculta.

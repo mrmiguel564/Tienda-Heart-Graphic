@@ -730,7 +730,7 @@ function observaReveals(){
 const OFERTA_WA = "Hola Heart Graphic! 💜 Quiero aprovechar las ofertas del Cyber Day";
 /* Término del Cyber Day para el contador (hora de Chile). Vacío = sin contador.
    Cuando llega a cero el contador se oculta solo. */
-const OFERTA_FIN = "2026-10-08T00:00:00-03:00";   /* miércoles 7 oct a las 12 de la noche */
+const OFERTA_FIN = "2026-10-11T23:59:59-03:00";   /* ofertas extendidas: sábado 11 oct a las 11:59 de la noche */
 
 /* ---------- Especial Veterinarias: carrusel vertical ----------
    El carrusel se arma con TODAS las fotos de los productos marcados con "si";
@@ -844,6 +844,7 @@ const CYBER = (() => {
   const foto = card.querySelector(".cy-foto"), puntos = card.querySelector(".cy-puntos");
   const burbuja = card.querySelector(".cy-burbuja");
   const barra = sec.querySelector(".cy-barra"), cinta = sec.querySelector(".cinta-arriba span");
+  const termina = sec.querySelector(".cy-termina");   /* "Las ofertas terminan en", se oculta con el contador */
   sec.querySelector(".cinta-abajo span").innerHTML =
     "<i>✦</i> OFERTAS POR TIEMPO LIMITADO <i>✦</i> HEART GRAPHIC ".repeat(8);
   let prods = [], k = 0, timer;
@@ -901,7 +902,7 @@ const CYBER = (() => {
   const fin = Date.parse(OFERTA_FIN);
   function tic(){
     const s = Math.floor((fin - Date.now()) / 1000);
-    if (!(s > 0)){ barra.hidden = true; clearInterval(reloj); return; }
+    if (!(s > 0)){ barra.hidden = true; if (termina) termina.hidden = true; clearInterval(reloj); return; }
     const v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60]
       .map(x => String(x).padStart(2, "0"));
     barra.querySelectorAll("b").forEach((b,i) => b.textContent = v[i]);
