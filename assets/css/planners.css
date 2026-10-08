@@ -1,0 +1,312 @@
+/* ============ Seccion PLANNERS ============
+   Agendas y Planner Semanal (marcado en index.html → pestaña Planner del catálogo #plPanel y
+   diálogos pl-*, lógica en assets/js/planners.js).
+   Reutiliza de tienda.css: .titulo-sec, .prod, .tarjeta, .badge, .tabla/.fila,
+   .notas, .materiales/.mat, .ver-mas, .fila-pedir/.pedir/.add-cart y .m-cerrar.
+   Aquí va solo lo propio: portadas, mockup, visores, galería y personalización.
+   Los anillos (portada, visor y mockup) son SIEMPRE blancos. */
+/* ---------- switch Catálogo ↔ Planner ----------
+   Cápsula blanca con una pastilla tinta detrás de la opción elegida. Al cambiar,
+   la pastilla se estira como gota hasta cubrir las dos opciones (.estira) y se
+   recoge en la nueva (data-vista); nunca sale de la cápsula. La sombra toma el
+   color de la sección. --p es a la vez el relleno y el espacio entre opciones. */
+.pl-switch{--p:8px;position:relative;display:inline-grid;grid-template-columns:1fr 1fr;gap:var(--p);padding:var(--p);
+  background:#fff;border:4px solid var(--ink);border-radius:var(--r-pill);box-shadow:8px 8px 0 var(--celeste);transition:box-shadow .35s ease}
+.pl-switch[data-vista="planners"]{box-shadow:8px 8px 0 var(--lila)}
+.pl-switch-pastilla{position:absolute;top:var(--p);bottom:var(--p);left:var(--p);width:calc((100% - 3 * var(--p)) / 2);
+  border-radius:var(--r-pill);background:var(--ink);
+  transition:left .24s cubic-bezier(.5,0,.3,1),width .24s cubic-bezier(.5,0,.3,1)}
+.pl-switch[data-vista="planners"] .pl-switch-pastilla{left:calc(50% + var(--p) / 2)}
+.pl-switch.estira .pl-switch-pastilla{left:var(--p);width:calc(100% - 2 * var(--p))}
+.pl-switch-op{position:relative;z-index:1;width:min(300px,calc((100vw - 96px) / 2));height:84px;border:0;border-radius:var(--r-pill);
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.3em;
+  font-family:'Neulis',sans-serif;font-weight:900;font-size:30px;line-height:1;color:#5d5985;
+  transition:font-size .3s ease,color .2s ease}
+.pl-switch-op .hg-title{width:1.15em;height:1em;vertical-align:0;flex:0 0 auto}
+.pl-switch-op[aria-selected="true"]{font-size:40px;color:#fff;cursor:default}
+/* "Planners y agendas" en dos líneas para que quepa en la opción: la segunda, más chica */
+.pl-switch-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:.92;text-align:left}
+.pl-switch-txt small{font-size:.48em;font-weight:800;letter-spacing:.02em;margin-top:.12em}
+.pl-switch-op[aria-selected="false"]:hover{color:var(--ink)}
+.pl-switch.estira .pl-switch-op{color:#fff}
+.pl-switch-op:focus-visible{outline:4px solid var(--celeste-deep);outline-offset:4px}
+/* el corazón de la opción elegida late una vez al llegar la pastilla (latido de tienda.css, ≤1.18: queda dentro) */
+.pl-switch-op .hg-title.late{animation:latido .8s ease}
+@media(max-width:520px){
+  .pl-switch{--p:6px;border-width:3px;box-shadow:6px 6px 0 var(--celeste)}
+  .pl-switch[data-vista="planners"]{box-shadow:6px 6px 0 var(--lila)}
+  .pl-switch-op{height:58px;font-size:18px}
+  .pl-switch-op[aria-selected="true"]{font-size:23px}
+  #tabPlanners[aria-selected="true"]{font-size:21px}   /* "Planners" es más largo que "Catálogo" */
+}
+/* el contenido sale hacia el costado contrario y el nuevo entra desde el lado al que
+   se movió el switch: --pl-dir es 1 (hacia Planner) o -1 (hacia Catálogo) */
+.pl-vista,.pl-cambia,#listaProductos.pl-vista{transition:opacity .3s ease,transform .35s cubic-bezier(.2,.7,.3,1)}
+.pl-fuera,#listaProductos.pl-fuera{opacity:0;transform:translateX(calc(-70px * var(--pl-dir,1)));transition:opacity .2s ease,transform .2s ease-in}
+.pl-entra,#listaProductos.pl-entra{opacity:0;transform:translateX(calc(70px * var(--pl-dir,1)));transition:none}
+
+.pl-oculto{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.pl-lab{font-family:'Neulis',sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);display:block;margin-bottom:8px}
+
+/* columna de la imagen: como .prod .arte, pero sin las reglas de las fotos del catálogo */
+.pl-arte{position:relative;z-index:0;min-width:0;display:grid;justify-items:center;align-content:center;gap:26px;padding:20px}
+.pl-lista .prod:nth-child(even) .pl-arte{order:2}
+@media(max-width:760px){.pl-lista .prod:nth-child(even) .pl-arte{order:0}}
+.pl-arte .ver-mas{margin:0}
+.ver-mas:focus-visible{outline:3px solid var(--celeste-deep);outline-offset:3px}
+.pl-ic-libro{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- opciones (radio / checkbox con el look de .fila) ---------- */
+.pl-op{position:relative}
+.pl-op:has(input:checked){border-color:var(--ink);background:#fff;box-shadow:3px 3px 0 rgba(63,60,102,.25)}
+.pl-op:has(input:checked) .chk{background:var(--lila-deep)}
+.pl-op:has(input:checked) .chk::after{content:"✓"}
+.pl-op:has(input:focus-visible){outline:3px solid var(--celeste-deep);outline-offset:3px}
+.pl-op-check .chk{border-radius:7px}
+.pl-op .pr{white-space:nowrap}
+/* valor único del producto */
+.pl-precio{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;padding:11px 20px;
+  background:linear-gradient(135deg,#eefaff 0%,#f4eeff 100%);border:2.5px solid var(--ink);border-radius:var(--r-pill);box-shadow:3px 3px 0 rgba(63,60,102,.16)}
+.pl-precio span{font-family:'Neulis',sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.pl-precio b{font-family:'Neulis',sans-serif;font-weight:900;font-size:clamp(24px,3vw,30px);line-height:1;color:var(--celeste-deep)}
+.pl-lista .prod:nth-child(even) .pl-precio b{color:var(--lila-deep)}
+/* descuento desde la planilla: precio de lista tachado + insignia "-15%" */
+.pl-precio .pl-precio-val{display:inline-flex;align-items:baseline;gap:8px;letter-spacing:0;text-transform:none}
+.pl-precio s{font-family:'NeulisAlt',sans-serif;font-weight:700;font-size:14px;color:var(--ink-soft)}
+.pl-dcto{font-style:normal;margin-left:6px;padding:1px 8px;border:2px solid var(--ink);border-radius:var(--r-pill);background:var(--rosa);letter-spacing:0}
+
+/* ---------- agenda en la página ---------- */
+/* --pag = ancho/alto de la página de cada agenda (lo pone planners.js) */
+.pl-agenda-btn{position:relative;display:block;width:min(290px,68vw,88%);aspect-ratio:var(--pag,.705);padding:0;border:0;background:none;cursor:pointer;
+  border-radius:6px 14px 14px 6px;transform:rotate(-4deg);transition:transform .35s ease}
+.pl-agenda-btn:hover{transform:rotate(-1.5deg) translateY(-6px)}
+.pl-agenda-btn:focus-visible{outline:4px solid var(--celeste-deep);outline-offset:10px}
+.pl-agenda-portada{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  border:3px solid var(--ink);border-radius:4px 12px 12px 4px;box-shadow:12px 14px 0 var(--lila)}
+/* ANILLADO (wire-o): perforaciones rectangulares + alambre doble blanco, 18 anillos.
+   Cada módulo SVG (100×40) tiene el lomo al centro: alambre de un agujero al otro.
+   En la portada cerrada solo hay perforación del lado de la tapa y el alambre
+   sobresale del borde, como si diera la vuelta al lomo. */
+.pl-agenda-btn::before{content:"";position:absolute;z-index:2;left:-10%;width:20%;top:2%;bottom:2%;pointer-events:none;
+  background:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-der.svg);
+  background-size:100% 5.5556%;background-repeat:repeat-y;background-position:center top}
+/* el mismo anillado en el lomo del visor, siempre por encima de las hojas */
+.pl-anillado{position:absolute;z-index:300;left:45%;width:10%;top:2%;bottom:2%;pointer-events:none;
+  background:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-der.svg),url(../productos/planners/anillado/hoyo-izq.svg);
+  background-size:100% 5.5556%;background-repeat:repeat-y;background-position:center top}
+.pl-libro.cerrado-frente .pl-anillado{background-image:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-der.svg)}
+.pl-libro.cerrado-atras .pl-anillado{background-image:url(../productos/planners/anillado/alambre.svg),url(../productos/planners/anillado/hoyo-izq.svg)}
+/* ---------- elegir portada (agendas con varias portadas) ----------
+   En la tarjeta: fila compacta de miniaturas que se desliza con ‹ ›.
+   En la foto: flechas a los lados de la portada grande + puntos "k / N".
+   Ambos controles muestran y cambian la misma portada. */
+.pl-pt-cab{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
+.pl-pt-cab .pl-lab{margin:0}
+.pl-pt-cuenta{font-size:13px;font-weight:600;color:#5d5985}
+.pl-pt-fila{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.pl-pt-flecha{flex:0 0 34px;height:34px;padding:0;border-radius:50%;border:2.5px solid var(--ink);background:#fff;color:var(--ink);
+  display:grid;place-items:center;cursor:pointer;transition:opacity .2s ease,transform .15s ease}
+.pl-pt-flecha[hidden]{display:none}
+.pl-pt-flecha[disabled]{opacity:.35;cursor:default}
+.pl-pt-flecha:not([disabled]):hover{transform:scale(1.08)}
+.pl-pt-flecha svg,.pl-foto-flecha svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.pl-pt-flecha:focus-visible,.pl-foto-flecha:focus-visible{outline:3px solid var(--celeste-deep);outline-offset:3px}
+/* la fila nunca impone su ancho (flex-basis 0 + tarjeta min-width 0): se desliza en vez de ensanchar la tarjeta */
+.pl-lista .prod>.tarjeta{min-width:0}
+.pl-pt-pista{flex:1 1 0;width:0;min-width:0;display:flex;gap:8px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding:4px 4px 7px}
+.pl-pt-pista::-webkit-scrollbar{display:none}
+.pl-pt{flex:0 0 44px;position:relative;cursor:pointer}
+.pl-pt img{width:44px;height:auto;aspect-ratio:var(--pag,.705);object-fit:cover;display:block;border-radius:8px;
+  border:2.5px solid #fff;box-shadow:0 0 0 1px #d8d3ee;transition:transform .15s ease,box-shadow .15s ease}
+.pl-pt:hover img{transform:translateY(-2px)}
+.pl-pt:has(input:checked) img{border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.pl-pt:has(input:focus-visible) img{outline:3px solid var(--celeste-deep);outline-offset:2px}
+/* en la foto */
+.pl-portada-marco{position:relative;width:min(290px,68vw,88%)}
+.pl-portada-marco .pl-agenda-btn{width:100%}
+.pl-foto-flecha{position:absolute;z-index:3;top:50%;width:48px;height:48px;margin-top:-24px;padding:0;border-radius:50%;
+  border:3px solid var(--ink);background:#fff;color:var(--ink);box-shadow:3px 3px 0 var(--lila);display:grid;place-items:center;cursor:pointer;transition:transform .15s ease}
+.pl-foto-flecha svg{width:20px;height:20px}
+.pl-foto-flecha.ant{left:-24px}
+.pl-foto-flecha.sig{right:-24px}
+.pl-foto-flecha:hover{transform:scale(1.08)}
+.pl-puntos{display:flex;align-items:center;gap:6px;margin-top:-6px}
+.pl-punto{width:10px;height:10px;padding:0;border-radius:var(--r-pill);border:2px solid var(--ink);background:#fff;cursor:pointer;transition:width .2s ease,background .2s ease}
+.pl-punto.on{width:26px;background:var(--lila-deep)}
+.pl-puntos-n{margin-left:6px;font-family:'Neulis',sans-serif;font-weight:800;font-size:13px;color:var(--ink)}
+/* cantos de las hojas asomando por la derecha */
+.pl-cantos{position:absolute;right:-7px;top:7px;bottom:7px;width:11px;z-index:-1;border-radius:0 6px 6px 0;
+  border:2px solid var(--ink);border-left:0;background:repeating-linear-gradient(90deg,#fff 0 2px,#ece6dc 2px 3px)}
+
+/* ---------- personalización de portada ---------- */
+.pl-perso{margin-bottom:13px}
+.pl-perso-box{display:flex;flex-direction:column;gap:7px;margin:10px 4px 0}
+.pl-perso-box[hidden]{display:none}
+.pl-subir{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pl-subir-btn{font-family:'Neulis',sans-serif;font-weight:800;font-size:13.5px;color:var(--ink);background:#fff;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;border:2.5px dashed var(--ink);border-radius:16px;padding:10px 16px;transition:.14s}
+.pl-subir-btn:hover{background:#f7f4ff}
+.pl-subir-btn .ic{width:20px;height:20px;fill:none;stroke:currentColor;color:var(--lila-deep)}
+.pl-subida{width:64px;aspect-ratio:229/164;object-fit:cover;border-radius:9px;border:2px solid var(--ink)}
+.pl-subida[hidden],.pl-quitar[hidden]{display:none}
+.pl-quitar{font:inherit;font-size:13px;font-weight:700;color:var(--ink-soft);text-decoration:underline;background:none;border:0;padding:4px;cursor:pointer}
+.pl-subir-btn:focus-visible,.pl-quitar:focus-visible{outline:3px solid var(--celeste-deep);outline-offset:2px}
+.pl-perso-box small{font-size:12px;font-weight:600;color:var(--ink-soft);line-height:1.45}
+.pl-perso-box small.aviso{color:#c2416b}
+.pl-total{display:flex;justify-content:space-between;align-items:baseline;margin:2px 4px 14px;padding-top:12px;border-top:2.5px dashed rgba(63,60,102,.22);
+  font-family:'Neulis',sans-serif;font-weight:800;color:var(--ink)}
+.pl-total[hidden]{display:none}
+.pl-total span{font-size:13.5px}
+.pl-total b{font-weight:900;font-size:26px;color:var(--lila-deep)}
+
+/* ---------- visores (agenda y planner) ---------- */
+.pl-visor{position:fixed;inset:0;z-index:160;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 12px calc(16px + env(safe-area-inset-bottom,0px));
+  background:rgba(63,60,102,.74);backdrop-filter:blur(6px);opacity:0;transition:opacity .3s ease}
+.pl-visor[hidden]{display:none}
+.pl-visor.abierto{opacity:1}
+.pl-visor-cab{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(1100px,96vw)}
+.pl-visor-cab h3{font-weight:900;font-size:clamp(20px,3vw,30px);color:#fff;text-shadow:3px 3px 0 rgba(63,60,102,.6)}
+.pl-cerrar{position:relative;top:auto;right:auto;flex:0 0 auto}
+.pl-cerrar:focus-visible,.pl-nav:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.pl-visor-barra{display:flex;align-items:center;gap:14px;color:#fff}
+.pl-nav{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;cursor:pointer;padding:0;
+  background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--lila);transition:.15s}
+.pl-nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.pl-nav:hover:not([disabled]){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--lila)}
+.pl-nav[disabled]{opacity:.4;cursor:default}
+.pl-cuenta{min-width:200px;text-align:center;font-family:'Neulis',sans-serif;font-weight:800;font-size:15px}
+.pl-visor-nota{font-size:13px;font-weight:600;color:#ece5fd;text-align:center}
+
+/* libro de la agenda: pliegos con anillado al centro, las hojas giran hacia la izquierda */
+.pl-libro-marco{perspective:2600px;width:min(1100px,96vw,calc((100vh - 200px) * 2 * var(--pag,.705)))}
+.pl-libro{position:relative;width:100%;aspect-ratio:calc(2 * var(--pag,.705));transition:transform .7s cubic-bezier(.4,.1,.2,1);touch-action:pan-y}
+.pl-libro.cerrado-frente{transform:translateX(-25%)}
+.pl-libro.cerrado-atras{transform:translateX(25%)}
+.pl-libro::after{content:"";position:absolute;left:4%;right:4%;bottom:-18px;height:24px;border-radius:50%;background:rgba(20,16,50,.35);filter:blur(10px);z-index:-1}
+.pl-hoja{position:absolute;top:0;left:50%;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;
+  transition:transform .9s cubic-bezier(.45,.05,.25,1);cursor:pointer}
+.pl-hoja.vuelta{transform:rotateY(-180deg)}
+.pl-cara{position:absolute;inset:0;overflow:hidden;background:#fbf8f3;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.pl-cara img{width:100%;height:100%;display:block;object-fit:cover;user-select:none;-webkit-user-drag:none}
+.pl-cara.frente{border-radius:0 6px 6px 0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
+.pl-cara.dorso{transform:rotateY(180deg);border-radius:6px 0 0 6px}
+.pl-cara.frente::after,.pl-cara.dorso::after{content:"";position:absolute;inset:0;pointer-events:none}
+.pl-cara.frente::after{background:linear-gradient(90deg,rgba(0,0,0,.14),rgba(0,0,0,0) 9%)}
+.pl-cara.dorso::after{background:linear-gradient(270deg,rgba(0,0,0,.14),rgba(0,0,0,0) 9%)}
+.pl-cara.contratapa{background:var(--tapa,#7d1f3a)}
+/* margen del anillado: el espacio que el diseño deja para las perforaciones queda como
+   papel en blanco junto al lomo, y la página se ve entera en el resto (sin cortes ni anillos encima).
+   La portada y la contratapa sí van perforadas, como en el producto real. */
+.pl-cara.frente:not(:has(.pl-tapa)){padding-left:7%}
+.pl-cara.dorso:not(.contratapa){padding-right:7%}
+.pl-cara:not(.contratapa)>img{object-fit:contain;background:#fff}
+.pl-cara.frente:not(:has(.pl-tapa)),.pl-cara.dorso:not(.contratapa){background:#fff}
+.pl-tapa{position:absolute;inset:0;border-radius:0 10px 10px 0;overflow:hidden}
+.pl-tapa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pl-sombra{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .45s;background:linear-gradient(90deg,rgba(0,0,0,.18),transparent)}
+.girando .pl-sombra{opacity:1}
+
+/* bloc: agendas con anillado arriba, UNA hoja a la vez a tamaño completo (proporción = --pag).
+   Al avanzar, la hoja se levanta por arriba girando sobre el anillado y se desvanece. */
+.pl-bloc-marco{width:min(560px,94vw,calc((100vh - 240px) * var(--pag,.705)));padding-top:14px}
+.pl-bloc{position:relative;width:100%;aspect-ratio:var(--pag,.705);perspective:1600px;touch-action:pan-x}
+.pl-bloc::after{content:"";position:absolute;left:6%;right:6%;bottom:-26px;height:22px;border-radius:50%;background:rgba(20,16,50,.4);filter:blur(10px);z-index:-1}
+/* cantos de las hojas por debajo */
+.pl-bloc-cantos{position:absolute;left:10px;right:10px;bottom:-9px;height:14px;border-radius:0 0 10px 10px;
+  border:2px solid var(--ink);border-top:0;background:repeating-linear-gradient(180deg,#fff 0 2px,#e4dfd6 2px 3px)}
+/* debajo de todas las hojas: la contratapa (retiro), o cartón liso */
+.pl-base{position:absolute;inset:0;background:#e8e2d8;border-radius:4px 4px 10px 10px;overflow:hidden}
+.pl-base img{width:100%;height:100%;object-fit:cover;display:block}
+.pl-bhoja{position:absolute;inset:0;border-radius:4px 4px 10px 10px;overflow:hidden;background:#fff;cursor:pointer;
+  transform-origin:50% 0;box-shadow:0 2px 0 rgba(0,0,0,.08);
+  transition:transform .8s cubic-bezier(.45,.05,.25,1),opacity .35s ease}
+.pl-bhoja img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+/* leída: gira por arriba y se desvanece al pasar la vertical (al volver, aparece primero y luego baja) */
+.pl-bhoja.vuelta{transform:rotateX(165deg);opacity:0;transition:transform .8s cubic-bezier(.45,.05,.25,1),opacity .35s ease .3s}
+/* margen del anillado arriba (ver .pl-cara): papel en blanco bajo los anillos; crece con el tamaño del anillo */
+.pl-bhoja:not(.pl-btapa){box-sizing:border-box;padding-top:calc(65% / var(--anillos,13))}
+.pl-bhoja:not(.pl-btapa)>img{object-fit:contain}
+.pl-bhoja .pl-sombra{background:linear-gradient(180deg,rgba(0,0,0,.2),transparent)}
+/* anillado arriba (wire-o): alambre blanco sobre el borde superior; --anillos = cantidad de anillos */
+.pl-anillado-h{position:absolute;z-index:300;left:4%;width:92%;top:0;transform:translateY(-50%);pointer-events:none;
+  aspect-ratio:calc(var(--anillos,13) / 2.5);
+  background:url(../productos/planners/anillado/alambre-h.svg),url(../productos/planners/anillado/hoyo-abajo.svg);
+  background-size:calc(100% / var(--anillos,13)) 100%;background-repeat:repeat-x;background-position:left center}
+
+/* ---------- menos movimiento ---------- */
+@media (prefers-reduced-motion: reduce){
+  .pl-agenda-btn,.pl-libro,.pl-hoja,.pl-bloc,.pl-bhoja,.pl-sombra,
+  .pl-visor,.pl-nav,.pl-switch,.pl-switch-pastilla,.pl-switch-op,.pl-vista,.pl-cambia{transition-duration:.01s!important}
+  .pl-switch-op .hg-title.late{animation:none}
+  .pl-agenda-btn:hover{transform:rotate(-4deg)}
+  .pl-pt:hover img,.pl-pt-flecha:not([disabled]):hover,.pl-foto-flecha:hover{transform:none}
+  .pl-punto,.pl-pt img,.pl-pt-pista{transition:none;scroll-behavior:auto}
+}
+
+/* agenda con portada personalizada: el selector de portadas del catálogo queda en segundo plano */
+.pl-con-perso .pl-pt-fila,.pl-con-perso .pl-puntos{opacity:.45;transition:opacity .2s ease}
+.pl-con-perso .pl-pt-fila:hover,.pl-con-perso .pl-puntos:hover{opacity:1}
+
+/* ---------- portada con anillado arriba (Planner Semanal, Planner Diario 4-6) ----------
+   Perforaciones bajo el borde superior y el alambre sobresale hacia arriba. */
+.pl-agenda-btn.lomo-arriba::before{left:4%;right:4%;width:auto;top:0;bottom:auto;transform:translateY(-50%);
+  aspect-ratio:calc(var(--anillos,13) / 2.5);
+  background:url(../productos/planners/anillado/alambre-h.svg),url(../productos/planners/anillado/hoyo-abajo.svg);
+  background-size:calc(100% / var(--anillos,13)) 100%;background-repeat:repeat-x;background-position:left center}
+.pl-agenda-btn.lomo-arriba.apaisada{--anillos:18}
+.lomo-arriba .pl-agenda-portada{border-radius:4px 4px 12px 12px}
+/* los cantos de las hojas asoman por abajo */
+.lomo-arriba .pl-cantos{left:7px;right:7px;top:auto;bottom:-7px;width:auto;height:11px;border:2px solid var(--ink);border-top:0;
+  border-radius:0 0 6px 6px;background:repeating-linear-gradient(180deg,#fff 0 2px,#ece6dc 2px 3px)}
+/* tamaño de la agenda, junto a la insignia: "A5 14,8 × 21 cm" */
+.pl-cab{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:12px}
+.pl-cab .badge{margin-bottom:0}
+/* color de cada tamaño (el mismo en la etiqueta de la tarjeta y en la comparación de arriba) */
+.pl-tam-B5{--tc:var(--rosa)}
+.pl-tam-A5{--tc:var(--lila)}
+.pl-tam-A6{--tc:var(--celeste)}
+/* etiqueta de la tarjeta: la hoja pintada del color del tamaño (a escala) + tamaño y medidas */
+.pl-tam{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 6px;border:2.5px solid var(--ink);border-radius:14px;background:#fff;
+  color:var(--ink);box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+.pl-tam-hoja{display:flex;align-items:center;justify-content:center;width:30px;height:38px;flex:none}
+.pl-tam-hoja i{display:block;box-sizing:border-box;background:var(--tc);border:2.5px solid var(--ink);border-radius:3px}
+.pl-tam-txt{display:flex;flex-direction:column;justify-content:center;line-height:1.05}
+.pl-tam-txt b{font-family:'Neulis',sans-serif;font-weight:900;font-size:21px}
+.pl-tam-txt small{font-size:11.5px;font-weight:700;margin-top:2px}
+/* guía de tamaños, arriba de las tarjetas: tarjeta blanca (sombra lila) con sticker celeste, las 3 agendas a escala
+   (una sobre otra, con anillado y textura) y las medidas en pastillas del color de cada tamaño */
+.pl-tamanos{position:relative;max-width:900px;margin:34px auto 80px;display:flex;align-items:center;gap:56px;padding:34px 50px;
+  background:#fff;border:4px solid var(--ink);border-radius:38px;box-shadow:12px 12px 0 var(--lila);color:var(--ink)}
+.pl-tamanos-sticker{position:absolute;top:-22px;left:44px;padding:7px 18px;font-family:'Neulis',sans-serif;font-weight:900;font-size:14px;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--celeste);border:3px solid var(--ink);border-radius:var(--r-pill);
+  box-shadow:3px 3px 0 var(--ink);transform:rotate(-3deg)}
+.pl-tamanos-pila{position:relative;width:230px;height:236px;flex:none}
+.pl-tamanos-ag{position:absolute;bottom:6px;box-sizing:border-box;border:3.5px solid var(--ink);border-radius:4px 10px 10px 4px;background-color:var(--tc)}
+.pl-tamanos-ag::before{content:"";position:absolute;left:-11px;top:8px;bottom:8px;width:16px;
+  background-image:repeating-linear-gradient(180deg,#fff 0 4px,transparent 4px 14px);filter:drop-shadow(0 0 1px var(--ink))}
+.pl-tamanos-ag b{position:absolute;top:8px;right:8px;padding:2px 8px;font-family:'Neulis',sans-serif;font-weight:900;font-size:13px;line-height:1.2;
+  background:#fff;border:2px solid var(--ink);border-radius:var(--r-pill)}
+.pl-tamanos-ag.pl-tam-B5{box-shadow:5px 5px 0 var(--ink);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.45) 0 10px,transparent 10px 20px)}
+.pl-tamanos-ag.pl-tam-A5{background-image:radial-gradient(circle,rgba(255,255,255,.55) 2px,transparent 2.5px);background-size:14px 14px}
+.pl-tamanos-ag.pl-tam-A6{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.45) 0 6px,transparent 6px 14px)}
+.pl-tamanos-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:12px}
+.pl-tamanos-txt h3{margin:0;font-family:'Neulis',sans-serif;font-weight:900;font-size:clamp(26px,3.4vw,36px);line-height:1.02;color:var(--ink)}
+.pl-tamanos-txt p{margin:0;font-size:15px;line-height:1.5;color:var(--ink-soft)}
+.pl-tamanos-pills{display:flex;flex-wrap:wrap;gap:12px}
+.pl-tamanos-pill{display:inline-flex;align-items:center;gap:10px;padding:9px 18px 9px 11px;border:3px solid var(--ink);border-radius:var(--r-pill);
+  background:#fff;background:color-mix(in srgb,var(--tc) 18%,#fff);font-size:15.5px;font-weight:700;white-space:nowrap;box-shadow:3px 3px 0 var(--ink)}
+.pl-tamanos-pill i{width:18px;height:18px;flex:none;border-radius:5px;background:var(--tc);border:2px solid var(--ink)}
+.pl-tamanos-pill b{font-family:'Neulis',sans-serif;font-weight:900;font-size:18px}
+@media(max-width:700px){
+  .pl-tamanos{flex-direction:column;gap:22px;padding:42px 22px 26px;border-radius:30px;text-align:center}
+  .pl-tamanos-txt{align-items:center}
+  .pl-tamanos-pills{justify-content:center}
+}
+/* portada apaisada: más ancha */
+.pl-agenda-btn.apaisada{width:min(400px,84vw,calc(100% - 16px))}
+/* con flechas: deja libre su espacio (sobresalen 24px por lado) para no pisar la tarjeta del precio */
+.pl-portada-marco.apaisada{width:min(380px,84vw,calc(100% - 64px))}
+/* en escritorio, la fila de un planner apaisado reparte el ancho por igual para que la foto respire */
+@media(min-width:761px){.pl-lista .prod:has(.apaisada){grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.pl-portada-marco.apaisada .pl-agenda-btn{width:100%}
