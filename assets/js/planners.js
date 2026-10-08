@@ -668,11 +668,22 @@ function tarjetaAgenda(a){
 }
 
 /* todas las tarjetas del panel se arman desde AGENDAS y se numeran en orden */
-/* arriba, los 3 tamaños dibujados a escala para comparar; las tarjetas van en su propio contenedor
-   (así la alternancia de colores de .prod:nth-child no se corre) */
-$("plPanel").insertAdjacentHTML("afterbegin", `<div class="pl-tamanos" role="group" aria-label="Comparación de tamaños">
-  <div class="pl-tamanos-txt"><b>Nuestros tamaños</b><span>Dibujados a escala para que compares. Cada agenda lleva su tamaño marcado con el mismo color.</span></div>
-  <div class="pl-tamanos-hojas">${Object.entries(TAMANOS).map(([t, z]) => `<div class="pl-tamanos-item pl-tam-${t}">${hojaEscala(...z.cm.map(c => parseFloat(c.replace(",", "."))), 3.6)}<b>${t}</b><small>${z.cm.join(" × ")} cm</small><em>${z.nombre}</em></div>`).join("")}</div>
+/* arriba de las tarjetas, la guía de tamaños: las 3 agendas a escala, una sobre otra y con su anillado
+   (mismo color que la etiqueta de cada tarjeta). Las tarjetas van en su propio contenedor, así la
+   alternancia de colores de .prod:nth-child no se corre. */
+const cmNum = c => parseFloat(c.replace(",", "."));
+const GUIA_PX = 8.8, GUIA_IZQ = { B5: 14, A5: 50, A6: 96 };   /* px por cm y dónde empieza cada agenda en la pila */
+$("plPanel").insertAdjacentHTML("afterbegin", `<div class="pl-tamanos" role="group" aria-label="Guía de tamaños">
+  <span class="pl-tamanos-sticker" aria-hidden="true">Guía de tamaños</span>
+  <div class="pl-tamanos-pila" aria-hidden="true">${Object.entries(TAMANOS).map(([t, z]) => {
+    const w = Math.round(cmNum(z.cm[0]) * GUIA_PX), h = Math.round(cmNum(z.cm[1]) * GUIA_PX), x = GUIA_IZQ[t];
+    return `<span class="pl-tamanos-ag pl-tam-${t}" style="left:${x}px;width:${w}px;height:${h}px"><b>${t}</b></span>`;
+  }).join("")}</div>
+  <div class="pl-tamanos-txt">
+    <h3>Elige tu tamaño</h3>
+    <p>Así se ven nuestras agendas una al lado de la otra, a escala y con su anillado.</p>
+    <div class="pl-tamanos-pills">${Object.entries(TAMANOS).map(([t, z]) => `<span class="pl-tamanos-pill pl-tam-${t}"><i></i><b>${t}</b> ${z.nombre} · ${z.cm.join(" × ")}</span>`).join("")}</div>
+  </div>
 </div>
 <div class="pl-tarjetas"></div>`);
 /* de mayor a menor: B5, A5 y A6; dentro de cada tamaño, la columna "orden" de la planilla y luego el orden de AGENDAS */

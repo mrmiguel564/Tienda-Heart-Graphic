@@ -275,19 +275,35 @@
 .pl-tam-txt{display:flex;flex-direction:column;justify-content:center;line-height:1.05}
 .pl-tam-txt b{font-family:'Neulis',sans-serif;font-weight:900;font-size:21px}
 .pl-tam-txt small{font-size:11.5px;font-weight:700;margin-top:2px}
-/* comparación de los 3 tamaños, arriba de las tarjetas */
-.pl-tamanos{max-width:880px;margin:0 auto 70px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 34px;
-  padding:22px 30px;background:#fff;border:3.5px solid var(--ink);border-radius:30px;box-shadow:8px 8px 0 var(--lila)}
-.pl-tamanos-txt{flex:1 1 220px;display:flex;flex-direction:column;gap:6px}
-.pl-tamanos-txt b{font-family:'Neulis',sans-serif;font-weight:900;font-size:clamp(20px,2.4vw,26px);color:var(--ink)}
-.pl-tamanos-txt span{font-size:14px;color:var(--ink-soft);line-height:1.4}
-.pl-tamanos-hojas{flex:0 1 auto;display:flex;align-items:flex-end;gap:clamp(14px,3vw,30px)}
-.pl-tamanos-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);text-align:center}
-.pl-tamanos-item i{display:block;box-sizing:border-box;background:var(--tc);border:3px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);margin-bottom:6px}
-.pl-tamanos-item b{font-family:'Neulis',sans-serif;font-weight:900;font-size:20px;line-height:1}
-.pl-tamanos-item small{font-size:11.5px;font-weight:700}
-.pl-tamanos-item em{font-style:normal;font-size:11px;font-weight:700;color:var(--ink-soft)}
-@media(max-width:520px){.pl-tamanos{padding:18px;border-radius:24px}.pl-tamanos-hojas{width:100%;justify-content:space-between}}
+/* guía de tamaños, arriba de las tarjetas: tarjeta blanca con sticker, las 3 agendas a escala
+   (una sobre otra, con anillado y textura) y las medidas en pastillas del color de cada tamaño */
+.pl-tamanos{position:relative;max-width:900px;margin:34px auto 80px;display:flex;align-items:center;gap:56px;padding:34px 50px;
+  background:#fff;border:4px solid var(--ink);border-radius:38px;box-shadow:12px 12px 0 var(--rosa);color:var(--ink)}
+.pl-tamanos-sticker{position:absolute;top:-22px;left:44px;padding:7px 18px;font-family:'Neulis',sans-serif;font-weight:900;font-size:14px;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--rosa);border:3px solid var(--ink);border-radius:var(--r-pill);
+  box-shadow:3px 3px 0 var(--ink);transform:rotate(-3deg)}
+.pl-tamanos-pila{position:relative;width:230px;height:236px;flex:none}
+.pl-tamanos-ag{position:absolute;bottom:6px;box-sizing:border-box;border:3.5px solid var(--ink);border-radius:4px 10px 10px 4px;background-color:var(--tc)}
+.pl-tamanos-ag::before{content:"";position:absolute;left:-11px;top:8px;bottom:8px;width:16px;
+  background-image:repeating-linear-gradient(180deg,#fff 0 4px,transparent 4px 14px);filter:drop-shadow(0 0 1px var(--ink))}
+.pl-tamanos-ag b{position:absolute;top:8px;right:8px;padding:2px 8px;font-family:'Neulis',sans-serif;font-weight:900;font-size:13px;line-height:1.2;
+  background:#fff;border:2px solid var(--ink);border-radius:var(--r-pill)}
+.pl-tamanos-ag.pl-tam-B5{box-shadow:5px 5px 0 var(--ink);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.45) 0 10px,transparent 10px 20px)}
+.pl-tamanos-ag.pl-tam-A5{background-image:radial-gradient(circle,rgba(255,255,255,.55) 2px,transparent 2.5px);background-size:14px 14px}
+.pl-tamanos-ag.pl-tam-A6{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.45) 0 6px,transparent 6px 14px)}
+.pl-tamanos-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:12px}
+.pl-tamanos-txt h3{margin:0;font-family:'Neulis',sans-serif;font-weight:900;font-size:clamp(26px,3.4vw,36px);line-height:1.02;color:var(--ink)}
+.pl-tamanos-txt p{margin:0;font-size:15px;line-height:1.5;color:var(--ink-soft)}
+.pl-tamanos-pills{display:flex;flex-wrap:wrap;gap:10px}
+.pl-tamanos-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border:2.5px solid var(--ink);border-radius:var(--r-pill);
+  background:#fff;background:color-mix(in srgb,var(--tc) 18%,#fff);font-size:13px;font-weight:700;white-space:nowrap}
+.pl-tamanos-pill i{width:14px;height:14px;flex:none;border-radius:4px;background:var(--tc);border:2px solid var(--ink)}
+.pl-tamanos-pill b{font-family:'Neulis',sans-serif;font-weight:900}
+@media(max-width:700px){
+  .pl-tamanos{flex-direction:column;gap:22px;padding:42px 22px 26px;border-radius:30px;text-align:center}
+  .pl-tamanos-txt{align-items:center}
+  .pl-tamanos-pills{justify-content:center}
+}
 /* portada apaisada: más ancha */
 .pl-agenda-btn.apaisada{width:min(400px,84vw,calc(100% - 16px))}
 /* con flechas: deja libre su espacio (sobresalen 24px por lado) para no pisar la tarjeta del precio */
