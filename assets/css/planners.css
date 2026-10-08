@@ -275,12 +275,12 @@
 .pl-tam-txt{display:flex;flex-direction:column;justify-content:center;line-height:1.05}
 .pl-tam-txt b{font-family:'Neulis',sans-serif;font-weight:900;font-size:21px}
 .pl-tam-txt small{font-size:11.5px;font-weight:700;margin-top:2px}
-/* guía de tamaños, arriba de las tarjetas: tarjeta blanca con sticker, las 3 agendas a escala
+/* guía de tamaños, arriba de las tarjetas: tarjeta blanca (sombra lila) con sticker celeste, las 3 agendas a escala
    (una sobre otra, con anillado y textura) y las medidas en pastillas del color de cada tamaño */
 .pl-tamanos{position:relative;max-width:900px;margin:34px auto 80px;display:flex;align-items:center;gap:56px;padding:34px 50px;
-  background:#fff;border:4px solid var(--ink);border-radius:38px;box-shadow:12px 12px 0 var(--rosa);color:var(--ink)}
+  background:#fff;border:4px solid var(--ink);border-radius:38px;box-shadow:12px 12px 0 var(--lila);color:var(--ink)}
 .pl-tamanos-sticker{position:absolute;top:-22px;left:44px;padding:7px 18px;font-family:'Neulis',sans-serif;font-weight:900;font-size:14px;
-  letter-spacing:.1em;text-transform:uppercase;background:var(--rosa);border:3px solid var(--ink);border-radius:var(--r-pill);
+  letter-spacing:.1em;text-transform:uppercase;background:var(--celeste);border:3px solid var(--ink);border-radius:var(--r-pill);
   box-shadow:3px 3px 0 var(--ink);transform:rotate(-3deg)}
 .pl-tamanos-pila{position:relative;width:230px;height:236px;flex:none}
 .pl-tamanos-ag{position:absolute;bottom:6px;box-sizing:border-box;border:3.5px solid var(--ink);border-radius:4px 10px 10px 4px;background-color:var(--tc)}
