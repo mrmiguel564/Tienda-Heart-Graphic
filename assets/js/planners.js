@@ -111,13 +111,13 @@ const AGENDAS = [
     portadas: [
       { nom: "Azul", retiro: true, paginas: [D, CAL(2026), par(MENS, 4), pg(3, NOTAS)] },
       { nom: "Atardecer", retiro: true, paginas: [D, CAL(2026), CAL(2027), par(MENS, 5), pg(4, NOTAS)] }] },
-  { id: "gratitud", nombre: "Diario de Gratitud", precio: 11990, desc: "Diario para agradecer cada día. Elige entre 2 portadas.", formato: A5_100,
+  { id: "gratitud", nombre: "Diario de Gratitud", precio: 11990, tema: true, desc: "Diario para agradecer cada día. Elige entre 2 portadas.", formato: A5_100,
     portadas: [{ nom: "Noche", retiro: true }, { nom: "Rosa", retiro: true }],
     paginas: [D, CAL(2026), "Querido Universo", "Mapa de sueños", "Un momento para mí"] },
   /* Mini Planner Diario: la imagen 2 son los datos personales y la 1 el día */
   { id: "mini-diario", nombre: "Mini Planner Diario", precio: 5990, tam: "A6", ratio: .709, desc: "Planner diario de bolsillo. Elige entre 5 portadas.", formato: A6,
     portadas: portadasN(5), paginas: [pg(2, D), pg(1, DIA), pg(1, DIA), pg(1, DIA)] },
-  { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: 5990, tam: "A6", ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
+  { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: 5990, tema: true, tam: "A6", ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
     portadas: portadasN(4), paginas: ["Hojas de líneas"], repetir: 4 },
   { id: "gastos", nombre: "Planner Control de Gastos", precio: 11990, formato: A5_100,
     desc: "“Planificarme es mi superpoder”: ingresos, gastos fijos, gastos hormiga, ahorros y balance del mes. Elige entre 2 portadas.",
@@ -125,21 +125,21 @@ const AGENDAS = [
     paginas: [D, CAL(2025), CAL(2026), "Mi mes", "Ingresos y gastos fijos", par("Gastos hormiga"), "Mis ahorros",
       "Balance mensual", "Notas y observaciones"] },
   /* ---- 100 Citas: álbum de citas con reglas al inicio (el modelo con nombres de una pareja queda fuera) ---- */
-  { id: "citas-juntos", nombre: "100 Citas Juntos", precio: 9990, formato: A5_70,
+  { id: "citas-juntos", nombre: "100 Citas Juntos", precio: 9990, tema: true, formato: A5_70,
     desc: "Álbum de 100 citas para vivir en pareja: reglas, una página por cita con fotos, lugar, fecha y cómo se sintieron. Elige entre 3 portadas.",
     portadas: [{ nom: "Celeste", retiro: true }, { nom: "Lila", retiro: true }, { nom: "Gatitos", retiro: true }],
     paginas: ["Reglas", pg(2, ""), ...citas(3, 8), pg(11, "¡Felicidades!")] },
-  { id: "citas-amigas", nombre: "100 Citas con Amigas", precio: 9990, formato: A5,
+  { id: "citas-amigas", nombre: "100 Citas con Amigas", precio: 9990, tema: true, formato: A5,
     desc: "Álbum de citas para vivir con tus amigas: reglas, una página por cita con fotos y recuerdos. Elige entre 2 portadas.",
     portadas: [{ nom: "Amigas", retiro: true }, { nom: "Amigas con flores", retiro: true }],
     paginas: ["Reglas", pg(2, ""), ...citas(3, 8), pg(11, "¡Felicidades!")] },
   /* Mamá: la imagen 1 es el interior de la portada; la 4 es una hoja en blanco decorada */
-  { id: "citas-mama", nombre: "100 Citas con Mamá", precio: 9990, formato: A5, tapaInterior: 1,
+  { id: "citas-mama", nombre: "100 Citas con Mamá", precio: 9990, tema: true, formato: A5, tapaInterior: 1,
     desc: "Álbum de 100 citas para compartir con mamá: carta, compromiso y una página por cita con foto.",
     portadas: [{ nom: "Flores", retiro: true }],
     paginas: [pg(2, "Carta para mamá"), pg(4, ""), pg(3, "Nuestro compromiso"), pg(4, ""), ...citas(5, 8)] },
   /* ---- control veterinario: 3 gatos y un perro y gato, cada uno con su interior ---- */
-  { id: "control-vet", nombre: "Carnet de Control Veterinario", precio: 9990, ratio: .66, interiorPorPortada: true, formato: A5,
+  { id: "control-vet", nombre: "Carnet de Control Veterinario", precio: 9990, tema: true, ratio: .66, interiorPorPortada: true, formato: A5,
     desc: "Agenda de control para tu gato o perro: datos, vacunas, desparasitación, controles y aseo. Elige entre 4 portadas.",
     portadas: [
       { nom: "Gato negro", color: "#ef5b4c", paginas: [hoja1(1, "Datos de la mascota"), "Registro de vacunación", "Registro de desparasitación", "Observaciones", "Otros controles", "Aseo de la mascota"] },
@@ -149,7 +149,7 @@ const AGENDAS = [
     /* gato verde y perro y gato: cada sección es un pliego, su portadilla a la izquierda y el registro a la derecha */
     paginas: ["Datos de la mascota", par("Vacunación"), par("Desparasitación"), par("Observaciones"), par("Otros controles"),
       par("Aseo de la mascota")] },
-  { id: "recetas", nombre: "Agenda Mis Recetas", precio: 7990, lomo: "arriba", interiorPorPortada: true, formato: A5_70,
+  { id: "recetas", nombre: "Agenda Mis Recetas", precio: 7990, tema: true, lomo: "arriba", interiorPorPortada: true, formato: A5_70,
     desc: "Recetario para guardar tus recetas favoritas: ingredientes, tiempo, porciones y preparación. Elige entre 4 portadas.",
     portadas: [{ nom: "Girasoles", retiro: true }, { nom: "Mármol azul", retiro: true }, { nom: "Rosa", retiro: true },
       { nom: "Favoritas", retiro: true }],
@@ -163,7 +163,7 @@ const AGENDAS = [
       { nom: "Sigue tus sueños", retiro: true, interior: 3 }, { nom: "Un día a la vez", retiro: true, interior: 2 },
       { nom: "Yo soy capaz", retiro: true, interior: 3 }, { nom: "Si puedes creerlo", retiro: true, interior: 2 }],
     paginas: [D, CAL(2024), CAL(2025), pg(9, MENS), pg(7, PSEM), PSEM, pg(6, "Hojas de puntos")] },
-  { id: "mis-pedidos", nombre: "Agenda Mis Pedidos", precio: 5990, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
+  { id: "mis-pedidos", nombre: "Agenda Mis Pedidos", precio: 5990, tema: true, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Para emprendedoras: registra cada pedido con cliente, productos, pago y entrega. Elige entre 2 portadas.",
     portadas: [{ nom: "Rosado", retiro: true }, { nom: "Verde", retiro: true }],
     paginas: [D, CAL(2024), CAL(2025), "Registro de pedido", pg(4, "Registro de pedido"), pg(4, "Registro de pedido")] },
@@ -693,15 +693,16 @@ $("plPanel").insertAdjacentHTML("afterbegin", `<div class="pl-tamanos" role="gro
   </div>
 </div>
 <div class="pl-tarjetas"></div>`);
-/* de mayor a menor tamaño (B5, A5, A6); dentro de cada tamaño, del precio más alto al más bajo
-   (sin precio al final); a igual precio, la columna "orden" de la planilla y luego el orden de AGENDAS */
+/* de mayor a menor tamaño (B5, A5, A6); dentro de cada tamaño, primero los planners y al final las agendas
+   de otra temática (tema: true); en cada grupo, del precio más alto al más bajo (sin precio al final);
+   a igual precio, la columna "orden" de la planilla y luego el orden de AGENDAS */
 function pintaTarjetas(){
   const caja = $("plPanel").querySelector(".pl-tarjetas");
   caja.textContent = "";
   agSel.clear(); agPerso.clear();
   const pos = a => AGENDAS.indexOf(a), ord = a => Number.isFinite(a.orden) ? a.orden : 1e6;
   AGENDAS.filter(a => !a.oculto && a.portadas.length)
-    .sort((x, y) => tamDe(x).orden - tamDe(y).orden || (precioDe(y) || 0) - (precioDe(x) || 0) || ord(x) - ord(y) || pos(x) - pos(y))
+    .sort((x, y) => tamDe(x).orden - tamDe(y).orden || (x.tema ? 1 : 0) - (y.tema ? 1 : 0) || (precioDe(y) || 0) - (precioDe(x) || 0) || ord(x) - ord(y) || pos(x) - pos(y))
     .forEach(a => caja.append(tarjetaAgenda(a)));
   caja.querySelectorAll(".prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
   if (typeof observaReveals === "function") observaReveals();
@@ -711,7 +712,7 @@ pintaTarjetas();
 /* ---------- PLANILLA (Google Sheets, la misma del catálogo: SHEET_ID de tienda.js) ----------
    Pestañas (se leen las columnas por su nombre; cualquiera puede faltar):
    - planners: id, activo, nombre, precio, descuento, tamano, descripcion, detalles, ocultar_portadas,
-     orden, anillado (costado | arriba), orientacion (vertical | apaisada). Fila id = config: su
+     orden, anillado (costado | arriba), orientacion (vertical | apaisada), tipo (planner | tematica). Fila id = config: su
      precio es el de "Personaliza tu portada". Un id que no existe en AGENDAS crea un planner nuevo.
    - planners_portadas: id_planner, orden, nombre, url_portada, url_contratapa, color, activo.
    - planners_hojas: id_planner, portada, orden, titulo, url (o el archivo de una hoja actual), pliego, repetir.
@@ -741,6 +742,7 @@ function aplicaPlanilla(P, Po, H){
     const ori = txt(c("orientacion")).toLowerCase();
     if (ori === "apaisada" && ratioDe(a) <= 1) a.ratio = 1.414; else if (ori === "vertical" && ratioDe(a) > 1) a.ratio = .705;
     const o = num(c("orden")); if (o != null) a.orden = o;
+    const tipo = txt(c("tipo")).toLowerCase(); if (tipo) a.tema = /^tem/.test(tipo);   /* planner | tematica */
     const ocultas = txt(c("ocultar_portadas")).split(/[^0-9]+/).filter(Boolean).map(Number);
     if (ocultas.length) a.portadas = a.portadas.filter(p => !ocultas.includes(p.num));
   });
