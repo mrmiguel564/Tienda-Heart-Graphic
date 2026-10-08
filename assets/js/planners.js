@@ -256,18 +256,22 @@ function dialogo(el, {alAbrir, teclas} = {}){
 
 /* Visor con hojas que giran. Sirve para la agenda (eje Y, anillado al centro) y
    para el planner (eje X, anillado arriba): cambia solo cómo se arma y se rotula. */
-function visor(el, {libro, arma, rotulo, alEstado, mitadClic}){
+function visor(el, {libro, arma, rotulo, alEstado, mitadClic, atras = 1}){
   const cuenta = el.querySelector(".pl-cuenta");
   const [ant, sig] = el.querySelectorAll(".pl-nav");
-  let hojas = [], cur = 0, ocupado = false;
+  let hojas = [], cur = 0, ocupado = false, giro = -1;
 
   function pinta(){
     const n = hojas.length;
     hojas.forEach((h, i) => {
       h.classList.toggle("vuelta", i < cur);
       if (!h.classList.contains("girando")) h.style.zIndex = i < cur ? i + 1 : n - i;
+      /* solo se dibujan las hojas a la vista (y las vecinas de la que gira): las de
+         debajo, del mismo tamaño, asomaban como una línea clara en el borde */
+      const ve = (i >= cur - atras && i <= cur) || (giro >= 0 && Math.abs(i - giro) <= 1);
+      h.style.visibility = ve ? "" : "hidden";
     });
-    alEstado(cur, n);
+    alEstado(cur, n, giro);
     ant.disabled = cur === 0;
     sig.disabled = cur === n;
     cuenta.textContent = rotulo(cur, n);
@@ -280,9 +284,10 @@ function visor(el, {libro, arma, rotulo, alEstado, mitadClic}){
     const h = hojas[obj];
     h.classList.add("girando");
     h.style.zIndex = n + 5;
+    giro = obj;
     cur += dir;
     pinta();
-    setTimeout(() => { h.classList.remove("girando"); ocupado = false; pinta(); }, menosMov() ? 30 : 900);
+    setTimeout(() => { h.classList.remove("girando"); ocupado = false; giro = -1; pinta(); }, menosMov() ? 30 : 900);
   }
   ant.addEventListener("click", () => gira(-1));
   sig.addEventListener("click", () => gira(1));
@@ -623,7 +628,12 @@ const visorBloc = visor(visorBlocEl, {
     if (cur === n) return "Contratapa";
     return (agPags[cur - 1] || {}).t || "";
   },
-  alEstado: () => {},
+  atras: 0,   /* las hojas ya pasadas no se ven */
+  /* la contratapa de fondo solo se dibuja cuando queda a la vista (misma razón que las hojas) */
+  alEstado(cur, n, giro){
+    const base = bloc.querySelector(".pl-base");
+    if (base) base.style.visibility = cur === n || giro === n - 1 ? "" : "hidden";
+  },
   /* toque en el tercio de arriba: volver; en el resto: avanzar */
   mitadClic: (e, r) => e.clientY > r.top + r.height * .3 ? 1 : -1
 });
