@@ -252,5 +252,9 @@
 .lomo-arriba .pl-cantos{left:7px;right:7px;top:auto;bottom:-7px;width:auto;height:11px;border:2px solid var(--ink);border-top:0;
   border-radius:0 0 6px 6px;background:repeating-linear-gradient(180deg,#fff 0 2px,#ece6dc 2px 3px)}
 /* portada apaisada: más ancha */
-.pl-agenda-btn.apaisada,.pl-portada-marco.apaisada{width:min(420px,84vw,100%)}
+.pl-agenda-btn.apaisada{width:min(400px,84vw,calc(100% - 16px))}
+/* con flechas: deja libre su espacio (sobresalen 24px por lado) para no pisar la tarjeta del precio */
+.pl-portada-marco.apaisada{width:min(380px,84vw,calc(100% - 64px))}
+/* en escritorio, la fila de un planner apaisado reparte el ancho por igual para que la foto respire */
+@media(min-width:761px){.pl-lista .prod:has(.apaisada){grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 .pl-portada-marco.apaisada .pl-agenda-btn{width:100%}
