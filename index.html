@@ -132,8 +132,7 @@
 
   <!-- ============ Seccion PLANNERS ============
        Panel del catálogo que se muestra con la pestaña "Planner" (o el enlace #planners).
-       Agenda Atrévete 2027 (visor de pliegos, anillado al centro) y Planner Semanal
-       (galería de 10 portadas, visor con anillado arriba y portada personalizada).
+       Agendas y planners (Atrévete, Planner Semanal y los demás), todos con el mismo modelo.
        Estilos en assets/css/planners.css. Lógica, precios, WA_NUM y rutas de las
        imágenes en assets/js/planners.js (hoy apuntan a assets/productos/planners/;
        se migrarán a un servicio externo). Los diálogos van más abajo, junto al modal. -->
@@ -141,53 +140,6 @@
     <!-- Agendas (Atrévete y las demás): las tarjetas las arma assets/js/planners.js desde
          su lista AGENDAS, todas con el mismo modelo (portada anillada + visor de pliegos). -->
 
-    <!-- Planner Semanal -->
-    <article class="prod pl-prod reveal" id="plSemanal">
-      <div class="pl-arte">
-        <button class="pl-mockup" type="button" data-pl-abre="semanal" aria-label="Ver el interior del Planner Semanal">
-          <img id="plMockup" src="assets/productos/planners/semanal/mockups/mockup-01.webp" alt="Planner Semanal con la portada N° 1" width="1000" height="925">
-          <span class="pl-custom" id="plCustom" aria-hidden="true" hidden>
-            <span class="pl-escena"><span class="pl-warp" id="plWarp"><img id="plWarpImg" alt=""></span><img class="pl-anillos" src="assets/productos/planners/semanal/anillos-mockup.png" alt=""></span>
-          </span>
-        </button>
-        <button class="ver-mas" type="button" data-pl-abre="semanal"><svg class="ic pl-ic-libro" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1v14c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6v14"/></svg> Ve el interior</button>
-      </div>
-      <div class="tarjeta">
-        <span class="badge">planner 02</span>
-        <h3>Planner Semanal</h3>
-        <p class="desc">Organiza tu semana a la vista. Elige entre 10 portadas o personaliza la tuya.</p>
-        <div class="pl-elegida">
-          <img id="plElegidaImg" src="assets/productos/planners/semanal/portadas/portada-01.jpg" alt="" width="225" height="164">
-          <div><small>Portada elegida</small><strong id="plElegida">N° 1</strong></div>
-          <button class="ver-mas" type="button" id="plVerPortadas" aria-haspopup="dialog">Ver las 10 portadas</button>
-        </div>
-        <div class="pl-precio"><span>Valor único</span><b data-pl-precio="semanal"></b></div>
-        <div class="pl-perso">
-          <label class="fila pl-op pl-op-check"><input class="pl-oculto" type="checkbox" id="plPerso" aria-controls="plPersoBox"><span class="chk" aria-hidden="true"></span><span class="un">Personalizar portada</span><span class="pr" id="plPersoPrecio"></span></label>
-          <div class="pl-perso-box" id="plPersoBox" hidden>
-            <input type="file" id="plArchivo" accept="image/png,image/jpeg,image/webp" hidden>
-            <div class="pl-subir">
-              <button type="button" class="pl-subir-btn" id="plSubir"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></g></svg> <span id="plSubirTxt">Subir imagen</span></button>
-              <img class="pl-subida" id="plSubida" alt="Vista previa de tu imagen" hidden>
-              <button type="button" class="pl-quitar" id="plQuitar" hidden>Quitar</button>
-            </div>
-            <small id="plAyuda" aria-live="polite">Tu imagen será la portada. Usa una foto o diseño horizontal en buena resolución (JPG o PNG).</small>
-          </div>
-        </div>
-        <div class="pl-total" id="plTotalFila" hidden><span>Total con portada personalizada</span><b id="plTotal" aria-live="polite"></b></div>
-        <!-- TODO: completar con el tamaño y la cantidad de hojas reales del planner -->
-        <p class="notas">Tamaño y hojas: completa con los datos reales</p>
-        <div class="materiales">
-          <!-- TODO: confirmar material y terminación del planner -->
-          <div class="mat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><path d="M8 5h12M8 12h12M8 19h12"/></g></svg></span><b>Anillado metálico</b><i>Full color</i></div>
-        </div>
-        <div class="fila-pedir">
-          <a class="pedir" id="plSemanalWa" target="_blank" rel="noopener" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
-          <button class="pedir pedir-ig" id="plSemanalIg" type="button" title="Pedir por Instagram" aria-label="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> <span class="lbl">Instagram</span></button>
-          <button class="add-cart" id="plSemanalCarro" type="button" title="Agregar al carrito" aria-label="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg></button>
-        </div>
-      </div>
-    </article>
   </div>
 </main>
 
@@ -395,8 +347,8 @@
 </div>
 
 <!-- ============ PLANNERS: diálogos ============
-     Visor de la agenda (pliegos con anillado al centro), visor del planner
-     semanal (anillado arriba) y galería de portadas. Los arma assets/js/planners.js. -->
+     Visor de las agendas con anillado al costado (pliegos que giran a la izquierda) y
+     visor de las con anillado arriba (hojas que giran hacia arriba). Los arma assets/js/planners.js. -->
 <div class="pl-visor" id="plVisorAgenda" role="dialog" aria-modal="true" aria-labelledby="plVisorAgendaTit" hidden>
   <div class="pl-visor-cab">
     <h3 id="plVisorAgendaTit">Interior de la agenda</h3>
@@ -411,28 +363,18 @@
   <p class="pl-visor-nota">Vista previa de algunas páginas · desliza, usa las flechas o toca la hoja</p>
 </div>
 
-<div class="pl-visor" id="plVisorSemanal" role="dialog" aria-modal="true" aria-labelledby="plVisorSemanalTit" hidden>
+<div class="pl-visor" id="plVisorBloc" role="dialog" aria-modal="true" aria-labelledby="plVisorBlocTit" hidden>
   <div class="pl-visor-cab">
-    <h3 id="plVisorSemanalTit">Interior Planner Semanal</h3>
+    <h3 id="plVisorBlocTit">Interior del planner</h3>
     <button class="m-cerrar pl-cerrar" type="button" aria-label="Cerrar visor">&#10005;</button>
   </div>
-  <div class="pl-bloc-marco"><div class="pl-bloc cerrado" id="plBlocSemanal"></div></div>
+  <div class="pl-bloc-marco"><div class="pl-bloc cerrado" id="plBloc"></div></div>
   <div class="pl-visor-barra">
     <button class="pl-nav" type="button" data-dir="-1" aria-label="Hoja anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
     <span class="pl-cuenta" aria-live="polite">Portada</span>
     <button class="pl-nav" type="button" data-dir="1" aria-label="Hoja siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
   </div>
   <p class="pl-visor-nota">Desliza hacia arriba, usa las flechas o toca la hoja</p>
-</div>
-
-<div class="pl-galeria" id="plGaleria" role="dialog" aria-modal="true" aria-labelledby="plGaleriaTit" hidden>
-  <div class="pl-galeria-hoja">
-    <div class="pl-galeria-cab">
-      <h3 id="plGaleriaTit">Portadas disponibles</h3>
-      <button class="m-cerrar pl-cerrar" type="button" aria-label="Cerrar portadas">&#10005;</button>
-    </div>
-    <div class="pl-galeria-grid" id="plGaleriaGrid"></div>
-  </div>
 </div>
 
 <!-- ============ CARRITO ============ -->

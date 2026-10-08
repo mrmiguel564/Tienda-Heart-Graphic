@@ -17,7 +17,7 @@ const WA_NUM = WHATSAPP;   /* TODO: confirmar el número de pedidos de planners 
    más unidades se suman en el carrito (+/−). Los precios de cada agenda van en AGENDAS. */
 const PRECIOS = {
   semanal: 9990,
-  perso:   1000     /* recargo por portada personalizada del planner semanal */
+  perso:   1000     /* recargo por portada personalizada (todas las agendas) */
 };
 
 /* bajada bajo los títulos del catálogo según la pestaña */
@@ -74,11 +74,11 @@ const AGENDAS = [
     portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
   { id: "diario-3", nombre: "Planner Diario · Diseño 3", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
     portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
-  { id: "diario-4", nombre: "Planner Diario · Diseño 4", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+  { id: "diario-4", nombre: "Planner Diario · Diseño 4", precio: null, lomo: "arriba", desc: "Un día por página para planificar con calma.", formato: A5,
     portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
-  { id: "diario-5", nombre: "Planner Diario · Diseño 5", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+  { id: "diario-5", nombre: "Planner Diario · Diseño 5", precio: null, lomo: "arriba", desc: "Un día por página para planificar con calma.", formato: A5,
     portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
-  { id: "diario-6", nombre: "Planner Diario · Diseño 6", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
+  { id: "diario-6", nombre: "Planner Diario · Diseño 6", precio: null, lomo: "arriba", desc: "Un día por página para planificar con calma.", formato: A5,
     portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
   { id: "semanal-diario-potencial", nombre: "Planner Semanal Diario · Potencial", precio: null, desc: "Planificación semanal y diaria con calendario 2026.", formato: A5,
     portadas: [{ nom: "Potencial", retiro: true }], paginas: [D, CAL(2026), ...veces(PSEM, 6)] },
@@ -95,35 +95,29 @@ const AGENDAS = [
   { id: "mini-diario", nombre: "Mini Planner Diario", precio: null, ratio: .709, desc: "Planner diario de bolsillo. Elige entre 5 portadas.", formato: A6,
     portadas: portadasN(5), paginas: [DIA, DIA], repetir: 2 },
   { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: null, ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
-    portadas: portadasN(4), paginas: ["Hojas de líneas"], repetir: 4 }
+    portadas: portadasN(4), paginas: ["Hojas de líneas"], repetir: 4 },
+  /* Planner Semanal apaisado, anillado arriba: cada portada trae su propio interior
+     (pagina-K-01 = tiro: planificación semanal, pagina-K-02 = retiro: hábitos) */
+  { id: "semanal", nombre: "Planner Semanal", precio: PRECIOS.semanal, lomo: "arriba", ratio: 1.42, interiorPorPortada: true,
+    desc: "Organiza tu semana a la vista. Elige entre 11 diseños: cada uno con su interior a juego.",
+    formato: "Tamaño y hojas: completa con los datos reales",   /* TODO: tamaño y cantidad de hojas reales */
+    portadas: portadasN(11), paginas: ["Planificación semanal", "Hábitos y objetivos"], repetir: 3 }
 ];
-/* ruta de cada imagen de una agenda */
+/* ruta de cada imagen de una agenda (k = portada elegida, para los interiores por portada) */
 const agImg = {
   portada:    (a, k) => `agendas/${a.id}/portada-${k + 1}.jpg`,
   mini:       (a, k) => `agendas/${a.id}/portada-${k + 1}-mini.jpg`,
   contratapa: (a, k) => `agendas/${a.id}/contratapa-${k + 1}.jpg`,
-  pagina:     (a, i) => `agendas/${a.id}/pagina-${String(i + 1).padStart(2, "0")}.jpg`
+  pagina:     (a, i, k) => `agendas/${a.id}/pagina-${a.interiorPorPortada ? (k + 1) + "-" : ""}${String(i + 1).padStart(2, "0")}.jpg`
 };
 /* páginas en orden de lectura: [{src, t}] (repite la lista si la agenda lo pide) */
-const paginasDe = a => {
-  const una = a.paginas.map((t, i) => ({ src: agImg.pagina(a, i), t }));
+const paginasDe = (a, k = 0) => {
+  const una = a.paginas.map((t, i) => ({ src: agImg.pagina(a, i, k), t }));
   return Array.from({length: a.repetir || 1}, () => una).flat();
-};
-
-const SEMANAL = {
-  nombre: "Planner Semanal",
-  portadas: Array.from({length: 10}, (_, i) => `semanal/portadas/portada-${String(i + 1).padStart(2, "0")}.jpg`),
-  mockups:  Array.from({length: 10}, (_, i) => `semanal/mockups/mockup-${String(i + 1).padStart(2, "0")}.webp`),  /* mismo orden */
-  tiro:   "semanal/hoja-tiro.jpg",     /* planificación semanal */
-  retiro: "semanal/hoja-retiro.jpg",   /* hábitos y objetivos */
-  hojasVisor: 3,                       /* cuántas semanas muestra la vista previa */
-  /* esquinas de la portada dentro del mockup (sobre un ancho de 1000px) */
-  quad: [[137.6,78.1],[983.3,234.4],[865.9,906.7],[19.8,771.0]]
 };
 
 /* productos "virtuales" para el carrito de la tienda */
 const pCarro = a => ({id: "pl-" + a.id, n: a.nombre, e: "📒", vars: [{v: "", p: []}], dcto: 0});
-const P_SEMANAL = {id: "pl-semanal", n: SEMANAL.nombre, e: "🗓️", vars: [{v: "", p: []}], dcto: 0};
 
 /* ---------- utilidades ---------- */
 const $ = id => document.getElementById(id);
@@ -132,7 +126,6 @@ const menosMov = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const waHref = msg => `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
 const FOCO = 'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]):not([hidden]),[tabindex]:not([tabindex="-1"])';
 
-document.querySelectorAll("[data-pl-precio]").forEach(el => { el.textContent = fmt(PRECIOS[el.dataset.plPrecio]); });
 
 /* =========================================================
    SWITCH DEL CATÁLOGO: Catálogo ↔ Planner
@@ -325,7 +318,6 @@ function visor(el, {libro, arma, rotulo, alEstado, mitadClic}){
 
 const hojaHTML = (cara, frente, dorso, claseDorso = "") =>
   `<div class="${cara} frente">${frente}</div><div class="${cara} dorso ${claseDorso}">${dorso}</div><div class="pl-sombra"></div>`;
-const imgHTML = (ruta, alt) => `<img src="${src(ruta)}" alt="${alt}" draggable="false" loading="lazy">`;
 
 
 /* =========================================================
@@ -372,13 +364,15 @@ function tarjetaAgenda(a){
        </div>`
     : "";
   /* …y flechas + puntos sobre la portada grande */
-  const portadaBtn = `<button class="pl-agenda-btn" type="button" data-ag="${a.id}" aria-label="Ver el interior de ${nombre}">
+  /* forma de la portada: anillado al costado (por defecto) o arriba, vertical o apaisada */
+  const forma = (a.lomo === "arriba" ? " lomo-arriba" : "") + (ratioDe(a) > 1 ? " apaisada" : "");
+  const portadaBtn = `<button class="pl-agenda-btn${forma}" type="button" data-ag="${a.id}" aria-label="Ver el interior de ${nombre}">
         <span class="pl-cantos" aria-hidden="true"></span>
         <img class="pl-agenda-portada" src="${src(agImg.portada(a, 0))}" alt="Portada de ${nombre}" loading="lazy">
       </button>`;
   art.innerHTML = `
     <div class="pl-arte">
-      ${varias ? `<div class="pl-portada-marco">
+      ${varias ? `<div class="pl-portada-marco${forma}">
         ${portadaBtn}
         <button class="pl-foto-flecha ant" type="button" data-paso="-1" aria-label="Portada anterior">${FLECHA(-1)}</button>
         <button class="pl-foto-flecha sig" type="button" data-paso="1" aria-label="Portada siguiente">${FLECHA(1)}</button>
@@ -530,9 +524,8 @@ function tarjetaAgenda(a){
   return art;
 }
 
-/* las agendas van antes del Planner Semanal; luego se numeran todas las tarjetas del panel */
-const semanalArt = $("plSemanal");
-AGENDAS.forEach(a => semanalArt.before(tarjetaAgenda(a)));
+/* todas las tarjetas del panel se arman desde AGENDAS y se numeran en orden */
+AGENDAS.forEach(a => $("plPanel").append(tarjetaAgenda(a)));
 document.querySelectorAll("#plPanel > .prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
 
 /* ---- visor compartido de las agendas ---- */
@@ -547,7 +540,7 @@ const visorAgenda = visor(visorAgEl, {
   arma(){
     const a = agActual, k = agSel.get(a.id) || 0, c = a.portadas[k];
     const per = agPerso.get(a.id) || {}, propia = per.activo && per.url;   /* portada personalizada: contratapa lisa */
-    const P = agPags = paginasDe(a), m = P.length;
+    const P = agPags = paginasDe(a, k), m = P.length;
     const img = (p, alt) => `<img src="${src(p.src)}" alt="${esc(alt || p.t)}" draggable="false" loading="lazy">`;
     const contra = !propia && c.retiro ? img({ src: agImg.contratapa(a, k) }, "Contratapa") : "";
     const tapa = propia ? `<img src="${propia}" alt="Tu portada personalizada" draggable="false">` : `<img src="${src(agImg.portada(a, k))}" alt="Portada" draggable="false">`;
@@ -582,105 +575,61 @@ const visorAgenda = visor(visorAgEl, {
     return e.clientX > mid ? 1 : -1;
   }
 });
+/* el visor que corresponde según dónde va el anillado */
 function abreAgenda(a){
   agActual = a;
+  if (a.lomo === "arriba"){
+    $("plVisorBlocTit").textContent = "Interior " + a.nombre;
+    visorBlocEl.style.setProperty("--pag", ratioDe(a));
+    visorBlocEl.style.setProperty("--anillos", ratioDe(a) > 1 ? 20 : 13);   /* apaisado: más anillos a lo ancho */
+    visorBloc.abre();
+    return;
+  }
   $("plVisorAgendaTit").textContent = "Interior " + a.nombre;
   visorAgEl.style.setProperty("--pag", ratioDe(a));
   visorAgenda.abre();
 }
 
-/* =========================================================
-   PLANNER SEMANAL
-   ========================================================= */
-const mockup = $("plMockup");
-const grid = $("plGaleriaGrid");
-const perso = $("plPerso");
-const ayuda = $("plAyuda");
-const AYUDA = ayuda.textContent;
-const semWa = $("plSemanalWa");
-let semSel = 0;            /* portada elegida (índice) */
-let propia = null;         /* imagen subida por el cliente (object URL, solo vista previa) */
-let propiaCmyk = false;
-
-$("plPersoPrecio").textContent = `+${fmt(PRECIOS.perso)}`;
-
-const semTotal = () => PRECIOS.semanal + (perso.checked ? PRECIOS.perso : 0);
-const semPortadaTxt = () => perso.checked ? "portada personalizada" : `portada N° ${semSel + 1}`;
-function semMsg(){
-  return `Hola Heart Graphic! 💜 Quiero pedir: ${SEMANAL.nombre} con ${semPortadaTxt()}` +
-         (perso.checked ? " (te envío la imagen por aquí)" : "") + `. Total: ${fmt(semTotal())}`;
-}
-function avisa(m){ ayuda.textContent = m; ayuda.classList.add("aviso"); }
-function ayudaNormal(){ ayuda.textContent = AYUDA; ayuda.classList.remove("aviso"); }
-/* con "Personalizar" marcado no se puede pedir sin subir la imagen */
-function faltaImagen(){
-  if (!perso.checked || propia) return false;
-  avisa("Sube la imagen para tu portada antes de pedir.");
-  $("plSubir").focus();
-  return true;
-}
-
-function semPinta(){
-  const conPropia = perso.checked && !!propia;
-  $("plTotal").textContent = fmt(semTotal());
-  $("plTotalFila").hidden = !perso.checked;
-  $("plCustom").hidden = !conPropia;
-  $("plElegida").textContent = conPropia ? "Tu imagen" : `N° ${semSel + 1}`;
-  $("plElegidaImg").src = conPropia ? propia : src(SEMANAL.portadas[semSel]);
-  semWa.href = waHref(semMsg());
-}
-
-/* galería de portadas */
-SEMANAL.portadas.forEach((ruta, i) => {
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = "pl-portada";
-  b.setAttribute("aria-label", `Elegir portada ${i + 1}`);
-  b.setAttribute("aria-pressed", "false");
-  b.innerHTML = `<span class="pl-num" aria-hidden="true">${i + 1}.</span><img src="${src(ruta)}" alt="" loading="lazy" width="225" height="164">`;
-  b.addEventListener("click", () => {
-    if (perso.checked){ perso.checked = false; $("plPersoBox").hidden = true; }
-    eligePortada(i);
-    galeria.cierra();
-  });
-  grid.appendChild(b);
-});
-const galeria = dialogo($("plGaleria"), { alAbrir: () => grid.children[semSel].focus() });
-$("plVerPortadas").addEventListener("click", galeria.abre);
-
-function eligePortada(i, instantaneo){
-  semSel = i;
-  [...grid.children].forEach((t, k) => t.setAttribute("aria-pressed", String(k === i)));
-  mockup.alt = `Planner Semanal con la portada N° ${i + 1}`;
-  if (instantaneo || menosMov()) mockup.src = src(SEMANAL.mockups[i]);
-  else {
-    mockup.classList.add("fuera");
-    setTimeout(() => { mockup.src = src(SEMANAL.mockups[i]); mockup.classList.remove("fuera"); }, 220);
+/* ---- visor de las agendas con anillado arriba: las hojas giran hacia arriba ----
+   hoja 0: portada (su dorso, el cartón de la tapa); hoja i: frente = página 2i-2,
+   dorso = página 2i-1. Debajo de todo queda la contratapa (retiro). */
+const visorBlocEl = $("plVisorBloc");
+const bloc = $("plBloc");
+const visorBloc = visor(visorBlocEl, {
+  libro: bloc,
+  arma(){
+    const a = agActual, k = agSel.get(a.id) || 0, c = a.portadas[k];
+    const per = agPerso.get(a.id) || {}, propia = per.activo && per.url;
+    const P = agPags = paginasDe(a, k);
+    const img = (p, alt) => `<img src="${src(p.src)}" alt="${esc(alt || p.t)}" draggable="false" loading="lazy">`;
+    const tapa = propia ? `<img src="${propia}" alt="Tu portada personalizada" draggable="false">` : `<img src="${src(agImg.portada(a, k))}" alt="Portada" draggable="false">`;
+    const contra = !propia && c.retiro ? img({ src: agImg.contratapa(a, k) }, "Contratapa") : "";
+    const defs = [{ f: tapa, d: "", cd: "carton" }];
+    for (let i = 0; i < P.length; i += 2) defs.push({ f: img(P[i]), d: P[i + 1] ? img(P[i + 1]) : "", cd: P[i + 1] ? "" : "carton" });
+    bloc.innerHTML = `<div class="pl-base">${contra}</div>`;
+    const hojas = defs.map(x => {
+      const h = document.createElement("div");
+      h.className = "pl-bhoja";
+      h.innerHTML = hojaHTML("pl-bcara", x.f, x.d, x.cd);
+      bloc.appendChild(h);
+      return h;
+    });
+    /* anillado arriba: perforaciones rectangulares + alambre doble blanco, siempre encima */
+    bloc.insertAdjacentHTML("beforeend", '<span class="pl-anillado-h" aria-hidden="true"></span>');
+    return hojas;
+  },
+  rotulo(cur, n){
+    if (cur === 0) return "Portada";
+    if (cur === n) return "Contratapa";
+    const arriba = cur > 1 ? agPags[2 * cur - 3] : null, abajo = agPags[2 * cur - 2];
+    return [...new Set([arriba, abajo].filter(Boolean).map(p => p.t))].join(" · ");
+  },
+  alEstado: (cur, n) => { bloc.classList.toggle("cerrado", cur === 0); bloc.classList.toggle("al-final", cur === n); },
+  mitadClic(e, r, cur){
+    const mid = cur === 0 ? r.top + r.height * .25 : r.top + r.height / 2;
+    return e.clientY > mid ? 1 : -1;
   }
-  semPinta();
-}
-
-perso.addEventListener("change", () => { $("plPersoBox").hidden = !perso.checked; ayudaNormal(); semPinta(); });
-semWa.addEventListener("click", e => { if (faltaImagen()) e.preventDefault(); });
-$("plSemanalIg").addEventListener("click", () => { if (!faltaImagen()) CART.pedirIg(semMsg()); });
-$("plSemanalCarro").addEventListener("click", () => {
-  if (faltaImagen()) return;
-  const v = perso.checked ? "Portada personalizada (imagen por WhatsApp)" : `Portada N° ${semSel + 1}`;
-  CART.add(P_SEMANAL, v, 1, semTotal(), "");
 });
-
-/* ---- imagen personalizada: se proyecta en perspectiva sobre la portada del mockup ---- */
-function homografia(w, h, q){
-  const [[x0,y0],[x1,y1],[x2,y2],[x3,y3]] = q;
-  const dx1 = x1-x2, dx2 = x3-x2, dy1 = y1-y2, dy2 = y3-y2, sx = x0-x1+x2-x3, sy = y0-y1+y2-y3;
-  const det = dx1*dy2 - dx2*dy1, g = (sx*dy2 - dx2*sy)/det, hh = (dx1*sy - sx*dy1)/det;
-  const a = x1-x0+g*x1, b = x3-x0+hh*x3, d = y1-y0+g*y1, e = y3-y0+hh*y3;
-  return `matrix3d(${a/w},${d/w},0,${g/w}, ${b/h},${e/h},0,${hh/h}, 0,0,1,0, ${x0},${y0},0,1)`;
-}
-$("plWarp").style.transform = homografia(1000, 808, SEMANAL.quad);
-const escena = document.querySelector("#plCustom .pl-escena");
-new ResizeObserver(([en]) => { escena.style.transform = `scale(${en.contentRect.width / 1000})`; })
-  .observe(document.querySelector(".pl-mockup"));
 
 /* JPG en CMYK (archivos para imprenta): en pantalla se ven más oscuros */
 function jpegEsCmyk(b){
@@ -694,84 +643,6 @@ function jpegEsCmyk(b){
   }
   return false;
 }
-
-const archivo = $("plArchivo");
-$("plSubir").addEventListener("click", () => archivo.click());
-archivo.addEventListener("change", async () => {
-  const f = archivo.files[0];
-  if (!f) return;
-  if (!/^image\/(png|jpeg|webp)$/.test(f.type)){ avisa("Sube una imagen JPG, PNG o WEBP."); return; }
-  if (f.size > 15 * 1024 * 1024){ avisa("La imagen pesa más de 15 MB. Prueba con una más liviana."); return; }
-  try { propiaCmyk = jpegEsCmyk(new Uint8Array(await f.slice(0, 256 * 1024).arrayBuffer())); }
-  catch(_){ propiaCmyk = false; }
-  const url = URL.createObjectURL(f);
-  const im = new Image();
-  im.onload = () => {
-    if (propia) URL.revokeObjectURL(propia);
-    propia = url;
-    $("plWarpImg").src = url;
-    const th = $("plSubida"); th.src = url; th.hidden = false;
-    $("plQuitar").hidden = false;
-    $("plSubirTxt").textContent = "Cambiar imagen";
-    if (propiaCmyk) avisa("Tu imagen está en CMYK y en pantalla se ve más oscura. Si puedes, súbela en RGB para ver bien los colores.");
-    else if (im.naturalWidth < 1500) avisa("Tu imagen es pequeña y podría verse borrosa impresa. Si tienes una más grande, mejor.");
-    else ayudaNormal();
-    semPinta();
-  };
-  im.onerror = () => { URL.revokeObjectURL(url); avisa("No pudimos leer la imagen. Prueba con otro archivo."); };
-  im.src = url;
-});
-$("plQuitar").addEventListener("click", () => {
-  if (propia) URL.revokeObjectURL(propia);
-  propia = null;
-  archivo.value = "";
-  $("plSubida").hidden = true;
-  $("plQuitar").hidden = true;
-  $("plSubirTxt").textContent = "Subir imagen";
-  ayudaNormal();
-  semPinta();
-  $("plSubir").focus();
-});
-
-eligePortada(0, true);
-
-/* ---- visor del planner: anillado arriba, las hojas giran hacia arriba ---- */
-const bloc = $("plBlocSemanal");
-/* aro blanco con contorno gris suave */
-const ANILLA = '<svg viewBox="0 0 20 52" aria-hidden="true"><g fill="none" stroke-linecap="round"><g stroke="#a9a3ba" stroke-width="3.6"><ellipse cx="7" cy="26" rx="3.4" ry="23"/><ellipse cx="13" cy="26" rx="3.4" ry="23"/></g><g stroke="#fff" stroke-width="2"><ellipse cx="7" cy="26" rx="3.4" ry="23"/><ellipse cx="13" cy="26" rx="3.4" ry="23"/></g></g></svg>';
-const visorSemanal = visor($("plVisorSemanal"), {
-  libro: bloc,
-  arma(){
-    const portada = (perso.checked && propia) || src(SEMANAL.portadas[semSel]);
-    const defs = [{f: `<img src="${portada}" alt="Portada" draggable="false">`, d: "", cd: "carton"}];
-    for (let k = 0; k < SEMANAL.hojasVisor; k++)
-      defs.push({f: imgHTML(SEMANAL.tiro, "Planificación semanal"), d: imgHTML(SEMANAL.retiro, "Hábitos y objetivos de la semana")});
-    bloc.innerHTML = '<div class="pl-base"></div>';
-    const hojas = defs.map(x => {
-      const h = document.createElement("div");
-      h.className = "pl-bhoja";
-      h.innerHTML = hojaHTML("pl-bcara", x.f, x.d, x.cd);
-      bloc.appendChild(h);
-      return h;
-    });
-    const an = document.createElement("div");
-    an.className = "pl-anillas";
-    an.setAttribute("aria-hidden", "true");
-    [9,15,21,27,33, 67,73,79,85,91].forEach(x => {
-      an.insertAdjacentHTML("beforeend",
-        `<span class="pl-hoyo abajo" style="left:${x}%"></span><span class="pl-hoyo arriba" style="left:${x}%"></span><span class="pl-anilla" style="left:${x}%">${ANILLA}</span>`);
-    });
-    bloc.appendChild(an);
-    return hojas;
-  },
-  rotulo: (cur, n) => cur === 0 ? "Portada" : cur === 1 ? "Planificación semanal" : cur === n ? "Hábitos y objetivos" : "Hábitos · Planificación",
-  alEstado: cur => bloc.classList.toggle("cerrado", cur === 0),
-  mitadClic(e, r, cur){
-    const mid = cur === 0 ? r.top + r.height * .25 : r.top + r.height / 2;
-    return e.clientY > mid ? 1 : -1;
-  }
-});
-document.querySelectorAll('[data-pl-abre="semanal"]').forEach(b => b.addEventListener("click", visorSemanal.abre));
 
 /* entrar directo con #planners en la URL */
 if (location.hash === "#planners") irAPlanners();
