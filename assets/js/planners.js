@@ -68,7 +68,7 @@ const DOCENTE = [D, CAL(2026), CAL(2027), "Horario", "Evaluaciones", "Registro d
   "Citación de apoderados", par(MENS), par(PSEM)];
 const AGENDAS = [
   /* Atrévete: sus imágenes ya son pliegos completos (incluidas las páginas en blanco) */
-  { id: "atrevete", nombre: "Agenda Atrévete 2027", precio: 24990, tam: "B5", ratio: .6416, pliegos: true,
+  { id: "atrevete", nombre: "Agenda Atrévete 2027", precio: 14990, tam: "B5", ratio: .6416, pliegos: true,
     desc: "Agenda mes a mes con calendario, metas, control de gastos, ahorro y semana a la vista.",
     formato: "Tamaño B5 de 17,6 × 25 cm, 100 hojas (200 páginas) anilladas",
     portadas: [{ nom: "Burdeo", color: "#7d1f3a" }, { nom: "Lila", color: "#e4c3e8" }],
@@ -693,14 +693,15 @@ $("plPanel").insertAdjacentHTML("afterbegin", `<div class="pl-tamanos" role="gro
   </div>
 </div>
 <div class="pl-tarjetas"></div>`);
-/* de mayor a menor: B5, A5 y A6; dentro de cada tamaño, la columna "orden" de la planilla y luego el orden de AGENDAS */
+/* de mayor a menor tamaño (B5, A5, A6); dentro de cada tamaño, del precio más alto al más bajo
+   (sin precio al final); a igual precio, la columna "orden" de la planilla y luego el orden de AGENDAS */
 function pintaTarjetas(){
   const caja = $("plPanel").querySelector(".pl-tarjetas");
   caja.textContent = "";
   agSel.clear(); agPerso.clear();
   const pos = a => AGENDAS.indexOf(a), ord = a => Number.isFinite(a.orden) ? a.orden : 1e6;
   AGENDAS.filter(a => !a.oculto && a.portadas.length)
-    .sort((x, y) => tamDe(x).orden - tamDe(y).orden || ord(x) - ord(y) || pos(x) - pos(y))
+    .sort((x, y) => tamDe(x).orden - tamDe(y).orden || (precioDe(y) || 0) - (precioDe(x) || 0) || ord(x) - ord(y) || pos(x) - pos(y))
     .forEach(a => caja.append(tarjetaAgenda(a)));
   caja.querySelectorAll(".prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
   if (typeof observaReveals === "function") observaReveals();
