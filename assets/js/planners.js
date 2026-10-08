@@ -13,10 +13,12 @@
 const PL_IMG = "assets/productos/planners/";
 const WA_NUM = WHATSAPP;   /* TODO: confirmar el número de pedidos de planners (sin +). Hoy usa el de la tienda */
 
-/* TODO: completar con los precios reales (CLP). Cada producto tiene valor único;
-   más unidades se suman en el carrito (+/−). Los precios de cada agenda van en AGENDAS. */
+/* Precios (CLP) del catálogo de planners, siempre terminados en 990. Cada producto tiene valor único;
+   más unidades se suman en el carrito (+/−). Los precios de cada agenda van en AGENDAS (o en la planilla).
+   TODO: precios de los que no están en el catálogo (mini planners, Mis Pedidos, Escritorio, Carnet,
+   100 Citas con Amigas y con Mamá): hoy muestran "Consultar". */
 const PRECIOS = {
-  semanal: 9990,
+  semanal: 7990,
   perso:   1000     /* recargo por portada personalizada (todas las agendas) */
 };
 
@@ -46,6 +48,9 @@ const VISTAS = {
    - ratio: ancho/alto de la página (A5 ≈ .705).
    TODO: precios reales (null = "Consultar"), descripciones y cantidad de hojas. */
 const A5 = "Tamaño A5 (14,8 × 21 cm) · anillado", A6 = "Tamaño A6 (10,5 × 14,8 cm) · anillado";
+/* hojas según el catálogo de planners (Canva): 100 u 70 hojas de 106 g, anillado metálico blanco */
+const A5_100 = "Tamaño A5 (14,8 × 21 cm) · 100 hojas de 106 g · anillado metálico blanco";
+const A5_70 = "Tamaño A5 (14,8 × 21 cm) · 70 hojas de 106 g · anillado metálico blanco";
 const D = "Datos personales", CAL = a => "Calendario " + a, NOTAS = "Notas", GASTOS = "Control de gastos";
 const SEM = "Semana a la vista", DIA = "Planificación diaria", PSEM = "Planificación semanal", MENS = "Planificación mensual";
 const par = (t, n, m) => ({ t, n, m, par: true }), pg = (n, t) => ({ t, n });
@@ -68,45 +73,45 @@ const AGENDAS = [
     formato: "Tamaño B5 de 17,6 × 25 cm, 100 hojas (200 páginas) anilladas",
     portadas: [{ nom: "Burdeo", color: "#7d1f3a" }, { nom: "Lila", color: "#e4c3e8" }],
     paginas: ATREVETE_PLIEGOS.flatMap(t => [t, t]) },
-  { id: "mi-planner", nombre: "Mi Planner", precio: null, interiorPorPortada: true, formato: A5,
+  { id: "mi-planner", nombre: "Mi Planner", precio: 11990, interiorPorPortada: true, formato: A5_100,
     desc: "Planner con datos personales, calendario, semana a la vista y hábitos. Elige entre 3 diseños.",
     portadas: [1, 2, 3].map(n => ({ nom: "Diseño " + n, retiro: true })),
     paginas: [D, CAL(2026), par(MENS, 5), pg(7, "Mis hábitos"), par(SEM, 3), pg(8, NOTAS)] },
-  { id: "brilla", nombre: "Planner Brilla", precio: null, interiorPorPortada: true, formato: A5,
+  { id: "brilla", nombre: "Planner Brilla", precio: 11990, interiorPorPortada: true, formato: A5_100,
     desc: "Planner con calendarios 2026-2027, planificación mensual, gastos, hábitos y semana a la vista. Elige entre 2 portadas.",
     portadas: [{ nom: "Levántate & Brilla", retiro: true }, { nom: "Brilla como si todo el Universo fuera tuyo", retiro: true }],
     paginas: [D, CAL(2026), CAL(2027), par(MENS, 6), pg(9, GASTOS), pg(8, "Mis hábitos"), par(PSEM, 4), pg(10, NOTAS)] },
   /* Planner Docente: dos modelos distintos (Héroes, y Morado/Rosado con el mismo interior) */
-  { id: "docente-heroes", nombre: "Planner Docente · Héroes", precio: null, formato: A5,
+  { id: "docente-heroes", nombre: "Planner Docente · Héroes", precio: 11990, formato: A5_100,
     desc: "Planner para profes: horario, evaluaciones y planificación semanal.",
     portadas: [{ nom: "Héroes", retiro: true }], paginas: [D, "Horario", "Evaluaciones", par(PSEM)] },
-  { id: "docente", nombre: "Planner Docente", precio: null, interiorPorPortada: true, formato: A5,
+  { id: "docente", nombre: "Planner Docente", precio: 11990, interiorPorPortada: true, formato: A5_100,
     desc: "Planner para profes con calendarios 2026-2027, horario, evaluaciones y apoderados. Elige entre 2 diseños.",
     portadas: [{ nom: "Enseñar es Inspirar", retiro: true }, { nom: "Gran Corazón", retiro: true }],
     paginas: DOCENTE },
-  { id: "universitario", nombre: "Planner Universitario", precio: null, desc: "Planner para la U con calendario 2027. Elige entre 6 portadas.", formato: A5,
+  { id: "universitario", nombre: "Planner Universitario", precio: 11990, desc: "Planner para la U con calendario 2027. Elige entre 6 portadas.", formato: A5_100,
     portadas: [1, 2, 3, 4, 5, 6].map(n => ({ nom: "N° " + n, retiro: n !== 5 })),   /* la 5 no trae contratapa */
     paginas: [D, CAL(2027), "Calendarios", "Calendarios", "Fechas importantes", "Horario", "Información académica",
       "Semana de pruebas", DIA, PSEM] },
-  { id: "diario", nombre: "Planner Diario", precio: null, interiorPorPortada: true, formato: A5,
+  { id: "diario", nombre: "Planner Diario", precio: 11990, interiorPorPortada: true, formato: A5_100,
     desc: "Un día por página para planificar con calma, con cumpleaños, hábitos y mes a mes. Elige entre 3 diseños.",
     portadas: [1, 2, 3].map(n => ({ nom: "Diseño " + n, retiro: true })),
     paginas: [D, pg(3, "Cumpleaños importantes"), "Cumpleaños importantes", "Cumpleaños importantes", pg(7, "Números de teléfono"),
       par(MENS, 8), pg(6, "Hábitos"), pg(2, DIA)] },
-  { id: "diario-arriba", nombre: "Planner Diario · Anillado arriba", precio: null, lomo: "arriba", interiorPorPortada: true, formato: A5,
+  { id: "diario-arriba", nombre: "Planner Diario · Anillado arriba", precio: 7990, lomo: "arriba", interiorPorPortada: true, formato: A5_70,
     desc: "Un día por página, con el anillado arriba. Elige entre 5 diseños.",
     portadas: [1, 2, 3, 4, 5].map(n => ({ nom: "Diseño " + n, retiro: true })), paginas: [DIA], repetir: 4 },
-  { id: "semanal-diario", nombre: "Planner Semanal Diario", precio: null, interiorPorPortada: true, formato: A5,
+  { id: "semanal-diario", nombre: "Planner Semanal Diario", precio: 11990, interiorPorPortada: true, formato: A5_100,
     desc: "Planificación semanal y diaria con calendario. Elige entre 2 diseños.",
     portadas: [
       { nom: "Potencial", retiro: true, paginas: [D, CAL(2026), par(MENS, 6), pg(8, GASTOS), pg(3, PSEM), par(DIA, 4)] },
       { nom: "Buen Día", retiro: true, paginas: [D, CAL(2026), CAL(2027), par(MENS, 7), pg(9, GASTOS), pg(4, PSEM), par(DIA, 5)] }] },
-  { id: "suena", nombre: "Planner Sueña en Grande", precio: null, interiorPorPortada: true, formato: A5,
+  { id: "suena", nombre: "Planner Sueña en Grande", precio: 11990, interiorPorPortada: true, formato: A5_100,
     desc: "Planner tipo cuaderno con calendario y planificación mensual. Elige entre 2 diseños.",
     portadas: [
       { nom: "Azul", retiro: true, paginas: [D, CAL(2026), par(MENS, 4), pg(3, NOTAS)] },
       { nom: "Atardecer", retiro: true, paginas: [D, CAL(2026), CAL(2027), par(MENS, 5), pg(4, NOTAS)] }] },
-  { id: "gratitud", nombre: "Diario de Gratitud", precio: null, desc: "Diario para agradecer cada día. Elige entre 2 portadas.", formato: A5,
+  { id: "gratitud", nombre: "Diario de Gratitud", precio: 11990, desc: "Diario para agradecer cada día. Elige entre 2 portadas.", formato: A5_100,
     portadas: [{ nom: "Noche", retiro: true }, { nom: "Rosa", retiro: true }],
     paginas: [D, CAL(2026), "Querido Universo", "Mapa de sueños", "Un momento para mí"] },
   /* Mini Planner Diario: la imagen 2 son los datos personales y la 1 el día */
@@ -114,13 +119,13 @@ const AGENDAS = [
     portadas: portadasN(5), paginas: [pg(2, D), pg(1, DIA), pg(1, DIA), pg(1, DIA)] },
   { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: null, tam: "A6", ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
     portadas: portadasN(4), paginas: ["Hojas de líneas"], repetir: 4 },
-  { id: "gastos", nombre: "Planner Control de Gastos", precio: null, formato: A5,
+  { id: "gastos", nombre: "Planner Control de Gastos", precio: 11990, formato: A5_100,
     desc: "“Planificarme es mi superpoder”: ingresos, gastos fijos, gastos hormiga, ahorros y balance del mes. Elige entre 2 portadas.",
     portadas: [{ nom: "Turquesa", retiro: true }, { nom: "Coral", retiro: true }],
     paginas: [D, CAL(2025), CAL(2026), "Mi mes", "Ingresos y gastos fijos", par("Gastos hormiga"), "Mis ahorros",
       "Balance mensual", "Notas y observaciones"] },
   /* ---- 100 Citas: álbum de citas con reglas al inicio (el modelo con nombres de una pareja queda fuera) ---- */
-  { id: "citas-juntos", nombre: "100 Citas Juntos", precio: null, formato: A5,
+  { id: "citas-juntos", nombre: "100 Citas Juntos", precio: 9990, formato: A5_70,
     desc: "Álbum de 100 citas para vivir en pareja: reglas, una página por cita con fotos, lugar, fecha y cómo se sintieron. Elige entre 3 portadas.",
     portadas: [{ nom: "Celeste", retiro: true }, { nom: "Lila", retiro: true }, { nom: "Gatitos", retiro: true }],
     paginas: ["Reglas", pg(2, ""), ...citas(3, 8), pg(11, "¡Felicidades!")] },
@@ -144,7 +149,7 @@ const AGENDAS = [
     /* gato verde y perro y gato: cada sección es un pliego, su portadilla a la izquierda y el registro a la derecha */
     paginas: ["Datos de la mascota", par("Vacunación"), par("Desparasitación"), par("Observaciones"), par("Otros controles"),
       par("Aseo de la mascota")] },
-  { id: "recetas", nombre: "Agenda Mis Recetas", precio: null, lomo: "arriba", interiorPorPortada: true, formato: A5,
+  { id: "recetas", nombre: "Agenda Mis Recetas", precio: 7990, lomo: "arriba", interiorPorPortada: true, formato: A5_70,
     desc: "Recetario para guardar tus recetas favoritas: ingredientes, tiempo, porciones y preparación. Elige entre 4 portadas.",
     portadas: [{ nom: "Girasoles", retiro: true }, { nom: "Mármol azul", retiro: true }, { nom: "Rosa", retiro: true },
       { nom: "Favoritas", retiro: true }],
@@ -170,7 +175,7 @@ const AGENDAS = [
      (pagina-K-01 = tiro: planificación semanal, pagina-K-02 = retiro: hábitos) */
   { id: "semanal", nombre: "Planner Semanal", precio: PRECIOS.semanal, lomo: "arriba", ratio: 1.42, interiorPorPortada: true,
     desc: "Organiza tu semana a la vista. Elige entre 11 diseños: cada uno con su interior a juego.",
-    formato: "Tamaño A5 apaisado (21 × 14,8 cm) · anillado",   /* TODO: cantidad de hojas real */
+    formato: "Tamaño A5 apaisado (21 × 14,8 cm) · 70 hojas de 106 g · anillado metálico blanco",
     portadas: portadasN(11), paginas: ["Planificación semanal", "Hábitos y objetivos"], repetir: 3 }
 ];
 /* número de archivo de cada portada: no cambia aunque la planilla oculte o agregue portadas */
@@ -231,7 +236,9 @@ const src = (ruta, ancho = 900) => /^(https?:|blob:|data:)/.test(ruta)
   ? (typeof cld === "function" ? cld(ruta, ancho) : ruta)
   : PL_IMG + ruta;
 /* precio final con el descuento de la planilla (null = "Consultar") */
-const precioDe = a => a.precio ? Math.round(a.precio * (1 - (a.dcto || 0) / 100)) : null;
+/* los precios siempre terminan en 990 ($12.000 → $11.990): se redondea al mil más cercano y se restan 10 */
+const a990 = n => n >= 1000 ? Math.round(n / 1000) * 1000 - 10 : n;
+const precioDe = a => a.precio ? a990(a.precio * (1 - (a.dcto || 0) / 100)) : null;
 const menosMov = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const waHref = msg => `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
 const FOCO = 'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]):not([hidden]),[tabindex]:not([tabindex="-1"])';
@@ -530,7 +537,7 @@ function tarjetaAgenda(a){
       <div class="pl-cab"><span class="badge">planner</span>${tamHTML(a)}</div>
       <h3>${nombre}</h3>
       <p class="desc">${esc(a.desc)}</p>
-      <div class="pl-precio"><span>Valor único${a.precio && a.dcto ? ` <em class="pl-dcto">-${a.dcto}%</em>` : ""}</span><span class="pl-precio-val">${a.precio && a.dcto ? `<s>${fmt(a.precio)}</s>` : ""}<b>${a.precio ? fmt(precioDe(a)) : "Consultar"}</b></span></div>
+      <div class="pl-precio"><span>Valor único${a.precio && a.dcto ? ` <em class="pl-dcto">-${a.dcto}%</em>` : ""}</span><span class="pl-precio-val">${a.precio && a.dcto ? `<s>${fmt(a990(a.precio))}</s>` : ""}<b>${a.precio ? fmt(precioDe(a)) : "Consultar"}</b></span></div>
       ${elegir}
       <div class="pl-perso">
         <label class="fila pl-op pl-op-check"><input class="pl-oculto pl-perso-chk" type="checkbox"><span class="chk" aria-hidden="true"></span><span class="un">Personaliza tu portada</span><span class="pr">+${fmt(PRECIOS.perso)}</span></label>
