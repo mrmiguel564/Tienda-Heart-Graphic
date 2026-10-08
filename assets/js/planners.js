@@ -353,18 +353,35 @@ function tarjetaAgenda(a){
   art.className = "prod pl-prod reveal";
   art.id = "ag-" + a.id;
   const nombre = esc(a.nombre);
-  const elegir = a.portadas.length > 1
-    ? `<span class="pl-lab">Elige la portada</span>
-       <div class="pl-portadas-ag" role="radiogroup" aria-label="Portada de ${nombre}">
-         ${a.portadas.map((p, k) => `<label class="pl-pt"><input class="pl-oculto" type="radio" name="ag-${a.id}" value="${k}"${k ? "" : " checked"}><img src="${src(agImg.mini(a, k))}" alt="" width="160" height="${Math.round(160 / ratioDe(a))}" loading="lazy"><span>${esc(p.nom)}</span></label>`).join("")}
+  const varias = a.portadas.length > 1, total = a.portadas.length;
+  const FLECHA = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d < 0 ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"}"/></svg>`;
+  /* varias portadas: fila compacta de miniaturas con flechas en la tarjeta… */
+  const elegir = varias
+    ? `<div class="pl-pt-cab"><span class="pl-lab">Portada</span><span class="pl-pt-cuenta" aria-live="polite"></span></div>
+       <div class="pl-pt-fila">
+         <button class="pl-pt-flecha" type="button" data-dir="-1" aria-label="Ver portadas anteriores">${FLECHA(-1)}</button>
+         <div class="pl-pt-pista" role="radiogroup" aria-label="Portada de ${nombre}">
+           ${a.portadas.map((p, k) => `<label class="pl-pt" title="${esc(p.nom)}"><input class="pl-oculto" type="radio" name="ag-${a.id}" value="${k}" aria-label="Portada ${esc(p.nom)}"${k ? "" : " checked"}><img src="${src(agImg.mini(a, k))}" alt="" width="160" height="${Math.round(160 / ratioDe(a))}" loading="lazy"></label>`).join("")}
+         </div>
+         <button class="pl-pt-flecha" type="button" data-dir="1" aria-label="Ver más portadas">${FLECHA(1)}</button>
        </div>`
     : "";
-  art.innerHTML = `
-    <div class="pl-arte">
-      <button class="pl-agenda-btn" type="button" data-ag="${a.id}" aria-label="Ver el interior de ${nombre}">
+  /* …y flechas + puntos sobre la portada grande */
+  const portadaBtn = `<button class="pl-agenda-btn" type="button" data-ag="${a.id}" aria-label="Ver el interior de ${nombre}">
         <span class="pl-cantos" aria-hidden="true"></span>
         <img class="pl-agenda-portada" src="${src(agImg.portada(a, 0))}" alt="Portada de ${nombre}" loading="lazy">
-      </button>
+      </button>`;
+  art.innerHTML = `
+    <div class="pl-arte">
+      ${varias ? `<div class="pl-portada-marco">
+        ${portadaBtn}
+        <button class="pl-foto-flecha ant" type="button" data-paso="-1" aria-label="Portada anterior">${FLECHA(-1)}</button>
+        <button class="pl-foto-flecha sig" type="button" data-paso="1" aria-label="Portada siguiente">${FLECHA(1)}</button>
+      </div>
+      <div class="pl-puntos" aria-hidden="true">
+        ${a.portadas.map((p, k) => `<button class="pl-punto" type="button" tabindex="-1" data-k="${k}"></button>`).join("")}
+        <span class="pl-puntos-n"></span>
+      </div>` : portadaBtn}
       <button class="ver-mas" type="button" data-ag="${a.id}">${LIBRO_SVG} Ve el interior</button>
     </div>
     <div class="tarjeta">
@@ -387,18 +404,48 @@ function tarjetaAgenda(a){
 
   const portada = art.querySelector(".pl-agenda-portada");
   const wa = art.querySelector(".pedir:not(.pedir-ig)");
-  const pinta = () => {
-    const k = agSel.get(a.id) || 0;
-    portada.src = src(agImg.portada(a, k));
-    portada.alt = `Portada ${a.portadas.length > 1 ? a.portadas[k].nom + " " : ""}de ${a.nombre}`;
-    wa.href = waHref(agMsg(a));
+  const radios = [...art.querySelectorAll(`input[name="ag-${a.id}"]`)];
+  const pista = art.querySelector(".pl-pt-pista");
+  const flechasFila = [...art.querySelectorAll(".pl-pt-flecha")];
+  /* flechas de la fila: se apagan en los extremos y se ocultan si caben todas */
+  const pintaFlechas = () => {
+    if (!pista) return;
+    const sobra = pista.scrollWidth - pista.clientWidth;
+    flechasFila.forEach(f => {
+      f.hidden = sobra <= 2;
+      f.disabled = f.dataset.dir < 0 ? pista.scrollLeft <= 2 : pista.scrollLeft >= sobra - 2;
+    });
   };
-  art.querySelectorAll(`input[name="ag-${a.id}"]`).forEach(r => r.addEventListener("change", () => { agSel.set(a.id, +r.value); pinta(); }));
+  const pinta = () => {
+    const k = agSel.get(a.id) || 0, nom = a.portadas[k].nom;
+    portada.src = src(agImg.portada(a, k));
+    portada.alt = `Portada ${varias ? nom + " " : ""}de ${a.nombre}`;
+    wa.href = waHref(agMsg(a));
+    if (!varias) return;
+    radios[k].checked = true;
+    art.querySelector(".pl-pt-cuenta").textContent = (/^N°/.test(nom) ? "" : nom + " · ") + `N° ${k + 1} de ${total}`;
+    art.querySelectorAll(".pl-punto").forEach((p, i) => p.classList.toggle("on", i === k));
+    art.querySelector(".pl-puntos-n").textContent = `${k + 1} / ${total}`;
+    /* la miniatura elegida siempre queda a la vista en la fila */
+    const pt = radios[k].closest(".pl-pt");
+    const izq = pt.offsetLeft - pista.offsetLeft, der = izq + pt.offsetWidth;
+    if (izq < pista.scrollLeft) pista.scrollTo({ left: izq - 4, behavior: menosMov() ? "auto" : "smooth" });
+    else if (der > pista.scrollLeft + pista.clientWidth) pista.scrollTo({ left: der - pista.clientWidth + 4, behavior: menosMov() ? "auto" : "smooth" });
+  };
+  const elige = k => { agSel.set(a.id, (k + total) % total); pinta(); };
+  radios.forEach(r => r.addEventListener("change", () => elige(+r.value)));
+  art.querySelectorAll(".pl-foto-flecha").forEach(b => b.addEventListener("click", () => elige((agSel.get(a.id) || 0) + +b.dataset.paso)));
+  art.querySelectorAll(".pl-punto").forEach(b => b.addEventListener("click", () => elige(+b.dataset.k)));
+  flechasFila.forEach(f => f.addEventListener("click", () => pista.scrollBy({ left: f.dataset.dir * 104, behavior: menosMov() ? "auto" : "smooth" })));
+  if (pista){
+    pista.addEventListener("scroll", pintaFlechas, { passive: true });
+    new ResizeObserver(pintaFlechas).observe(pista);
+  }
   art.querySelector(".pedir-ig").addEventListener("click", () => CART.pedirIg(agMsg(a)));
   const carro = art.querySelector(".add-cart");
   if (carro) carro.addEventListener("click", () => {
     const k = agSel.get(a.id) || 0;
-    CART.add(pCarro(a), a.portadas.length > 1 ? `Portada ${a.portadas[k].nom}` : "Valor único", 1, a.precio, "");
+    CART.add(pCarro(a), varias ? `Portada ${a.portadas[k].nom}` : "Valor único", 1, a.precio, "");
   });
   art.querySelectorAll("[data-ag]").forEach(b => b.addEventListener("click", () => abreAgenda(a)));
   pinta();
