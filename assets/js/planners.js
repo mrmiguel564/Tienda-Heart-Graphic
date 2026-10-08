@@ -45,7 +45,7 @@ const VISTAS = {
      y hábitos; después la planificación semanal o diaria; al final notas y hojas libres.
    - ratio: ancho/alto de la página (A5 ≈ .705).
    TODO: precios reales (null = "Consultar"), descripciones y cantidad de hojas. */
-const A5 = "Tamaño A5 (14,8 × 21 cm) · anillado", A6 = "Tamaño A6 (10,5 × 14,8 cm) · anillado", B5 = "Tamaño B5 (17,6 × 25 cm) · anillado";
+const A5 = "Tamaño A5 (14,8 × 21 cm) · anillado", A6 = "Tamaño A6 (10,5 × 14,8 cm) · anillado";
 const D = "Datos personales", CAL = a => "Calendario " + a, NOTAS = "Notas", GASTOS = "Control de gastos";
 const SEM = "Semana a la vista", DIA = "Planificación diaria", PSEM = "Planificación semanal", MENS = "Planificación mensual";
 const par = (t, n, m) => ({ t, n, m, par: true }), pg = (n, t) => ({ t, n });
@@ -102,11 +102,6 @@ const AGENDAS = [
     portadas: [
       { nom: "Azul", retiro: true, paginas: [D, CAL(2026), par(MENS, 4), pg(3, NOTAS)] },
       { nom: "Atardecer", retiro: true, paginas: [D, CAL(2026), CAL(2027), par(MENS, 5), pg(4, NOTAS)] }] },
-  /* XL: en los archivos, los datos personales y el calendario van al final */
-  { id: "xl", nombre: "Planner XL", precio: null, ratio: .704, desc: "Formato grande para planificar con espacio de sobra.", formato: B5,
-    portadas: [{ nom: "La meta", retiro: true }],
-    paginas: [pg(11, D), pg(10, CAL(2026)), pg(3, "Mapa de los sueños"), par(MENS, 4), pg(6, GASTOS), par(SEM, 1),
-      pg(7, "Momentos especiales"), "Un momento para mí", "Mis apuntes"] },
   { id: "gratitud", nombre: "Diario de Gratitud", precio: null, desc: "Diario para agradecer cada día. Elige entre 2 portadas.", formato: A5,
     portadas: [{ nom: "Noche", retiro: true }, { nom: "Rosa", retiro: true }],
     paginas: [D, CAL(2026), "Querido Universo", "Mapa de sueños", "Un momento para mí"] },
