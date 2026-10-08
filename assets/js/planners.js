@@ -15,8 +15,8 @@ const WA_NUM = WHATSAPP;   /* TODO: confirmar el número de pedidos de planners 
 
 /* Precios (CLP) del catálogo de planners, siempre terminados en 990. Cada producto tiene valor único;
    más unidades se suman en el carrito (+/−). Los precios de cada agenda van en AGENDAS (o en la planilla).
-   TODO: precios de los que no están en el catálogo (mini planners, Mis Pedidos, Escritorio, Carnet,
-   100 Citas con Amigas y con Mamá): hoy muestran "Consultar". */
+   Los que no están en el catálogo los dio la tienda: A6 $5.990 (Escritorio $6.990), Carnet de Control,
+   Docente · Héroes y 100 Citas $9.990. */
 const PRECIOS = {
   semanal: 7990,
   perso:   1000     /* recargo por portada personalizada (todas las agendas) */
@@ -82,7 +82,7 @@ const AGENDAS = [
     portadas: [{ nom: "Levántate & Brilla", retiro: true }, { nom: "Brilla como si todo el Universo fuera tuyo", retiro: true }],
     paginas: [D, CAL(2026), CAL(2027), par(MENS, 6), pg(9, GASTOS), pg(8, "Mis hábitos"), par(PSEM, 4), pg(10, NOTAS)] },
   /* Planner Docente: dos modelos distintos (Héroes, y Morado/Rosado con el mismo interior) */
-  { id: "docente-heroes", nombre: "Planner Docente · Héroes", precio: 11990, formato: A5_100,
+  { id: "docente-heroes", nombre: "Planner Docente · Héroes", precio: 9990, formato: A5,
     desc: "Planner para profes: horario, evaluaciones y planificación semanal.",
     portadas: [{ nom: "Héroes", retiro: true }], paginas: [D, "Horario", "Evaluaciones", par(PSEM)] },
   { id: "docente", nombre: "Planner Docente", precio: 11990, interiorPorPortada: true, formato: A5_100,
@@ -115,9 +115,9 @@ const AGENDAS = [
     portadas: [{ nom: "Noche", retiro: true }, { nom: "Rosa", retiro: true }],
     paginas: [D, CAL(2026), "Querido Universo", "Mapa de sueños", "Un momento para mí"] },
   /* Mini Planner Diario: la imagen 2 son los datos personales y la 1 el día */
-  { id: "mini-diario", nombre: "Mini Planner Diario", precio: null, tam: "A6", ratio: .709, desc: "Planner diario de bolsillo. Elige entre 5 portadas.", formato: A6,
+  { id: "mini-diario", nombre: "Mini Planner Diario", precio: 5990, tam: "A6", ratio: .709, desc: "Planner diario de bolsillo. Elige entre 5 portadas.", formato: A6,
     portadas: portadasN(5), paginas: [pg(2, D), pg(1, DIA), pg(1, DIA), pg(1, DIA)] },
-  { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: null, tam: "A6", ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
+  { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: 5990, tam: "A6", ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
     portadas: portadasN(4), paginas: ["Hojas de líneas"], repetir: 4 },
   { id: "gastos", nombre: "Planner Control de Gastos", precio: 11990, formato: A5_100,
     desc: "“Planificarme es mi superpoder”: ingresos, gastos fijos, gastos hormiga, ahorros y balance del mes. Elige entre 2 portadas.",
@@ -129,17 +129,17 @@ const AGENDAS = [
     desc: "Álbum de 100 citas para vivir en pareja: reglas, una página por cita con fotos, lugar, fecha y cómo se sintieron. Elige entre 3 portadas.",
     portadas: [{ nom: "Celeste", retiro: true }, { nom: "Lila", retiro: true }, { nom: "Gatitos", retiro: true }],
     paginas: ["Reglas", pg(2, ""), ...citas(3, 8), pg(11, "¡Felicidades!")] },
-  { id: "citas-amigas", nombre: "100 Citas con Amigas", precio: null, formato: A5,
+  { id: "citas-amigas", nombre: "100 Citas con Amigas", precio: 9990, formato: A5,
     desc: "Álbum de citas para vivir con tus amigas: reglas, una página por cita con fotos y recuerdos. Elige entre 2 portadas.",
     portadas: [{ nom: "Amigas", retiro: true }, { nom: "Amigas con flores", retiro: true }],
     paginas: ["Reglas", pg(2, ""), ...citas(3, 8), pg(11, "¡Felicidades!")] },
   /* Mamá: la imagen 1 es el interior de la portada; la 4 es una hoja en blanco decorada */
-  { id: "citas-mama", nombre: "100 Citas con Mamá", precio: null, formato: A5, tapaInterior: 1,
+  { id: "citas-mama", nombre: "100 Citas con Mamá", precio: 9990, formato: A5, tapaInterior: 1,
     desc: "Álbum de 100 citas para compartir con mamá: carta, compromiso y una página por cita con foto.",
     portadas: [{ nom: "Flores", retiro: true }],
     paginas: [pg(2, "Carta para mamá"), pg(4, ""), pg(3, "Nuestro compromiso"), pg(4, ""), ...citas(5, 8)] },
   /* ---- control veterinario: 3 gatos y un perro y gato, cada uno con su interior ---- */
-  { id: "control-vet", nombre: "Carnet de Control Veterinario", precio: null, ratio: .66, interiorPorPortada: true, formato: A5,
+  { id: "control-vet", nombre: "Carnet de Control Veterinario", precio: 9990, ratio: .66, interiorPorPortada: true, formato: A5,
     desc: "Agenda de control para tu gato o perro: datos, vacunas, desparasitación, controles y aseo. Elige entre 4 portadas.",
     portadas: [
       { nom: "Gato negro", color: "#ef5b4c", paginas: [hoja1(1, "Datos de la mascota"), "Registro de vacunación", "Registro de desparasitación", "Observaciones", "Otros controles", "Aseo de la mascota"] },
@@ -157,17 +157,17 @@ const AGENDAS = [
   /* ---- anillado arriba ---- */
   /* Mini Planner Semanal: 5 portadas y 3 juegos de hojas (1 celeste y rosa, 2 lila, 3 rosa).
      TODO: confirmar qué juego de hojas va con cada portada (interior = número de juego) */
-  { id: "mini-semanal", nombre: "Mini Planner Semanal", precio: null, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
+  { id: "mini-semanal", nombre: "Mini Planner Semanal", precio: 5990, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Planner semanal de bolsillo con calendario y planificación mensual. Elige entre 5 portadas.",
     portadas: [{ nom: "Tú puedes", retiro: true, interior: 1 },
       { nom: "Sigue tus sueños", retiro: true, interior: 3 }, { nom: "Un día a la vez", retiro: true, interior: 2 },
       { nom: "Yo soy capaz", retiro: true, interior: 3 }, { nom: "Si puedes creerlo", retiro: true, interior: 2 }],
     paginas: [D, CAL(2024), CAL(2025), pg(9, MENS), pg(7, PSEM), PSEM, pg(6, "Hojas de puntos")] },
-  { id: "mis-pedidos", nombre: "Agenda Mis Pedidos", precio: null, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
+  { id: "mis-pedidos", nombre: "Agenda Mis Pedidos", precio: 5990, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Para emprendedoras: registra cada pedido con cliente, productos, pago y entrega. Elige entre 2 portadas.",
     portadas: [{ nom: "Rosado", retiro: true }, { nom: "Verde", retiro: true }],
     paginas: [D, CAL(2024), CAL(2025), "Registro de pedido", pg(4, "Registro de pedido"), pg(4, "Registro de pedido")] },
-  { id: "mini-escritorio", nombre: "Mini Planner de Escritorio", precio: null, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
+  { id: "mini-escritorio", nombre: "Mini Planner de Escritorio", precio: 6990, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "“Pequeños planes, grandes logros”: pendientes del día y calendario. Elige entre 3 diseños.",
     portadas: [{ nom: "Celeste", color: "#cfe0f3" }, { nom: "Rosa y morado", color: "#f6cfe0" }, { nom: "Verde", color: "#d7ebc6" }],
     paginas: [D, CAL(2025), CAL(2026), "Pendientes de hoy", pg(4, "Pendientes de hoy"), pg(4, "Pendientes de hoy")] },

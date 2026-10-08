@@ -111,7 +111,7 @@ Pestaña del Catálogo: bajo el título hay un switch **Catálogo / Planner** (c
 
 **Imágenes (temporal):** se sirven desde `assets/productos/planners/` (`agendas/<id>/` con `portada-N.jpg`, `portada-N-mini.jpg`, `contratapa-N.jpg` y `pagina-NN.jpg` en orden de lectura, copiadas y achicadas desde las carpetas de diseño (PLANNERS, 100 CITAS, 100 Citas con AMIGAS, 100 Citas con mamá, AGENDA DE CONTROL VET y AGENDA de Recetas); con `interiorPorPortada` las páginas son `pagina-K-NN.jpg`, una serie por portada). Cuando se migren a un servicio externo, basta con cambiar `PL_IMG` o las rutas de la configuración.
 
-**Precios:** salen del catálogo de planners (Canva) y siempre terminan en 990 ($12.000 → $11.990); la web aplica esa regla también a lo que venga de la planilla y a los descuentos (`a990` en `planners.js`). Quedan con **TODO** (muestran "Consultar"): mini planners, Mis Pedidos, Escritorio, Carnet de Control y 100 Citas con Amigas y con Mamá. Las páginas de la Atrévete se recortaron en el lomo para quitar el anillado redondo que traían dibujado.
+**Precios:** salen del catálogo de planners (Canva) y siempre terminan en 990 ($12.000 → $11.990); la web aplica esa regla también a lo que venga de la planilla y a los descuentos (`a990` en `planners.js`). Los que no están en el catálogo: A6 $5.990 (Mini Planner de Escritorio $6.990), Carnet de Control Veterinario, Planner Docente · Héroes y 100 Citas con Amigas y con Mamá $9.990. Las páginas de la Atrévete se recortaron en el lomo para quitar el anillado redondo que traían dibujado.
 
 ### Planners en Google Sheets
 
