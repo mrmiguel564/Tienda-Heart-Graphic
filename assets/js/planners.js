@@ -53,7 +53,8 @@ const par = (t, n, m) => ({ t, n, m, par: true }), pg = (n, t) => ({ t, n });
 const hoja1 = (n, t) => ({ t, n, blanco: true });
 const citas = (desde, n) => Array.from({length: n}, (_, i) => pg(desde + i, "Cita " + (i + 1)));
 /* tamaños: la tarjeta muestra el tamaño y el catálogo va de mayor a menor (tam: "B5" | "A5" | "A6"; por defecto A5) */
-const TAMANOS = { B5: { cm: ["17,6", "25"], orden: 0 }, A5: { cm: ["14,8", "21"], orden: 1 }, A6: { cm: ["10,5", "14,8"], orden: 2 } };
+const TAMANOS = { B5: { cm: ["17,6", "25"], orden: 0, nombre: "Grande" }, A5: { cm: ["14,8", "21"], orden: 1, nombre: "Mediana" },
+  A6: { cm: ["10,5", "14,8"], orden: 2, nombre: "De bolsillo" } };
 const ATREVETE_PLIEGOS = ["Datos personales","Calendarios","Calendario 2028 y feriados","Planificación anual",
   "Metas y mi año en colores","Cumpleaños","Planificación mensual","Control de gastos y ahorro",
   "Notas","Semana a la vista","Semana a la vista","Mis lecturas","Lista de deseos","Notas"];
@@ -443,9 +444,14 @@ const ratioDe = a => a.ratio || .705;
 /* tamaño de la agenda: "A5 · 14,8 × 21 cm" (en las apaisadas, el ancho va primero) */
 const tamDe = a => {
   const t = TAMANOS[a.tam] ? a.tam : "A5", c = TAMANOS[t].cm, cm = ratioDe(a) > 1 ? [c[1], c[0]] : c;
-  return { t, cm: cm.join(" × ") + " cm", orden: TAMANOS[t].orden };
+  return { t, cm: cm.join(" × ") + " cm", w: parseFloat(cm[0].replace(",", ".")), h: parseFloat(cm[1].replace(",", ".")), orden: TAMANOS[t].orden };
 };
-const REGLA_SVG = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="19" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></g></svg>';
+/* hoja dibujada a escala (px por cm); cada tamaño tiene su color (clase pl-tam-B5/A5/A6) */
+const hojaEscala = (w, h, px) => `<i style="width:${Math.round(w * px)}px;height:${Math.round(h * px)}px"></i>`;
+const tamHTML = a => {
+  const z = tamDe(a);
+  return `<span class="pl-tam pl-tam-${z.t}" title="Tamaño ${z.t}: ${z.cm}"><span class="pl-tam-hoja" aria-hidden="true">${hojaEscala(z.w, z.h, 1.3)}</span><span class="pl-tam-txt"><b>${z.t}</b><small>${z.cm}</small></span></span>`;
+};
 const SUBIR_SVG = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></g></svg>';
 
 function agMsg(a){
@@ -499,7 +505,7 @@ function tarjetaAgenda(a){
       <button class="ver-mas" type="button" data-ag="${a.id}">${LIBRO_SVG} Ve el interior</button>
     </div>
     <div class="tarjeta">
-      <div class="pl-cab"><span class="badge">planner</span><span class="pl-tam" title="Tamaño ${tamDe(a).t}: ${tamDe(a).cm}">${REGLA_SVG}<b>${tamDe(a).t}</b><span>${tamDe(a).cm}</span></span></div>
+      <div class="pl-cab"><span class="badge">planner</span>${tamHTML(a)}</div>
       <h3>${nombre}</h3>
       <p class="desc">${esc(a.desc)}</p>
       <div class="pl-precio"><span>Valor único</span><b>${a.precio ? fmt(a.precio) : "Consultar"}</b></div>
@@ -640,9 +646,16 @@ function tarjetaAgenda(a){
 }
 
 /* todas las tarjetas del panel se arman desde AGENDAS y se numeran en orden */
+/* arriba, los 3 tamaños dibujados a escala para comparar; las tarjetas van en su propio contenedor
+   (así la alternancia de colores de .prod:nth-child no se corre) */
+$("plPanel").insertAdjacentHTML("afterbegin", `<div class="pl-tamanos" role="group" aria-label="Comparación de tamaños">
+  <div class="pl-tamanos-txt"><b>Nuestros tamaños</b><span>Dibujados a escala para que compares. Cada agenda lleva su tamaño marcado con el mismo color.</span></div>
+  <div class="pl-tamanos-hojas">${Object.entries(TAMANOS).map(([t, z]) => `<div class="pl-tamanos-item pl-tam-${t}">${hojaEscala(...z.cm.map(c => parseFloat(c.replace(",", "."))), 3.6)}<b>${t}</b><small>${z.cm.join(" × ")} cm</small><em>${z.nombre}</em></div>`).join("")}</div>
+</div>
+<div class="pl-tarjetas"></div>`);
 /* de mayor a menor: B5, A5 y A6 (dentro de cada tamaño, el orden de AGENDAS) */
-AGENDAS.slice().sort((x, y) => tamDe(x).orden - tamDe(y).orden).forEach(a => $("plPanel").append(tarjetaAgenda(a)));
-document.querySelectorAll("#plPanel > .prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
+AGENDAS.slice().sort((x, y) => tamDe(x).orden - tamDe(y).orden).forEach(a => $("plPanel").querySelector(".pl-tarjetas").append(tarjetaAgenda(a)));
+document.querySelectorAll("#plPanel .prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
 
 /* ---- visor compartido de las agendas ---- */
 const visorAgEl = $("plVisorAgenda");
