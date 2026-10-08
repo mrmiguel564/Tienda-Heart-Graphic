@@ -15,6 +15,7 @@ index.html                    Marcado del sitio (tienda + vista de Políticas). 
                               van como SVG en línea.
 catalogo_heart_graphic.xlsx   Plantilla del catálogo para subir a Google Sheets (trae hoja "leeme").
 planners_heart_graphic.xlsx   Pestañas de la sección Planners para la misma planilla (trae hoja "leeme").
+instructivo_planners.pdf      Guía paso a paso (para cualquier persona) para usar esa planilla.
 assets/
   css/tienda.css              Estilos del sitio (trae embebidas Neulis Alt Regular y Neulis Bold)
   js/tienda.js                Script del sitio: configuración, catálogo, carrito, ofertas, router
