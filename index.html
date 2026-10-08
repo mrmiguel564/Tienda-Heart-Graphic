@@ -335,6 +335,8 @@ footer{text-align:center;font-weight:600;font-size:13px;color:var(--ink-soft);pa
 .cyber h2 em{font-style:normal;color:#1f8cc4}
 .cyber h2 i{font-style:normal;color:#7458d2}
 .cy-bajada{font-size:18px;font-weight:700;margin-bottom:22px;max-width:460px}
+/* ofertas extendidas: texto sobre el contador */
+.cy-termina{margin:0 0 10px;font-family:'Neulis',sans-serif;font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
 .cy-barra{display:inline-flex;align-items:center;gap:6px;background:#fff;border:4px solid var(--ink);border-radius:26px;padding:10px 18px;box-shadow:8px 8px 0 var(--ink);margin-bottom:28px}
 .cy-barra div{min-width:64px;text-align:center}
 .cy-barra b{display:block;font-family:'Neulis',sans-serif;font-weight:900;font-size:clamp(32px,4.4vw,48px);line-height:1;font-variant-numeric:tabular-nums}
@@ -634,9 +636,10 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
     <div class="cy-grid">
       <div class="cy-info">
         <span class="pv-badge">cyber day</span>
-        <h2><em>CYBER</em> <i>DAY</i><br>RELÁMPAGO</h2>
+        <h2><em>EXTENDEMOS</em><br>LAS OFERTAS<br><i>CYBER</i></h2>
         <p class="cy-bajada">Cada producto con su precio más bajo del año. Cuando se acaba, se acaba.</p>
-        <div class="cy-barra" role="timer" aria-label="Tiempo restante del Cyber Day">
+        <p class="cy-termina">Las ofertas terminan en</p>
+        <div class="cy-barra" role="timer" aria-label="Tiempo restante de las ofertas Cyber">
           <div><b>00</b><small>días</small></div><div class="sep">:</div>
           <div><b>00</b><small>hrs</small></div><div class="sep">:</div>
           <div><b>00</b><small>min</small></div><div class="sep">:</div>
@@ -1625,7 +1628,7 @@ function observaReveals(){
 const OFERTA_WA = "Hola Heart Graphic! 💜 Quiero aprovechar las ofertas del Cyber Day";
 /* Término del Cyber Day para el contador (hora de Chile). Vacío = sin contador.
    Cuando llega a cero el contador se oculta solo. */
-const OFERTA_FIN = "2026-10-08T00:00:00-03:00";   /* miércoles 7 oct a las 12 de la noche */
+const OFERTA_FIN = "2026-10-11T23:59:59-03:00";   /* ofertas extendidas: sábado 11 oct a las 11:59 de la noche */
 
 /* ---------- Especial Veterinarias: carrusel vertical ----------
    El carrusel se arma con TODAS las fotos de los productos marcados con "si";
@@ -1739,6 +1742,7 @@ const CYBER = (() => {
   const foto = card.querySelector(".cy-foto"), puntos = card.querySelector(".cy-puntos");
   const burbuja = card.querySelector(".cy-burbuja");
   const barra = sec.querySelector(".cy-barra"), cinta = sec.querySelector(".cinta-arriba span");
+  const termina = sec.querySelector(".cy-termina");   /* "Las ofertas terminan en", se oculta con el contador */
   sec.querySelector(".cinta-abajo span").innerHTML =
     "<i>✦</i> OFERTAS POR TIEMPO LIMITADO <i>✦</i> HEART GRAPHIC ".repeat(8);
   let prods = [], k = 0, timer;
@@ -1796,7 +1800,7 @@ const CYBER = (() => {
   const fin = Date.parse(OFERTA_FIN);
   function tic(){
     const s = Math.floor((fin - Date.now()) / 1000);
-    if (!(s > 0)){ barra.hidden = true; clearInterval(reloj); return; }
+    if (!(s > 0)){ barra.hidden = true; if (termina) termina.hidden = true; clearInterval(reloj); return; }
     const v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60]
       .map(x => String(x).padStart(2, "0"));
     barra.querySelectorAll("b").forEach((b,i) => b.textContent = v[i]);
