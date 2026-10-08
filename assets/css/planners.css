@@ -251,6 +251,14 @@
 /* los cantos de las hojas asoman por abajo */
 .lomo-arriba .pl-cantos{left:7px;right:7px;top:auto;bottom:-7px;width:auto;height:11px;border:2px solid var(--ink);border-top:0;
   border-radius:0 0 6px 6px;background:repeating-linear-gradient(180deg,#fff 0 2px,#ece6dc 2px 3px)}
+/* tamaño de la agenda, junto a la insignia: "A5 14,8 × 21 cm" */
+.pl-cab{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:12px}
+.pl-cab .badge{margin-bottom:0}
+.pl-tam{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 5px;border-radius:var(--r-pill);
+  border:2.5px solid var(--ink);background:#fff;color:var(--ink);font-size:12.5px;font-weight:700;white-space:nowrap}
+.pl-tam b{font-family:'Neulis',sans-serif;font-weight:900;font-size:13px;letter-spacing:.04em;padding:2px 9px;border-radius:var(--r-pill);
+  background:var(--celeste);color:var(--ink)}
+.prod:nth-child(even) .pl-tam b{background:var(--lila)}
 /* portada apaisada: más ancha */
 .pl-agenda-btn.apaisada{width:min(400px,84vw,calc(100% - 16px))}
 /* con flechas: deja libre su espacio (sobresalen 24px por lado) para no pisar la tarjeta del precio */
