@@ -187,6 +187,13 @@
 .pl-cara.frente::after{background:linear-gradient(90deg,rgba(0,0,0,.14),rgba(0,0,0,0) 9%)}
 .pl-cara.dorso::after{background:linear-gradient(270deg,rgba(0,0,0,.14),rgba(0,0,0,0) 9%)}
 .pl-cara.contratapa{background:var(--tapa,#7d1f3a)}
+/* margen del anillado: el espacio que el diseño deja para las perforaciones queda como
+   papel en blanco junto al lomo, y la página se ve entera en el resto (sin cortes ni anillos encima).
+   La portada y la contratapa sí van perforadas, como en el producto real. */
+.pl-cara.frente:not(:has(.pl-tapa)){padding-left:7%}
+.pl-cara.dorso:not(.contratapa){padding-right:7%}
+.pl-cara:not(.contratapa)>img{object-fit:contain;background:#fff}
+.pl-cara.frente:not(:has(.pl-tapa)),.pl-cara.dorso:not(.contratapa){background:#fff}
 .pl-tapa{position:absolute;inset:0;border-radius:0 10px 10px 0;overflow:hidden}
 .pl-tapa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .pl-sombra{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .45s;background:linear-gradient(90deg,rgba(0,0,0,.18),transparent)}
@@ -209,6 +216,9 @@
 .pl-bhoja img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
 /* leída: gira por arriba y se desvanece al pasar la vertical (al volver, aparece primero y luego baja) */
 .pl-bhoja.vuelta{transform:rotateX(165deg);opacity:0;transition:transform .8s cubic-bezier(.45,.05,.25,1),opacity .35s ease .3s}
+/* margen del anillado arriba (ver .pl-cara): papel en blanco bajo los anillos; crece con el tamaño del anillo */
+.pl-bhoja:not(.pl-btapa){box-sizing:border-box;padding-top:calc(65% / var(--anillos,13))}
+.pl-bhoja:not(.pl-btapa)>img{object-fit:contain}
 .pl-bhoja .pl-sombra{background:linear-gradient(180deg,rgba(0,0,0,.2),transparent)}
 /* anillado arriba (wire-o): alambre blanco sobre el borde superior; --anillos = cantidad de anillos */
 .pl-anillado-h{position:absolute;z-index:300;left:4%;width:92%;top:0;transform:translateY(-50%);pointer-events:none;

@@ -27,75 +27,143 @@ const VISTAS = {
 };
 
 /* ---------- AGENDAS ----------
-   Cada agenda es un producto independiente con el mismo modelo que la Atrévete:
-   portada anillada (perforaciones rectangulares + alambre blanco) y visor de pliegos.
-   Imágenes en agendas/<id>/: portada-N.jpg, portada-N-mini.jpg, contratapa-N.jpg
-   (si la portada trae retiro) y pagina-NN.jpg en orden de lectura (izq, der, izq…).
+   Cada agenda es un producto con el mismo modelo que la Atrévete: portada anillada
+   (perforaciones rectangulares + alambre blanco) y visor de pliegos. Los diseños que
+   vienen de la misma carpeta van juntos en un producto: el cliente elige la portada
+   y cada portada trae su propio interior (interiorPorPortada).
+   Imágenes en agendas/<id>/: portada-K.jpg, portada-K-mini.jpg, contratapa-K.jpg
+   (si la portada trae retiro) y pagina-NN.jpg, o pagina-K-NN.jpg si el interior va por portada.
    - portadas: más de una = el cliente elige. color = contratapa lisa (sin retiro).
-   - paginas: un título por página; repetir = cuántas veces se muestra esa lista.
+     Una portada puede traer sus propias "paginas" si su interior es distinto.
+   - paginas: un título por imagen, en el orden de los archivos. par(t) = dos imágenes que
+     forman un pliego (izquierda + derecha); par(t, n, m) = el pliego con las imágenes n (izq.) y m (der.); pg(n, t) = la imagen n (si el archivo va en otro orden).
+     repetir = cuántas veces se muestra esa lista.
+   - Orden de lectura igual que la Atrévete (lo arma paginasDe): el interior de la portada
+     en blanco, los datos personales a la derecha con su reverso en blanco, y los pliegos
+     siempre empezando a la izquierda (si hace falta se intercala una página en blanco).
+   - Orden del interior (en "paginas"): datos y calendarios; luego planificación mensual, control de gastos
+     y hábitos; después la planificación semanal o diaria; al final notas y hojas libres.
    - ratio: ancho/alto de la página (A5 ≈ .705).
    TODO: precios reales (null = "Consultar"), descripciones y cantidad de hojas. */
 const A5 = "Tamaño A5 (14,8 × 21 cm) · anillado", A6 = "Tamaño A6 (10,5 × 14,8 cm) · anillado", B5 = "Tamaño B5 (17,6 × 25 cm) · anillado";
-const D = "Datos personales", I = "Páginas interiores", CAL = a => "Calendario " + a;
-const SEM = "Semana a la vista", DIA = "Planificación diaria", PSEM = "Planificación semanal";
-const veces = (t, n) => Array(n).fill(t);
+const D = "Datos personales", CAL = a => "Calendario " + a, NOTAS = "Notas", GASTOS = "Control de gastos";
+const SEM = "Semana a la vista", DIA = "Planificación diaria", PSEM = "Planificación semanal", MENS = "Planificación mensual";
+const par = (t, n, m) => ({ t, n, m, par: true }), pg = (n, t) => ({ t, n });
 const ATREVETE_PLIEGOS = ["Datos personales","Calendarios","Calendario 2028 y feriados","Planificación anual",
   "Metas y mi año en colores","Cumpleaños","Planificación mensual","Control de gastos y ahorro",
   "Notas","Semana a la vista","Semana a la vista","Mis lecturas","Lista de deseos","Notas"];
 const portadasN = n => Array.from({length: n}, (_, i) => ({ nom: "N° " + (i + 1), retiro: true }));
+const DOCENTE = [D, CAL(2026), CAL(2027), "Horario", "Evaluaciones", "Registro de asistencia", "Reunión de apoderados",
+  "Citación de apoderados", par(MENS), par(PSEM)];
 const AGENDAS = [
-  { id: "atrevete", nombre: "Agenda Atrévete 2027", precio: 24990, ratio: .6416,
+  /* Atrévete: sus imágenes ya son pliegos completos (incluidas las páginas en blanco) */
+  { id: "atrevete", nombre: "Agenda Atrévete 2027", precio: 24990, ratio: .6416, pliegos: true,
     desc: "Agenda mes a mes con calendario, metas, control de gastos, ahorro y semana a la vista.",
     formato: "Tamaño B5 de 17,6 × 25 cm, 100 hojas (200 páginas) anilladas",
     portadas: [{ nom: "Burdeo", color: "#7d1f3a" }, { nom: "Lila", color: "#e4c3e8" }],
     paginas: ATREVETE_PLIEGOS.flatMap(t => [t, t]) },
-  { id: "mi-planner-1", nombre: "Mi Planner · Diseño 1", precio: null, desc: "Planner con datos personales, calendario y semana a la vista.", formato: A5,
-    portadas: [{ nom: "Mi Planner", retiro: true }], paginas: [D, CAL(2026), ...veces(SEM, 6)] },
-  { id: "mi-planner-2", nombre: "Mi Planner · Diseño 2", precio: null, desc: "Planner con datos personales, calendario y semana a la vista.", formato: A5,
-    portadas: [{ nom: "Mi Planner", retiro: true }], paginas: [D, CAL(2026), ...veces(SEM, 6)] },
-  { id: "mi-planner-3", nombre: "Mi Planner · Diseño 3", precio: null, desc: "Planner con datos personales, calendario y semana a la vista.", formato: A5,
-    portadas: [{ nom: "Mi Planner", retiro: true }], paginas: [D, CAL(2026), ...veces(SEM, 6)] },
+  { id: "mi-planner", nombre: "Mi Planner", precio: null, interiorPorPortada: true, formato: A5,
+    desc: "Planner con datos personales, calendario, semana a la vista y hábitos. Elige entre 3 diseños.",
+    portadas: [1, 2, 3].map(n => ({ nom: "Diseño " + n, retiro: true })),
+    paginas: [D, CAL(2026), par(MENS, 5), pg(7, "Mis hábitos"), par(SEM, 3), pg(8, NOTAS)] },
   { id: "levantate-brilla", nombre: "Planner Levántate & Brilla", precio: null, desc: "Planner con calendarios 2026-2027 y planificación semanal.", formato: A5,
-    portadas: [{ nom: "Levántate & Brilla", retiro: true }], paginas: [D, CAL(2026), CAL(2027), ...veces(PSEM, 7)] },
+    portadas: [{ nom: "Levántate & Brilla", retiro: true }],
+    paginas: [D, CAL(2026), CAL(2027), par(MENS, 6), pg(9, GASTOS), pg(8, "Mis hábitos"), par(PSEM, 4), pg(10, NOTAS)] },
   { id: "brilla-universo", nombre: "Planner Brilla", precio: null, desc: "“Brilla como si todo el Universo fuera tuyo”: calendarios 2026-2027 y planificación semanal.", formato: A5,
-    portadas: [{ nom: "Brilla", retiro: true }], paginas: [D, CAL(2026), CAL(2027), ...veces(PSEM, 7)] },
-  { id: "docente-heroes", nombre: "Planner Docente · Héroes", precio: null, desc: "Planner para profes: organiza clases, cursos y semanas.", formato: A5,
-    portadas: [{ nom: "Héroes", retiro: true }], paginas: veces(I, 5) },
-  { id: "docente-inspirar", nombre: "Planner Docente · Enseñar es Inspirar", precio: null, desc: "Planner para profes con calendarios 2026-2027.", formato: A5,
-    portadas: [{ nom: "Enseñar es Inspirar", retiro: true }], paginas: [I, CAL(2026), CAL(2027), ...veces(I, 9)] },
-  { id: "docente-corazon", nombre: "Planner Docente · Gran Corazón", precio: null, desc: "Planner para profes con calendarios 2026-2027.", formato: A5,
-    portadas: [{ nom: "Gran Corazón", retiro: true }], paginas: [I, CAL(2026), CAL(2027), ...veces(I, 9)] },
+    portadas: [{ nom: "Brilla", retiro: true }],
+    paginas: [D, CAL(2026), CAL(2027), par(MENS, 6), pg(9, GASTOS), pg(8, "Mis hábitos"), par(PSEM, 4), pg(10, NOTAS)] },
+  /* Planner Docente: dos modelos distintos (Héroes, y Morado/Rosado con el mismo interior) */
+  { id: "docente-heroes", nombre: "Planner Docente · Héroes", precio: null, formato: A5,
+    desc: "Planner para profes: horario, evaluaciones y planificación semanal.",
+    portadas: [{ nom: "Héroes", retiro: true }], paginas: [D, "Horario", "Evaluaciones", par(PSEM)] },
+  { id: "docente", nombre: "Planner Docente", precio: null, interiorPorPortada: true, formato: A5,
+    desc: "Planner para profes con calendarios 2026-2027, horario, evaluaciones y apoderados. Elige entre 2 diseños.",
+    portadas: [{ nom: "Enseñar es Inspirar", retiro: true }, { nom: "Gran Corazón", retiro: true }],
+    paginas: DOCENTE },
   { id: "universitario", nombre: "Planner Universitario", precio: null, desc: "Planner para la U con calendario 2027. Elige entre 6 portadas.", formato: A5,
     portadas: [1, 2, 3, 4, 5, 6].map(n => ({ nom: "N° " + n, retiro: n !== 5 })),   /* la 5 no trae contratapa */
-    paginas: [D, CAL(2027), ...veces(I, 8)] },
-  { id: "diario-1", nombre: "Planner Diario · Diseño 1", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
-    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
-  { id: "diario-2", nombre: "Planner Diario · Diseño 2", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
-    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
-  { id: "diario-3", nombre: "Planner Diario · Diseño 3", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
-    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
-  { id: "diario-4", nombre: "Planner Diario · Diseño 4", precio: null, lomo: "arriba", desc: "Un día por página para planificar con calma.", formato: A5,
-    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
-  { id: "diario-5", nombre: "Planner Diario · Diseño 5", precio: null, lomo: "arriba", desc: "Un día por página para planificar con calma.", formato: A5,
-    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
-  { id: "diario-6", nombre: "Planner Diario · Diseño 6", precio: null, lomo: "arriba", desc: "Un día por página para planificar con calma.", formato: A5,
-    portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [DIA], repetir: 4 },
-  { id: "semanal-diario-potencial", nombre: "Planner Semanal Diario · Potencial", precio: null, desc: "Planificación semanal y diaria con calendario 2026.", formato: A5,
-    portadas: [{ nom: "Potencial", retiro: true }], paginas: [D, CAL(2026), ...veces(PSEM, 6)] },
-  { id: "semanal-diario-buen-dia", nombre: "Planner Semanal Diario · Buen Día", precio: null, desc: "Planificación semanal y diaria con calendarios 2026-2027.", formato: A5,
-    portadas: [{ nom: "Buen Día", retiro: true }], paginas: [D, CAL(2026), "Calendario 2026-2027", ...veces(PSEM, 6)] },
-  { id: "suena-azul", nombre: "Planner Sueña en Grande · Azul", precio: null, desc: "Planner tipo cuaderno con calendario 2026.", formato: A5,
-    portadas: [{ nom: "Sueña en Grande", retiro: true }], paginas: [D, CAL(2026), ...veces(I, 3)] },
-  { id: "suena-atardecer", nombre: "Planner Sueña en Grande · Atardecer", precio: null, desc: "Planner tipo cuaderno con calendarios 2026-2027.", formato: A5,
-    portadas: [{ nom: "Sueña en Grande", retiro: true }], paginas: [D, CAL(2026), CAL(2027), ...veces(I, 3)] },
+    paginas: [D, CAL(2027), "Calendarios", "Calendarios", "Fechas importantes", "Horario", "Información académica",
+      "Semana de pruebas", DIA, PSEM] },
+  { id: "diario", nombre: "Planner Diario", precio: null, interiorPorPortada: true, formato: A5,
+    desc: "Un día por página para planificar con calma, con cumpleaños, hábitos y mes a mes. Elige entre 3 diseños.",
+    portadas: [1, 2, 3].map(n => ({ nom: "Diseño " + n, retiro: true })),
+    paginas: [D, pg(3, "Cumpleaños importantes"), "Cumpleaños importantes", "Cumpleaños importantes", pg(7, "Números de teléfono"),
+      par(MENS, 8), pg(6, "Hábitos"), pg(2, DIA)] },
+  { id: "diario-arriba", nombre: "Planner Diario · Anillado arriba", precio: null, lomo: "arriba", interiorPorPortada: true, formato: A5,
+    desc: "Un día por página, con el anillado arriba. Elige entre 5 diseños.",
+    portadas: [1, 2, 3, 4, 5].map(n => ({ nom: "Diseño " + n, retiro: true })), paginas: [DIA], repetir: 4 },
+  { id: "semanal-diario", nombre: "Planner Semanal Diario", precio: null, interiorPorPortada: true, formato: A5,
+    desc: "Planificación semanal y diaria con calendario. Elige entre 2 diseños.",
+    portadas: [
+      { nom: "Potencial", retiro: true, paginas: [D, CAL(2026), par(MENS, 6), pg(8, GASTOS), pg(3, PSEM), par(DIA, 4)] },
+      { nom: "Buen Día", retiro: true, paginas: [D, CAL(2026), CAL(2027), par(MENS, 7), pg(9, GASTOS), pg(4, PSEM), par(DIA, 5)] }] },
+  { id: "suena", nombre: "Planner Sueña en Grande", precio: null, interiorPorPortada: true, formato: A5,
+    desc: "Planner tipo cuaderno con calendario y planificación mensual. Elige entre 2 diseños.",
+    portadas: [
+      { nom: "Azul", retiro: true, paginas: [D, CAL(2026), par(MENS, 4), pg(3, NOTAS)] },
+      { nom: "Atardecer", retiro: true, paginas: [D, CAL(2026), CAL(2027), par(MENS, 5), pg(4, NOTAS)] }] },
+  /* XL: en los archivos, los datos personales y el calendario van al final */
   { id: "xl", nombre: "Planner XL", precio: null, ratio: .704, desc: "Formato grande para planificar con espacio de sobra.", formato: B5,
-    portadas: [{ nom: "La meta", retiro: true }], paginas: veces(I, 11) },
+    portadas: [{ nom: "La meta", retiro: true }],
+    paginas: [pg(11, D), pg(10, CAL(2026)), pg(3, "Mapa de los sueños"), par(MENS, 4), pg(6, GASTOS), par(SEM, 1),
+      pg(7, "Momentos especiales"), "Un momento para mí", "Mis apuntes"] },
   { id: "gratitud", nombre: "Diario de Gratitud", precio: null, desc: "Diario para agradecer cada día. Elige entre 2 portadas.", formato: A5,
-    portadas: [{ nom: "Noche", retiro: true }, { nom: "Rosa", retiro: true }], paginas: [D, CAL(2026), ...veces(I, 3)] },
+    portadas: [{ nom: "Noche", retiro: true }, { nom: "Rosa", retiro: true }],
+    paginas: [D, CAL(2026), "Querido Universo", "Mapa de sueños", "Un momento para mí"] },
+  /* Mini Planner Diario: la imagen 2 son los datos personales y la 1 el día */
   { id: "mini-diario", nombre: "Mini Planner Diario", precio: null, ratio: .709, desc: "Planner diario de bolsillo. Elige entre 5 portadas.", formato: A6,
-    portadas: portadasN(5), paginas: [DIA, DIA], repetir: 2 },
+    portadas: portadasN(5), paginas: [pg(2, D), pg(1, DIA), pg(1, DIA), pg(1, DIA)] },
   { id: "mini-lineas", nombre: "Mini Agenda Líneas", precio: null, ratio: .709, desc: "Agenda de bolsillo con hojas de líneas. Elige entre 4 portadas.", formato: A6,
     portadas: portadasN(4), paginas: ["Hojas de líneas"], repetir: 4 },
+  { id: "gastos", nombre: "Planner Control de Gastos", precio: null, formato: A5,
+    desc: "“Planificarme es mi superpoder”: ingresos, gastos fijos, gastos hormiga, ahorros y balance del mes. Elige entre 2 portadas.",
+    portadas: [{ nom: "Turquesa", retiro: true }, { nom: "Coral", retiro: true }],
+    paginas: [D, CAL(2025), CAL(2026), "Mi mes", "Ingresos y gastos fijos", par("Gastos hormiga"), "Mis ahorros",
+      "Balance mensual", "Notas y observaciones"] },
+  /* Planner Semanal Largo Happy (vertical angosto): la imagen 2 es la página izquierda del pliego y la 1 la derecha */
+  { id: "semanal-happy", nombre: "Planner Semanal Largo · Happy", precio: null, ratio: .384, formato: "Formato largo · anillado",
+    desc: "“I'm a happy planner”: semana a la vista en formato largo. Elige entre 2 portadas.",
+    portadas: [{ nom: "Degradé", retiro: true }, { nom: "Ondas", retiro: true }],
+    paginas: [pg(3, D), pg(4, "Hojas de puntos"), par(SEM, 2, 1), par(SEM, 2, 1), par(SEM, 2, 1)] },
+  /* ---- anillado arriba ---- */
+  { id: "diario-horizontal", nombre: "Planner Diario Horizontal", precio: null, lomo: "arriba", ratio: 1.419, interiorPorPortada: true,
+    formato: "Tamaño A5 apaisado (21 × 14,8 cm) · anillado", desc: "Un día por página en formato apaisado. Elige entre 3 diseños.",
+    portadas: [{ nom: "Acuarela", retiro: true }, { nom: "Ondas pastel", retiro: true }, { nom: "Piñas", retiro: true }],
+    paginas: [DIA], repetir: 4 },
+  /* Mini Planner Semanal: 6 portadas y 3 juegos de hojas (1 celeste y rosa, 2 lila, 3 rosa).
+     TODO: confirmar qué juego de hojas va con cada portada (interior = número de juego) */
+  { id: "mini-semanal", nombre: "Mini Planner Semanal", precio: null, lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
+    formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Planner semanal de bolsillo con calendario y mes a mes. Elige entre 6 portadas.",
+    portadas: [{ nom: "Yo puedo con todo", retiro: true, interior: 1 }, { nom: "Tú puedes", retiro: true, interior: 1 },
+      { nom: "Sigue tus sueños", retiro: true, interior: 3 }, { nom: "Un día a la vez", retiro: true, interior: 2 },
+      { nom: "Yo soy capaz", retiro: true, interior: 3 }, { nom: "Si puedes creerlo", retiro: true, interior: 2 }],
+    paginas: [D, CAL(2024), CAL(2025), MENS, pg(9, "Registro mensual"), pg(5, "Notas y días importantes"), pg(7, PSEM), PSEM,
+      pg(6, "Hojas de puntos")] },
+  { id: "mis-pedidos", nombre: "Agenda Mis Pedidos", precio: null, lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
+    formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Para emprendedoras: registra cada pedido con cliente, productos, pago y entrega. Elige entre 2 portadas.",
+    portadas: [{ nom: "Rosado", retiro: true }, { nom: "Verde", retiro: true }],
+    paginas: [D, CAL(2024), CAL(2025), "Registro de pedido", pg(4, "Registro de pedido"), pg(4, "Registro de pedido")] },
+  { id: "mini-escritorio", nombre: "Mini Planner de Escritorio", precio: null, lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
+    formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "“Pequeños planes, grandes logros”: pendientes del día y calendario. Elige entre 3 diseños.",
+    portadas: [{ nom: "Celeste", color: "#cfe0f3" }, { nom: "Rosa y morado", color: "#f6cfe0" }, { nom: "Verde", color: "#d7ebc6" }],
+    paginas: [D, CAL(2025), CAL(2026), "Pendientes de hoy", pg(4, "Pendientes de hoy"), pg(4, "Pendientes de hoy")] },
+  { id: "semanal-largo", nombre: "Planner Semanal Largo", precio: null, lomo: "arriba", ratio: 2.607, interiorPorPortada: true,
+    formato: "Formato largo apaisado · anillado", desc: "Semana a la vista en formato largo, con notas, agua y tips al reverso. Elige entre 5 colores.",
+    portadas: ["Lila", "Celeste", "Rosa", "Verde", "Amarillo"].map(nom => ({ nom, retiro: true })),
+    paginas: [PSEM, "Notas, agua y tips"], repetir: 3 },
+  { id: "mensual", nombre: "Planner Mensual", precio: null, lomo: "arriba", ratio: 1.429, interiorPorPortada: true,
+    formato: "Tamaño A5 apaisado (21 × 14,8 cm) · anillado", desc: "Un mes por hoja, con hábitos, metas, tips e ideas al reverso. Elige entre 4 diseños.",
+    portadas: [{ nom: "Rosa", color: "#f9dbe6" }, { nom: "Lila", color: "#cbc3f0" }, { nom: "Girasoles", color: "#f8e9a6" }, { nom: "Turquesa", color: "#5fd0c5" }],
+    paginas: [MENS, "Hábitos, metas e ideas"], repetir: 3 },
+  /* Taco y To Do List: blocks sin tapa, lo primero que se ve es la hoja */
+  { id: "taco-mensual", nombre: "Taco Planner Mensual", precio: null, lomo: "arriba", ratio: .773,
+    formato: "Tamaño carta · anillado", desc: "Block de hojas mensuales en 8 colores pastel.",
+    portadas: [{ nom: "Colores", color: "#ffffff" }],
+    paginas: [pg(2, "Mes rosa"), "Mes verde", "Mes durazno", "Mes lila", "Mes coral", "Mes fucsia", "Mes menta"] },
+  { id: "todo", nombre: "Block To Do List", precio: null, lomo: "arriba", ratio: .771, interiorPorPortada: true,
+    formato: "Block anillado", desc: "Lista de pendientes para tachar lo hecho. Elige entre 6 diseños.",
+    portadas: ["Flores", "Lavanda", "Acuarela", "Gatitos", "Místico", "Gatos y patitas"].map(nom => ({ nom, color: "#ffffff" })),
+    paginas: ["To do list"], repetir: 4 },
   /* Planner Semanal apaisado, anillado arriba: cada portada trae su propio interior
      (pagina-K-01 = tiro: planificación semanal, pagina-K-02 = retiro: hábitos) */
   { id: "semanal", nombre: "Planner Semanal", precio: PRECIOS.semanal, lomo: "arriba", ratio: 1.42, interiorPorPortada: true,
@@ -108,12 +176,30 @@ const agImg = {
   portada:    (a, k) => `agendas/${a.id}/portada-${k + 1}.jpg`,
   mini:       (a, k) => `agendas/${a.id}/portada-${k + 1}-mini.jpg`,
   contratapa: (a, k) => `agendas/${a.id}/contratapa-${k + 1}.jpg`,
-  pagina:     (a, i, k) => `agendas/${a.id}/pagina-${a.interiorPorPortada ? (k + 1) + "-" : ""}${String(i + 1).padStart(2, "0")}.jpg`
+  pagina:     (a, i, k) => `agendas/${a.id}/pagina-${a.interiorPorPortada ? (a.portadas[k].interior || k + 1) + "-" : ""}${String(i + 1).padStart(2, "0")}.jpg`
 };
-/* páginas en orden de lectura: [{src, t}] (repite la lista si la agenda lo pide) */
+/* páginas en orden de lectura: [{src, t}]; src null = página en blanco.
+   Con el lomo al costado se ordenan como la Atrévete: interior de la portada en blanco,
+   datos personales a la derecha (reverso en blanco) y cada pliego desde la izquierda. */
+const PAG_BLANCA = { src: null, t: "" };
 const paginasDe = (a, k = 0) => {
-  const una = a.paginas.map((t, i) => ({ src: agImg.pagina(a, i, k), t }));
-  return Array.from({length: a.repetir || 1}, () => una).flat();
+  const lista = (a.portadas[k] && a.portadas[k].paginas) || a.paginas;
+  let sig = 1;
+  const unidades = lista.map(e => {
+    const o = typeof e === "string" ? { t: e } : e, n = o.n || sig;
+    const ns = o.par ? [n, o.m || n + 1] : [n];
+    sig = Math.max(...ns) + 1;
+    return ns.map(m => ({ src: agImg.pagina(a, m - 1, k), t: o.t }));
+  });
+  const todas = Array.from({length: a.repetir || 1}, () => unidades).flat();
+  if (a.lomo === "arriba" || a.pliegos) return todas.flat();
+  const out = [PAG_BLANCA];
+  todas.forEach((u, i) => {
+    if (u.length === 2 && out.length % 2 === 1) out.push(PAG_BLANCA);   /* el pliego empieza a la izquierda */
+    out.push(...u);
+    if (i === 0 && u[0].t === D) out.push(PAG_BLANCA);                  /* reverso de los datos en blanco */
+  });
+  return out;
 };
 
 /* productos "virtuales" para el carrito de la tienda */
@@ -561,7 +647,7 @@ const visorAgenda = visor(visorAgEl, {
     const a = agActual, k = agSel.get(a.id) || 0, c = a.portadas[k];
     const per = agPerso.get(a.id) || {}, propia = per.activo && per.url;   /* portada personalizada: contratapa lisa */
     const P = agPags = paginasDe(a, k), m = P.length;
-    const img = (p, alt) => `<img src="${src(p.src)}" alt="${esc(alt || p.t)}" draggable="false" loading="lazy">`;
+    const img = (p, alt) => p.src ? `<img src="${src(p.src)}" alt="${esc(alt || p.t)}" draggable="false" loading="lazy">` : "";   /* src null: página en blanco */
     const contra = !propia && c.retiro ? img({ src: agImg.contratapa(a, k) }, "Contratapa") : "";
     const tapa = propia ? `<img src="${propia}" alt="Tu portada personalizada" draggable="false">` : `<img src="${src(agImg.portada(a, k))}" alt="Portada" draggable="false">`;
     const defs = [{ f: `<div class="pl-tapa">${tapa}</div>`, d: img(P[0]) }];
@@ -584,7 +670,7 @@ const visorAgenda = visor(visorAgEl, {
     if (cur === 0) return "Portada";
     if (cur === n) return "Contratapa";
     const izq = agPags[2 * cur - 2], der = agPags[2 * cur - 1];
-    return (izq || der || {}).t || "";
+    return (izq && izq.t) || (der && der.t) || "";   /* las páginas en blanco no tienen título */
   },
   alEstado(cur, n){
     libroAg.classList.toggle("cerrado-frente", cur === 0);
@@ -601,7 +687,7 @@ function abreAgenda(a){
   if (a.lomo === "arriba"){
     $("plVisorBlocTit").textContent = "Interior " + a.nombre;
     visorBlocEl.style.setProperty("--pag", ratioDe(a));
-    visorBlocEl.style.setProperty("--anillos", ratioDe(a) > 1 ? 20 : 13);   /* apaisado: más anillos a lo ancho */
+    visorBlocEl.style.setProperty("--anillos", ratioDe(a) > 2 ? 30 : ratioDe(a) > 1 ? 20 : 13);   /* apaisado: más anillos a lo ancho */
     visorBloc.abre();
     return;
   }
@@ -627,9 +713,9 @@ const visorBloc = visor(visorBlocEl, {
     const tapa = propia ? img(propia, "Tu portada personalizada", false) : img(src(agImg.portada(a, k)), "Portada", false);
     const contra = !propia && c.retiro ? img(src(agImg.contratapa(a, k)), "Contratapa") : "";
     bloc.innerHTML = `<span class="pl-bloc-cantos" aria-hidden="true"></span><div class="pl-base">${contra}</div>`;
-    const hojas = [tapa, ...P.map(p => img(src(p.src), p.t))].map(html => {
+    const hojas = [tapa, ...P.map(p => img(src(p.src), p.t))].map((html, i) => {
       const h = document.createElement("div");
-      h.className = "pl-bhoja";
+      h.className = i ? "pl-bhoja" : "pl-bhoja pl-btapa";   /* la tapa va perforada; las hojas dejan el margen del anillado */
       h.innerHTML = `${html}<div class="pl-sombra"></div>`;
       bloc.appendChild(h);
       return h;
