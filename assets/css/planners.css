@@ -274,3 +274,7 @@
   .pl-mockup:hover,.pl-portada:hover,.pl-pt:hover img,.pl-pt-flecha:not([disabled]):hover,.pl-foto-flecha:hover{transform:none}
   .pl-punto,.pl-pt img,.pl-pt-pista{transition:none;scroll-behavior:auto}
 }
+
+/* agenda con portada personalizada: el selector de portadas del catálogo queda en segundo plano */
+.pl-con-perso .pl-pt-fila,.pl-con-perso .pl-puntos{opacity:.45;transition:opacity .2s ease}
+.pl-con-perso .pl-pt-fila:hover,.pl-con-perso .pl-puntos:hover{opacity:1}

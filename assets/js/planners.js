@@ -65,8 +65,8 @@ const AGENDAS = [
     portadas: [{ nom: "Enseñar es Inspirar", retiro: true }], paginas: [I, CAL(2026), CAL(2027), ...veces(I, 9)] },
   { id: "docente-corazon", nombre: "Planner Docente · Gran Corazón", precio: null, desc: "Planner para profes con calendarios 2026-2027.", formato: A5,
     portadas: [{ nom: "Gran Corazón", retiro: true }], paginas: [I, CAL(2026), CAL(2027), ...veces(I, 9)] },
-  { id: "universitario", nombre: "Planner Universitario", precio: null, desc: "Planner para la U con calendario 2027. Elige entre 8 portadas.", formato: A5,
-    portadas: [1, 2, 3, 4, 5, 6, 7, 8].map(n => ({ nom: "N° " + n, retiro: n === 5 || n === 6 || n === 8 })),
+  { id: "universitario", nombre: "Planner Universitario", precio: null, desc: "Planner para la U con calendario 2027. Elige entre 6 portadas.", formato: A5,
+    portadas: [1, 2, 3, 4, 5, 6].map(n => ({ nom: "N° " + n, retiro: n !== 5 })),   /* la 5 no trae contratapa */
     paginas: [D, CAL(2027), ...veces(I, 8)] },
   { id: "diario-1", nombre: "Planner Diario · Diseño 1", precio: null, desc: "Un día por página para planificar con calma.", formato: A5,
     portadas: [{ nom: "Planner Diario", retiro: true }], paginas: [D, ...veces(DIA, 8)] },
@@ -338,10 +338,15 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 const LIBRO_SVG = '<svg class="ic pl-ic-libro" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1v14c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6v14"/></svg>';
 const ANILLO_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><path d="M8 5h12M8 12h12M8 19h12"/></g></svg>';
 const agSel = new Map();   /* id → índice de la portada elegida */
+const agPerso = new Map(); /* id → {activo, url}: portada personalizada (la imagen no se sube, solo vista previa) */
 const ratioDe = a => a.ratio || .705;
+const SUBIR_SVG = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></g></svg>';
 
 function agMsg(a){
-  const k = agSel.get(a.id) || 0;
+  const k = agSel.get(a.id) || 0, p = agPerso.get(a.id) || {};
+  if (p.activo) return a.precio
+    ? `Hola Heart Graphic! 💜 Quiero pedir: ${a.nombre} con portada personalizada (te envío la imagen por aquí) — ${fmt(a.precio + PRECIOS.perso)}`
+    : `Hola Heart Graphic! 💜 Quiero consultar por: ${a.nombre} con portada personalizada (+${fmt(PRECIOS.perso)}, te envío la imagen por aquí)`;
   const portada = a.portadas.length > 1 ? ` (portada ${a.portadas[k].nom})` : "";
   return a.precio
     ? `Hola Heart Graphic! 💜 Quiero pedir: ${a.nombre}${portada} — ${fmt(a.precio)}`
@@ -390,6 +395,19 @@ function tarjetaAgenda(a){
       <p class="desc">${esc(a.desc)}</p>
       <div class="pl-precio"><span>Valor único</span><b>${a.precio ? fmt(a.precio) : "Consultar"}</b></div>
       ${elegir}
+      <div class="pl-perso">
+        <label class="fila pl-op pl-op-check"><input class="pl-oculto pl-perso-chk" type="checkbox"><span class="chk" aria-hidden="true"></span><span class="un">Personaliza tu portada</span><span class="pr">+${fmt(PRECIOS.perso)}</span></label>
+        <div class="pl-perso-box" hidden>
+          <input type="file" class="pl-archivo" accept="image/png,image/jpeg,image/webp" hidden>
+          <div class="pl-subir">
+            <button type="button" class="pl-subir-btn">${SUBIR_SVG} <span class="pl-subir-txt">Subir imagen</span></button>
+            <img class="pl-subida" alt="Vista previa de tu imagen" hidden>
+            <button type="button" class="pl-quitar" hidden>Quitar</button>
+          </div>
+          <small class="pl-ayuda" aria-live="polite">Tu imagen será la portada: la ves en la foto y en «Ve el interior». Usa una imagen vertical en buena resolución (JPG o PNG).</small>
+        </div>
+      </div>
+      ${a.precio ? `<div class="pl-total" hidden><span>Total con portada personalizada</span><b>${fmt(a.precio + PRECIOS.perso)}</b></div>` : ""}
       <p class="notas">${esc(a.formato)}</p>
       <div class="materiales">
         <div class="mat"><span class="ico">${ANILLO_SVG}</span><b>Anillado metálico</b><i>Full color</i></div>
@@ -416,23 +434,81 @@ function tarjetaAgenda(a){
       f.disabled = f.dataset.dir < 0 ? pista.scrollLeft <= 2 : pista.scrollLeft >= sobra - 2;
     });
   };
+  /* portada personalizada: la imagen del cliente se ve como portada (foto y visor) */
+  const st = { activo: false, url: null };
+  agPerso.set(a.id, st);
+  const chk = art.querySelector(".pl-perso-chk"), box = art.querySelector(".pl-perso-box");
+  const archivo = art.querySelector(".pl-archivo"), subirBtn = art.querySelector(".pl-subir-btn");
+  const ayuda = art.querySelector(".pl-ayuda"), AYUDA = ayuda.textContent, totalFila = art.querySelector(".pl-total");
+  const avisa = m => { ayuda.textContent = m; ayuda.classList.add("aviso"); };
+  const ayudaOk = () => { ayuda.textContent = AYUDA; ayuda.classList.remove("aviso"); };
+  /* con "Personaliza" marcado no se puede pedir sin subir la imagen */
+  const faltaImagen = () => {
+    if (!st.activo || st.url) return false;
+    avisa("Sube la imagen para tu portada antes de pedir.");
+    subirBtn.focus();
+    return true;
+  };
   const pinta = () => {
-    const k = agSel.get(a.id) || 0, nom = a.portadas[k].nom;
-    portada.src = src(agImg.portada(a, k));
-    portada.alt = `Portada ${varias ? nom + " " : ""}de ${a.nombre}`;
+    const k = agSel.get(a.id) || 0, nom = a.portadas[k].nom, propia = st.activo && st.url;
+    portada.src = propia || src(agImg.portada(a, k));
+    portada.alt = propia ? `Tu portada personalizada para ${a.nombre}` : `Portada ${varias ? nom + " " : ""}de ${a.nombre}`;
     wa.href = waHref(agMsg(a));
+    if (totalFila) totalFila.hidden = !st.activo;
+    art.classList.toggle("pl-con-perso", st.activo);
     if (!varias) return;
-    radios[k].checked = true;
-    art.querySelector(".pl-pt-cuenta").textContent = (/^N°/.test(nom) ? "" : nom + " · ") + `N° ${k + 1} de ${total}`;
-    art.querySelectorAll(".pl-punto").forEach((p, i) => p.classList.toggle("on", i === k));
-    art.querySelector(".pl-puntos-n").textContent = `${k + 1} / ${total}`;
+    radios.forEach((r, i) => { r.checked = !st.activo && i === k; });   /* con la propia, ninguna miniatura queda marcada */
+    art.querySelector(".pl-pt-cuenta").textContent = st.activo ? "Tu imagen" : (/^N°/.test(nom) ? "" : nom + " · ") + `N° ${k + 1} de ${total}`;
+    art.querySelectorAll(".pl-punto").forEach((p, i) => p.classList.toggle("on", !st.activo && i === k));
+    art.querySelector(".pl-puntos-n").textContent = st.activo ? "Tu imagen" : `${k + 1} / ${total}`;
     /* la miniatura elegida siempre queda a la vista en la fila */
     const pt = radios[k].closest(".pl-pt");
     const izq = pt.offsetLeft - pista.offsetLeft, der = izq + pt.offsetWidth;
     if (izq < pista.scrollLeft) pista.scrollTo({ left: izq - 4, behavior: menosMov() ? "auto" : "smooth" });
     else if (der > pista.scrollLeft + pista.clientWidth) pista.scrollTo({ left: der - pista.clientWidth + 4, behavior: menosMov() ? "auto" : "smooth" });
   };
-  const elige = k => { agSel.set(a.id, (k + total) % total); pinta(); };
+  /* elegir una portada del catálogo apaga la personalizada (la imagen subida se conserva) */
+  const elige = k => {
+    agSel.set(a.id, (k + total) % total);
+    if (st.activo){ st.activo = false; chk.checked = false; box.hidden = true; ayudaOk(); }
+    pinta();
+  };
+  chk.addEventListener("change", () => { st.activo = chk.checked; box.hidden = !chk.checked; ayudaOk(); pinta(); });
+  subirBtn.addEventListener("click", () => archivo.click());
+  archivo.addEventListener("change", async () => {
+    const f = archivo.files[0];
+    if (!f) return;
+    if (!/^image\/(png|jpeg|webp)$/.test(f.type)){ avisa("Sube una imagen JPG, PNG o WEBP."); return; }
+    if (f.size > 15 * 1024 * 1024){ avisa("La imagen pesa más de 15 MB. Prueba con una más liviana."); return; }
+    let cmyk = false;
+    try { cmyk = jpegEsCmyk(new Uint8Array(await f.slice(0, 256 * 1024).arrayBuffer())); } catch(_){}
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => {
+      if (st.url) URL.revokeObjectURL(st.url);
+      st.url = url;
+      const th = art.querySelector(".pl-subida"); th.src = url; th.hidden = false;
+      art.querySelector(".pl-quitar").hidden = false;
+      art.querySelector(".pl-subir-txt").textContent = "Cambiar imagen";
+      if (cmyk) avisa("Tu imagen está en CMYK y en pantalla se ve más oscura. Si puedes, súbela en RGB para ver bien los colores.");
+      else if (im.naturalHeight < 1200) avisa("Tu imagen es pequeña y podría verse borrosa impresa. Si tienes una más grande, mejor.");
+      else ayudaOk();
+      pinta();
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); avisa("No pudimos leer la imagen. Prueba con otro archivo."); };
+    im.src = url;
+  });
+  art.querySelector(".pl-quitar").addEventListener("click", () => {
+    if (st.url) URL.revokeObjectURL(st.url);
+    st.url = null;
+    archivo.value = "";
+    art.querySelector(".pl-subida").hidden = true;
+    art.querySelector(".pl-quitar").hidden = true;
+    art.querySelector(".pl-subir-txt").textContent = "Subir imagen";
+    ayudaOk();
+    pinta();
+    subirBtn.focus();
+  });
+  wa.addEventListener("click", e => { if (faltaImagen()) e.preventDefault(); });
   radios.forEach(r => r.addEventListener("change", () => elige(+r.value)));
   art.querySelectorAll(".pl-foto-flecha").forEach(b => b.addEventListener("click", () => elige((agSel.get(a.id) || 0) + +b.dataset.paso)));
   art.querySelectorAll(".pl-punto").forEach(b => b.addEventListener("click", () => elige(+b.dataset.k)));
@@ -441,11 +517,13 @@ function tarjetaAgenda(a){
     pista.addEventListener("scroll", pintaFlechas, { passive: true });
     new ResizeObserver(pintaFlechas).observe(pista);
   }
-  art.querySelector(".pedir-ig").addEventListener("click", () => CART.pedirIg(agMsg(a)));
+  art.querySelector(".pedir-ig").addEventListener("click", () => { if (!faltaImagen()) CART.pedirIg(agMsg(a)); });
   const carro = art.querySelector(".add-cart");
   if (carro) carro.addEventListener("click", () => {
+    if (faltaImagen()) return;
     const k = agSel.get(a.id) || 0;
-    CART.add(pCarro(a), varias ? `Portada ${a.portadas[k].nom}` : "Valor único", 1, a.precio, "");
+    if (st.activo) CART.add(pCarro(a), "Portada personalizada (imagen por WhatsApp)", 1, a.precio + PRECIOS.perso, "");
+    else CART.add(pCarro(a), varias ? `Portada ${a.portadas[k].nom}` : "Valor único", 1, a.precio, "");
   });
   art.querySelectorAll("[data-ag]").forEach(b => b.addEventListener("click", () => abreAgenda(a)));
   pinta();
@@ -468,14 +546,16 @@ const visorAgenda = visor(visorAgEl, {
      la última hoja termina en la contratapa (retiro de la portada, o su color liso) */
   arma(){
     const a = agActual, k = agSel.get(a.id) || 0, c = a.portadas[k];
+    const per = agPerso.get(a.id) || {}, propia = per.activo && per.url;   /* portada personalizada: contratapa lisa */
     const P = agPags = paginasDe(a), m = P.length;
     const img = (p, alt) => `<img src="${src(p.src)}" alt="${esc(alt || p.t)}" draggable="false" loading="lazy">`;
-    const contra = c.retiro ? img({ src: agImg.contratapa(a, k) }, "Contratapa") : "";
-    const defs = [{ f: `<div class="pl-tapa"><img src="${src(agImg.portada(a, k))}" alt="Portada" draggable="false"></div>`, d: img(P[0]) }];
+    const contra = !propia && c.retiro ? img({ src: agImg.contratapa(a, k) }, "Contratapa") : "";
+    const tapa = propia ? `<img src="${propia}" alt="Tu portada personalizada" draggable="false">` : `<img src="${src(agImg.portada(a, k))}" alt="Portada" draggable="false">`;
+    const defs = [{ f: `<div class="pl-tapa">${tapa}</div>`, d: img(P[0]) }];
     for (let i = 1; i < m; i += 2) defs.push({ f: img(P[i]), d: P[i + 1] ? img(P[i + 1]) : contra, cd: P[i + 1] ? "" : "contratapa" });
     if (m % 2 === 1) defs.push({ f: "", d: contra, cd: "contratapa" });   /* número impar: hoja final en blanco */
     libroAg.innerHTML = "";
-    libroAg.style.setProperty("--tapa", c.color || "#e8e2d8");
+    libroAg.style.setProperty("--tapa", (!propia && c.color) || "#e8e2d8");
     const hojas = defs.map(x => {
       const h = document.createElement("div");
       h.className = "pl-hoja";
