@@ -144,7 +144,7 @@ const AGENDAS = [
     /* gato verde y perro y gato: cada sección es un pliego, su portadilla a la izquierda y el registro a la derecha */
     paginas: ["Datos de la mascota", par("Vacunación"), par("Desparasitación"), par("Observaciones"), par("Otros controles"),
       par("Aseo de la mascota")] },
-  { id: "recetas", nombre: "Agenda Mis Recetas", precio: null, interiorPorPortada: true, formato: A5,
+  { id: "recetas", nombre: "Agenda Mis Recetas", precio: null, lomo: "arriba", interiorPorPortada: true, formato: A5,
     desc: "Recetario para guardar tus recetas favoritas: ingredientes, tiempo, porciones y preparación. Elige entre 4 portadas.",
     portadas: [{ nom: "Girasoles", retiro: true }, { nom: "Mármol azul", retiro: true }, { nom: "Rosa", retiro: true },
       { nom: "Favoritas", retiro: true }],
