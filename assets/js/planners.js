@@ -132,23 +132,15 @@ const AGENDAS = [
     desc: "Álbum de 100 citas para compartir con mamá: carta, compromiso y una página por cita con foto.",
     portadas: [{ nom: "Flores", retiro: true }],
     paginas: [pg(2, "Carta para mamá"), pg(4, ""), pg(3, "Nuestro compromiso"), pg(4, ""), ...citas(5, 8)] },
-  /* ---- control veterinario: dos modelos ---- */
-  { id: "carnet-vet", nombre: "Carnet Veterinario", precio: null, interiorPorPortada: true, formato: A5,
-    desc: "Lleva el control de tu mascota: datos, vacunas, desparasitación, controles, observaciones y aseo. Elige entre 2 diseños.",
-    portadas: [{ nom: "Beige", retiro: true }, { nom: "Morado", retiro: true }],
-    paginas: [hoja1(1, "Datos de la mascota"), "Registro de vacunación", "Registro de desparasitación", "Otros controles",
-      "Observaciones", "Aseo de la mascota"] },
-  /* Carnet de Control: 3 gatos y 3 perros; el perro 1 y el 2 usan las hojas del perro 3 (interior 4) */
+  /* ---- control veterinario: 3 gatos y un perro y gato, cada uno con su interior ---- */
   { id: "control-vet", nombre: "Carnet de Control Veterinario", precio: null, ratio: .66, interiorPorPortada: true, formato: A5,
-    desc: "Agenda de control para tu gato o perro: datos, vacunas, desparasitación, controles y aseo. Elige entre 6 portadas.",
+    desc: "Agenda de control para tu gato o perro: datos, vacunas, desparasitación, controles y aseo. Elige entre 4 portadas.",
     portadas: [
       { nom: "Gato negro", color: "#ef5b4c", paginas: [hoja1(1, "Datos de la mascota"), "Registro de vacunación", "Registro de desparasitación", "Observaciones", "Otros controles", "Aseo de la mascota"] },
       { nom: "Gato patita", color: "#35c2d8", paginas: [hoja1(1, "Datos de la mascota"), "Registro de vacunación", "Observaciones", "Otros controles", "Aseo de la mascota"] },
-      { nom: "Gato verde", color: "#8fd171", interior: 3 },
-      { nom: "Perros verde", color: "#8fd171", interior: 4 },
-      { nom: "Perros celeste", color: "#35c2d8", interior: 4 },
-      { nom: "Perro y gato", color: "#9b86e0", interior: 4 }],
-    /* gato 3 y perros: cada sección es un pliego, su portadilla a la izquierda y el registro a la derecha */
+      { nom: "Gato verde", color: "#8fd171" },
+      { nom: "Perro y gato", color: "#9b86e0" }],
+    /* gato verde y perro y gato: cada sección es un pliego, su portadilla a la izquierda y el registro a la derecha */
     paginas: ["Datos de la mascota", par("Vacunación"), par("Desparasitación"), par("Observaciones"), par("Otros controles"),
       par("Aseo de la mascota")] },
   { id: "recetas", nombre: "Agenda Mis Recetas", precio: null, interiorPorPortada: true, formato: A5,
@@ -453,6 +445,7 @@ const tamDe = a => {
   const t = TAMANOS[a.tam] ? a.tam : "A5", c = TAMANOS[t].cm, cm = ratioDe(a) > 1 ? [c[1], c[0]] : c;
   return { t, cm: cm.join(" × ") + " cm", orden: TAMANOS[t].orden };
 };
+const REGLA_SVG = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="19" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></g></svg>';
 const SUBIR_SVG = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></g></svg>';
 
 function agMsg(a){
@@ -506,7 +499,7 @@ function tarjetaAgenda(a){
       <button class="ver-mas" type="button" data-ag="${a.id}">${LIBRO_SVG} Ve el interior</button>
     </div>
     <div class="tarjeta">
-      <div class="pl-cab"><span class="badge">planner</span><span class="pl-tam" title="Tamaño ${tamDe(a).t}: ${tamDe(a).cm}"><b>${tamDe(a).t}</b> ${tamDe(a).cm}</span></div>
+      <div class="pl-cab"><span class="badge">planner</span><span class="pl-tam" title="Tamaño ${tamDe(a).t}: ${tamDe(a).cm}">${REGLA_SVG}<b>${tamDe(a).t}</b><span>${tamDe(a).cm}</span></span></div>
       <h3>${nombre}</h3>
       <p class="desc">${esc(a.desc)}</p>
       <div class="pl-precio"><span>Valor único</span><b>${a.precio ? fmt(a.precio) : "Consultar"}</b></div>

@@ -254,11 +254,18 @@
 /* tamaño de la agenda, junto a la insignia: "A5 14,8 × 21 cm" */
 .pl-cab{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:12px}
 .pl-cab .badge{margin-bottom:0}
-.pl-tam{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 5px;border-radius:var(--r-pill);
-  border:2.5px solid var(--ink);background:#fff;color:var(--ink);font-size:12.5px;font-weight:700;white-space:nowrap}
-.pl-tam b{font-family:'Neulis',sans-serif;font-weight:900;font-size:13px;letter-spacing:.04em;padding:2px 9px;border-radius:var(--r-pill);
-  background:var(--celeste);color:var(--ink)}
+/* etiqueta tipo sticker: tinta oscura, tamaño grande en celeste/lila, regla y sombra dura como la insignia */
+.pl-tam{display:inline-flex;align-items:center;gap:8px;padding:4px 15px 4px 10px;border-radius:var(--r-pill);
+  border:2.5px solid var(--ink);background:var(--ink);color:#fff;font-size:13.5px;font-weight:800;white-space:nowrap;
+  box-shadow:3px 3px 0 var(--celeste);transform:rotate(-2deg);transition:transform .2s ease}
+.pl-tam:hover{transform:rotate(0) scale(1.05)}
+.pl-tam .ic{width:18px;height:18px;flex:none;color:var(--celeste)}
+.pl-tam b{font-family:'Neulis',sans-serif;font-weight:900;font-size:19px;line-height:1;letter-spacing:.03em;padding:4px 11px 3px;
+  border-radius:var(--r-pill);background:var(--celeste);color:var(--ink)}
+.prod:nth-child(even) .pl-tam{box-shadow:3px 3px 0 var(--lila)}
+.prod:nth-child(even) .pl-tam .ic{color:var(--lila)}
 .prod:nth-child(even) .pl-tam b{background:var(--lila)}
+@media(prefers-reduced-motion:reduce){.pl-tam{transition:none}.pl-tam:hover{transform:rotate(-2deg)}}
 /* portada apaisada: más ancha */
 .pl-agenda-btn.apaisada{width:min(400px,84vw,calc(100% - 16px))}
 /* con flechas: deja libre su espacio (sobresalen 24px por lado) para no pisar la tarjeta del precio */
