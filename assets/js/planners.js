@@ -119,12 +119,11 @@ const AGENDAS = [
   /* Mini Planner Semanal: 6 portadas y 3 juegos de hojas (1 celeste y rosa, 2 lila, 3 rosa).
      TODO: confirmar qué juego de hojas va con cada portada (interior = número de juego) */
   { id: "mini-semanal", nombre: "Mini Planner Semanal", precio: null, lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
-    formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Planner semanal de bolsillo con calendario y mes a mes. Elige entre 6 portadas.",
+    formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Planner semanal de bolsillo con calendario y planificación mensual. Elige entre 6 portadas.",
     portadas: [{ nom: "Yo puedo con todo", retiro: true, interior: 1 }, { nom: "Tú puedes", retiro: true, interior: 1 },
       { nom: "Sigue tus sueños", retiro: true, interior: 3 }, { nom: "Un día a la vez", retiro: true, interior: 2 },
       { nom: "Yo soy capaz", retiro: true, interior: 3 }, { nom: "Si puedes creerlo", retiro: true, interior: 2 }],
-    paginas: [D, CAL(2024), CAL(2025), MENS, pg(9, "Registro mensual"), pg(5, "Notas y días importantes"), pg(7, PSEM), PSEM,
-      pg(6, "Hojas de puntos")] },
+    paginas: [D, CAL(2024), CAL(2025), pg(9, MENS), pg(7, PSEM), PSEM, pg(6, "Hojas de puntos")] },
   { id: "mis-pedidos", nombre: "Agenda Mis Pedidos", precio: null, lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Para emprendedoras: registra cada pedido con cliente, productos, pago y entrega. Elige entre 2 portadas.",
     portadas: [{ nom: "Rosado", retiro: true }, { nom: "Verde", retiro: true }],
