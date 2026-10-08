@@ -266,11 +266,10 @@
 .pl-tam-B5{--tc:var(--rosa)}
 .pl-tam-A5{--tc:var(--lila)}
 .pl-tam-A6{--tc:var(--celeste)}
-/* etiqueta de la tarjeta: recuadro claro con la hoja pintada del color del tamaño (a escala) + tamaño y medidas */
+/* etiqueta de la tarjeta: la hoja pintada del color del tamaño (a escala) + tamaño y medidas */
 .pl-tam{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 6px;border:2.5px solid var(--ink);border-radius:14px;background:#fff;
   color:var(--ink);box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
-.pl-tam-hoja{display:flex;align-items:center;justify-content:center;width:36px;height:40px;flex:none;border-radius:9px;
-  background:#f1f5fb;background:color-mix(in srgb,var(--tc) 22%,#fff)}
+.pl-tam-hoja{display:flex;align-items:center;justify-content:center;width:30px;height:38px;flex:none}
 .pl-tam-hoja i{display:block;box-sizing:border-box;background:var(--tc);border:2.5px solid var(--ink);border-radius:3px}
 .pl-tam-txt{display:flex;flex-direction:column;justify-content:center;line-height:1.05}
 .pl-tam-txt b{font-family:'Neulis',sans-serif;font-weight:900;font-size:21px}
