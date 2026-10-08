@@ -173,12 +173,28 @@ const AGENDAS = [
     formato: "Tamaño A5 apaisado (21 × 14,8 cm) · anillado",   /* TODO: cantidad de hojas real */
     portadas: portadasN(11), paginas: ["Planificación semanal", "Hábitos y objetivos"], repetir: 3 }
 ];
-/* ruta de cada imagen de una agenda (k = portada elegida, para los interiores por portada) */
+/* número de archivo de cada portada: no cambia aunque la planilla oculte o agregue portadas */
+AGENDAS.forEach(a => a.portadas.forEach((p, k) => { p.num = p.num || k + 1; }));
+/* ruta de cada imagen de una agenda (k = portada elegida, para los interiores por portada).
+   Una portada que viene de la planilla trae sus URL (url / urlContra) y se usan tal cual. */
 const agImg = {
-  portada:    (a, k) => `agendas/${a.id}/portada-${k + 1}.jpg`,
-  mini:       (a, k) => `agendas/${a.id}/portada-${k + 1}-mini.jpg`,
-  contratapa: (a, k) => `agendas/${a.id}/contratapa-${k + 1}.jpg`,
-  pagina:     (a, i, k) => `agendas/${a.id}/pagina-${a.interiorPorPortada ? (a.portadas[k].interior || k + 1) + "-" : ""}${String(i + 1).padStart(2, "0")}.jpg`
+  portada:    (a, k) => a.portadas[k].url || `agendas/${a.id}/portada-${a.portadas[k].num}.jpg`,
+  mini:       (a, k) => a.portadas[k].url || `agendas/${a.id}/portada-${a.portadas[k].num}-mini.jpg`,
+  contratapa: (a, k) => a.portadas[k].urlContra || `agendas/${a.id}/contratapa-${a.portadas[k].num}.jpg`,
+  pagina:     (a, i, k) => `agendas/${a.id}/pagina-${a.interiorPorPortada ? (a.portadas[k].interior || a.portadas[k].num) + "-" : ""}${String(i + 1).padStart(2, "0")}.jpg`
+};
+/* hojas agregadas desde la planilla (a.extra): van al final del interior; portada = número que se ve en la web
+   (vacío = todas). pliego: esa hoja y la siguiente forman un pliego (izquierda + derecha).
+   rep: cuántas veces se repite la hoja (o el pliego completo) */
+const extrasDe = (a, k) => {
+  const L = (a.extra || []).filter(h => !h.portada || h.portada === k + 1), u = [];
+  const pag = h => ({ src: h.url, t: h.t });
+  for (let i = 0; i < L.length; i++){
+    const rep = L[i].rep || 1;
+    if (L[i].pliego && L[i + 1]){ for (let r = 0; r < rep; r++) u.push([pag(L[i]), pag(L[i + 1])]); i++; }
+    else for (let r = 0; r < rep; r++) u.push([pag(L[i])]);
+  }
+  return u;
 };
 /* páginas en orden de lectura: [{src, t}]; src null = página en blanco.
    Con el lomo al costado se ordenan como la Atrévete: interior de la portada en blanco,
@@ -193,7 +209,7 @@ const paginasDe = (a, k = 0) => {
     sig = Math.max(...ns) + 1;
     return ns.map(m => ({ src: agImg.pagina(a, m - 1, k), t: o.t, blanco: o.blanco }));
   });
-  const todas = Array.from({length: a.repetir || 1}, () => unidades).flat();
+  const todas = Array.from({length: a.repetir || 1}, () => unidades).flat().concat(extrasDe(a, k));
   if (a.lomo === "arriba" || a.pliegos) return todas.flat();
   /* interior de la portada: en blanco, o la imagen tapaInterior si el diseño lo trae */
   const out = [a.tapaInterior ? { src: agImg.pagina(a, a.tapaInterior - 1, k), t: "" } : PAG_BLANCA];
@@ -210,7 +226,12 @@ const pCarro = a => ({id: "pl-" + a.id, n: a.nombre, e: "📒", vars: [{v: "", p
 
 /* ---------- utilidades ---------- */
 const $ = id => document.getElementById(id);
-const src = ruta => PL_IMG + ruta;
+/* rutas propias → assets; URL completa (planilla, Cloudinary) → tal cual, achicada con cld() de tienda.js */
+const src = (ruta, ancho = 900) => /^(https?:|blob:|data:)/.test(ruta)
+  ? (typeof cld === "function" ? cld(ruta, ancho) : ruta)
+  : PL_IMG + ruta;
+/* precio final con el descuento de la planilla (null = "Consultar") */
+const precioDe = a => a.precio ? Math.round(a.precio * (1 - (a.dcto || 0) / 100)) : null;
 const menosMov = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const waHref = msg => `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
 const FOCO = 'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]):not([hidden]),[tabindex]:not([tabindex="-1"])';
@@ -457,12 +478,13 @@ const SUBIR_SVG = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><g fil
 function agMsg(a){
   const k = agSel.get(a.id) || 0, p = agPerso.get(a.id) || {};
   const tam = ` tamaño ${tamDe(a).t}`;
-  if (p.activo) return a.precio
-    ? `Hola Heart Graphic! 💜 Quiero pedir: ${a.nombre}${tam} con portada personalizada (te envío la imagen por aquí) — ${fmt(a.precio + PRECIOS.perso)}`
+  const pr = precioDe(a);
+  if (p.activo) return pr
+    ? `Hola Heart Graphic! 💜 Quiero pedir: ${a.nombre}${tam} con portada personalizada (te envío la imagen por aquí) — ${fmt(pr + PRECIOS.perso)}`
     : `Hola Heart Graphic! 💜 Quiero consultar por: ${a.nombre}${tam} con portada personalizada (+${fmt(PRECIOS.perso)}, te envío la imagen por aquí)`;
   const portada = a.portadas.length > 1 ? ` (portada ${a.portadas[k].nom})` : "";
-  return a.precio
-    ? `Hola Heart Graphic! 💜 Quiero pedir: ${a.nombre}${tam}${portada} — ${fmt(a.precio)}`
+  return pr
+    ? `Hola Heart Graphic! 💜 Quiero pedir: ${a.nombre}${tam}${portada} — ${fmt(pr)}`
     : `Hola Heart Graphic! 💜 Quiero consultar por: ${a.nombre}${tam}${portada}`;
 }
 
@@ -479,7 +501,7 @@ function tarjetaAgenda(a){
        <div class="pl-pt-fila">
          <button class="pl-pt-flecha" type="button" data-dir="-1" aria-label="Ver portadas anteriores">${FLECHA(-1)}</button>
          <div class="pl-pt-pista" role="radiogroup" aria-label="Portada de ${nombre}">
-           ${a.portadas.map((p, k) => `<label class="pl-pt" title="${esc(p.nom)}"><input class="pl-oculto" type="radio" name="ag-${a.id}" value="${k}" aria-label="Portada ${esc(p.nom)}"${k ? "" : " checked"}><img src="${src(agImg.mini(a, k))}" alt="" width="160" height="${Math.round(160 / ratioDe(a))}" loading="lazy"></label>`).join("")}
+           ${a.portadas.map((p, k) => `<label class="pl-pt" title="${esc(p.nom)}"><input class="pl-oculto" type="radio" name="ag-${a.id}" value="${k}" aria-label="Portada ${esc(p.nom)}"${k ? "" : " checked"}><img src="${src(agImg.mini(a, k), 320)}" alt="" width="160" height="${Math.round(160 / ratioDe(a))}" loading="lazy"></label>`).join("")}
          </div>
          <button class="pl-pt-flecha" type="button" data-dir="1" aria-label="Ver más portadas">${FLECHA(1)}</button>
        </div>`
@@ -508,7 +530,7 @@ function tarjetaAgenda(a){
       <div class="pl-cab"><span class="badge">planner</span>${tamHTML(a)}</div>
       <h3>${nombre}</h3>
       <p class="desc">${esc(a.desc)}</p>
-      <div class="pl-precio"><span>Valor único</span><b>${a.precio ? fmt(a.precio) : "Consultar"}</b></div>
+      <div class="pl-precio"><span>Valor único${a.precio && a.dcto ? ` <em class="pl-dcto">-${a.dcto}%</em>` : ""}</span><span class="pl-precio-val">${a.precio && a.dcto ? `<s>${fmt(a.precio)}</s>` : ""}<b>${a.precio ? fmt(precioDe(a)) : "Consultar"}</b></span></div>
       ${elegir}
       <div class="pl-perso">
         <label class="fila pl-op pl-op-check"><input class="pl-oculto pl-perso-chk" type="checkbox"><span class="chk" aria-hidden="true"></span><span class="un">Personaliza tu portada</span><span class="pr">+${fmt(PRECIOS.perso)}</span></label>
@@ -522,7 +544,7 @@ function tarjetaAgenda(a){
           <small class="pl-ayuda" aria-live="polite">Tu imagen será la portada: la ves en la foto y en «Ve el interior». Usa una imagen vertical en buena resolución (JPG o PNG).</small>
         </div>
       </div>
-      ${a.precio ? `<div class="pl-total" hidden><span>Total con portada personalizada</span><b>${fmt(a.precio + PRECIOS.perso)}</b></div>` : ""}
+      ${a.precio ? `<div class="pl-total" hidden><span>Total con portada personalizada</span><b>${fmt(precioDe(a) + PRECIOS.perso)}</b></div>` : ""}
       <p class="notas">${esc(a.formato)}</p>
       <div class="materiales">
         <div class="mat"><span class="ico">${ANILLO_SVG}</span><b>Anillado metálico</b><i>Full color</i></div>
@@ -637,8 +659,8 @@ function tarjetaAgenda(a){
   if (carro) carro.addEventListener("click", () => {
     if (faltaImagen()) return;
     const k = agSel.get(a.id) || 0;
-    if (st.activo) CART.add(pCarro(a), "Portada personalizada (imagen por WhatsApp)", 1, a.precio + PRECIOS.perso, "");
-    else CART.add(pCarro(a), varias ? `Portada ${a.portadas[k].nom}` : "Valor único", 1, a.precio, "");
+    if (st.activo) CART.add(pCarro(a), "Portada personalizada (imagen por WhatsApp)", 1, precioDe(a) + PRECIOS.perso, "");
+    else CART.add(pCarro(a), varias ? `Portada ${a.portadas[k].nom}` : "Valor único", 1, precioDe(a), "");
   });
   art.querySelectorAll("[data-ag]").forEach(b => b.addEventListener("click", () => abreAgenda(a)));
   pinta();
@@ -653,9 +675,99 @@ $("plPanel").insertAdjacentHTML("afterbegin", `<div class="pl-tamanos" role="gro
   <div class="pl-tamanos-hojas">${Object.entries(TAMANOS).map(([t, z]) => `<div class="pl-tamanos-item pl-tam-${t}">${hojaEscala(...z.cm.map(c => parseFloat(c.replace(",", "."))), 3.6)}<b>${t}</b><small>${z.cm.join(" × ")} cm</small><em>${z.nombre}</em></div>`).join("")}</div>
 </div>
 <div class="pl-tarjetas"></div>`);
-/* de mayor a menor: B5, A5 y A6 (dentro de cada tamaño, el orden de AGENDAS) */
-AGENDAS.slice().sort((x, y) => tamDe(x).orden - tamDe(y).orden).forEach(a => $("plPanel").querySelector(".pl-tarjetas").append(tarjetaAgenda(a)));
-document.querySelectorAll("#plPanel .prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
+/* de mayor a menor: B5, A5 y A6; dentro de cada tamaño, la columna "orden" de la planilla y luego el orden de AGENDAS */
+function pintaTarjetas(){
+  const caja = $("plPanel").querySelector(".pl-tarjetas");
+  caja.textContent = "";
+  agSel.clear(); agPerso.clear();
+  const pos = a => AGENDAS.indexOf(a), ord = a => Number.isFinite(a.orden) ? a.orden : 1e6;
+  AGENDAS.filter(a => !a.oculto && a.portadas.length)
+    .sort((x, y) => tamDe(x).orden - tamDe(y).orden || ord(x) - ord(y) || pos(x) - pos(y))
+    .forEach(a => caja.append(tarjetaAgenda(a)));
+  caja.querySelectorAll(".prod .badge").forEach((b, i) => { b.textContent = "planner " + String(i + 1).padStart(2, "0"); });
+  if (typeof observaReveals === "function") observaReveals();
+}
+pintaTarjetas();
+
+/* ---------- PLANILLA (Google Sheets, la misma del catálogo: SHEET_ID de tienda.js) ----------
+   Pestañas (se leen las columnas por su nombre; cualquiera puede faltar):
+   - planners: id, activo, nombre, precio, descuento, tamano, descripcion, detalles, ocultar_portadas,
+     orden, anillado (costado | arriba), orientacion (vertical | apaisada). Fila id = config: su
+     precio es el de "Personaliza tu portada". Un id que no existe en AGENDAS crea un planner nuevo.
+   - planners_portadas: id_planner, orden, nombre, url_portada, url_contratapa, color, activo.
+   - planners_hojas: id_planner, portada, orden, titulo, url (o el archivo de una hoja actual), pliego, repetir.
+   Si la planilla no carga, o una fila está mal escrita, se usa lo de AGENDAS y se avisa en la consola. */
+const celda = (H, fila, nombre) => { const i = H.cols.indexOf(nombre); return i < 0 ? undefined : fila[i]; };
+const txt = v => String(v ?? "").trim();
+const num = v => { const n = typeof v === "number" ? v : parseFloat(txt(v).replace(/[$.\s]/g, "").replace(",", ".")); return Number.isFinite(n) ? n : null; };
+const siNo = (v, def) => { const s = txt(v).toLowerCase(); return s ? /^(si|sí|s|x|1|true)$/.test(s) : def; };
+const esUrl = v => /^https?:\/\/\S+$/i.test(txt(v));
+function aplicaPlanilla(P, Po, H){
+  const nuevos = [], aviso = (hoja, i, m) => console.warn(`Planilla › ${hoja}, fila ${i + 2}: ${m}`);
+  const busca = id => AGENDAS.find(a => a.id === id) || nuevos.find(a => a.id === id);
+  if (P) P.rows.forEach((r, i) => {
+    const c = n => celda(P, r, n), id = txt(c("id"));
+    if (!id) return;
+    if (id === "config"){ const v = num(c("precio")); if (v != null) PRECIOS.perso = v; return; }
+    let a = busca(id);
+    if (!a){ a = { id, nombre: id, precio: null, desc: "", formato: "", portadas: [], paginas: [], deLaPlanilla: true }; nuevos.push(a); }
+    if (!siNo(c("activo"), true)) a.oculto = true;
+    if (txt(c("nombre"))) a.nombre = txt(c("nombre"));
+    if (c("precio") !== undefined){ const v = num(c("precio")); a.precio = v && v > 0 ? v : null; }
+    if (c("descuento") !== undefined){ let d = num(String(c("descuento") ?? "").replace("%", "")) || 0; if (d > 0 && d < 1) d *= 100; a.dcto = Math.min(90, Math.max(0, Math.round(d))); }
+    const t = txt(c("tamano")).toUpperCase(); if (t){ if (TAMANOS[t]) a.tam = t; else aviso("planners", i, `tamano "${t}" no es B5, A5 ni A6`); }
+    if (txt(c("descripcion"))) a.desc = txt(c("descripcion"));
+    if (txt(c("detalles"))) a.formato = txt(c("detalles"));
+    const an = txt(c("anillado")).toLowerCase(); if (an === "arriba") a.lomo = "arriba"; else if (an === "costado") delete a.lomo;
+    const ori = txt(c("orientacion")).toLowerCase();
+    if (ori === "apaisada" && ratioDe(a) <= 1) a.ratio = 1.414; else if (ori === "vertical" && ratioDe(a) > 1) a.ratio = .705;
+    const o = num(c("orden")); if (o != null) a.orden = o;
+    const ocultas = txt(c("ocultar_portadas")).split(/[^0-9]+/).filter(Boolean).map(Number);
+    if (ocultas.length) a.portadas = a.portadas.filter(p => !ocultas.includes(p.num));
+  });
+  if (Po) Po.rows.map((r, i) => ({ r, i, c: n => celda(Po, r, n) }))
+    .filter(x => txt(x.c("id_planner")))
+    .sort((x, y) => (num(x.c("orden")) ?? 1e6) - (num(y.c("orden")) ?? 1e6))
+    .forEach(({ i, c }) => {
+      const a = busca(txt(c("id_planner")));
+      if (!a) return aviso("planners_portadas", i, `no hay un planner con id "${txt(c("id_planner"))}"`);
+      if (!siNo(c("activo"), true)) return;
+      if (!esUrl(c("url_portada"))) return aviso("planners_portadas", i, "falta url_portada (https://…)");
+      const base = a.portadas[0] || {}, contra = esUrl(c("url_contratapa")) ? txt(c("url_contratapa")) : "";
+      a.portadas.push({ nom: txt(c("nombre")) || "Portada " + (a.portadas.length + 1), url: txt(c("url_portada")), urlContra: contra,
+        retiro: !!contra, color: txt(c("color")) || undefined, num: 1000 + i,
+        /* su interior: el de la primera portada (más las hojas de planners_hojas con su número) */
+        interior: base.interior || base.num, paginas: base.paginas });
+    });
+  if (H) H.rows.map((r, i) => ({ i, c: n => celda(H, r, n) }))
+    .filter(x => txt(x.c("id_planner")))
+    .sort((x, y) => (num(x.c("orden")) ?? 1e6) - (num(y.c("orden")) ?? 1e6))
+    .forEach(({ i, c }) => {
+      const a = busca(txt(c("id_planner")));
+      if (!a) return aviso("planners_hojas", i, `no hay un planner con id "${txt(c("id_planner"))}"`);
+      /* url: una imagen en internet, o el archivo de una hoja que el planner ya tiene (pagina-03.jpg) para repetirla */
+      const u = txt(c("url")), propia = /^pagina-[0-9-]+\.jpe?g$/i.test(u);
+      if (!esUrl(u) && !propia) return aviso("planners_hojas", i, "url: pega una imagen (https://…) o el archivo de una hoja actual (pagina-03.jpg)");
+      const rep = Math.min(50, Math.max(1, Math.round(num(c("repetir")) || 1)));
+      (a.extra = a.extra || []).push({ t: txt(c("titulo")), url: propia ? `agendas/${a.id}/${u.toLowerCase()}` : u,
+        portada: num(c("portada")) || null, pliego: siNo(c("pliego"), false), rep });
+    });
+  nuevos.forEach(a => {
+    if (!a.portadas.length) return console.warn(`Planilla › planner "${a.id}" no se muestra: no tiene portadas en planners_portadas`);
+    AGENDAS.push(a);
+  });
+}
+/* la planilla es opcional: si una pestaña no existe (o gviz devuelve otra), se ignora */
+(async () => {
+  if (typeof SHEET_ID === "undefined" || !SHEET_ID || typeof gvizHoja !== "function") return;
+  const lee = async (nombre, debe) => { try { const h = await gvizHoja(nombre); return debe.every(c => h.cols.includes(c)) ? h : null; } catch (_) { return null; } };
+  const [P, Po, H] = await Promise.all([
+    lee("planners", ["id", "tamano"]), lee("planners_portadas", ["id_planner", "url_portada"]), lee("planners_hojas", ["id_planner", "titulo", "url"])
+  ]);
+  if (!P && !Po && !H) return;
+  try { aplicaPlanilla(P, Po, H); pintaTarjetas(); }
+  catch (e) { console.error("Planilla de planners: no se pudo aplicar; se muestran los datos de AGENDAS.", e); }
+})();
 
 /* ---- visor compartido de las agendas ---- */
 const visorAgEl = $("plVisorAgenda");

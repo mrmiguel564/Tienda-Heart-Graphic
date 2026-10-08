@@ -14,6 +14,7 @@ Es una página estática (HTML + CSS + JS, sin build): los pedidos se hacen por 
 index.html                    Marcado del sitio (tienda + vista de Políticas). Logos e íconos
                               van como SVG en línea.
 catalogo_heart_graphic.xlsx   Plantilla del catálogo para subir a Google Sheets (trae hoja "leeme").
+planners_heart_graphic.xlsx   Pestañas de la sección Planners para la misma planilla (trae hoja "leeme").
 assets/
   css/tienda.css              Estilos del sitio (trae embebidas Neulis Alt Regular y Neulis Bold)
   js/tienda.js                Script del sitio: configuración, catálogo, carrito, ofertas, router
@@ -111,6 +112,19 @@ Pestaña del Catálogo: bajo el título hay un switch **Catálogo / Planner** (c
 **Imágenes (temporal):** se sirven desde `assets/productos/planners/` (`agendas/<id>/` con `portada-N.jpg`, `portada-N-mini.jpg`, `contratapa-N.jpg` y `pagina-NN.jpg` en orden de lectura, copiadas y achicadas desde las carpetas de diseño (PLANNERS, 100 CITAS, 100 Citas con AMIGAS, 100 Citas con mamá, AGENDA DE CONTROL VET y AGENDA de Recetas); con `interiorPorPortada` las páginas son `pagina-K-NN.jpg`, una serie por portada). Cuando se migren a un servicio externo, basta con cambiar `PL_IMG` o las rutas de la configuración.
 
 Quedan con **TODO**: los precios, descripciones y tamaño/hojas de las agendas (incluido el Planner Semanal) (`AGENDAS` en `planners.js`). Las páginas de la Atrévete se recortaron en el lomo para quitar el anillado redondo que traían dibujado.
+
+### Planners en Google Sheets
+
+`planners_heart_graphic.xlsx` trae las pestañas para administrar la sección desde la **misma planilla del catálogo** (Archivo › Importar › "Insertar hojas nuevas"). Las instrucciones detalladas están en su hoja **leeme**. Si una pestaña no existe o una fila está mal escrita, la web usa lo que trae `AGENDAS` en `planners.js` y avisa en la consola con el número de fila.
+
+| Pestaña | Uso |
+|---|---|
+| `planners` | Una fila por planner (`id` = el de `AGENDAS`): `activo`, `nombre`, `precio` (vacío = Consultar), `descuento` (%), `tamano` (B5/A5/A6), `descripcion`, `detalles`, `ocultar_portadas`, `orden`, `anillado`, `orientacion`. La fila `config` guarda en `precio` el valor de "Personaliza tu portada". Un `id` nuevo crea un planner nuevo. |
+| `planners_portadas` | Portadas nuevas: `id_planner`, `orden`, `nombre`, `url_portada`, `url_contratapa`, `color`, `activo`. Usan el interior de la primera portada. |
+| `planners_hojas` | Hojas que se suman al final del interior: `id_planner`, `portada` (vacío = todas), `orden`, `titulo`, `url` (imagen en internet o el archivo de una hoja actual, ej. `pagina-1-03.jpg`), `pliego` (si = par izquierda + derecha), `repetir` (veces). |
+| `hojas_actuales` | Solo referencia: las hojas que hoy tiene cada planner, con su título y su archivo. |
+
+> Google devuelve la primera pestaña cuando se pide una que no existe; por eso la web solo acepta cada pestaña si trae sus columnas propias (`tamano`, `url_portada`, `titulo`…).
 
 ## Ramas y despliegue (Netlify)
 
