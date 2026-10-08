@@ -215,6 +215,21 @@ addEventListener("hashchange", () => {
   else if (location.hash === "#productos") muestraVista("catalogo");
 });
 
+/* Con un visor abierto la página de fondo no se desplaza. Se bloquea en <html>
+   (tienda.css le pone overflow-x, así que el overflow de <body> no alcanza) y se
+   reserva el ancho de la barra para que el fondo no salte ni quede una franja clara. */
+function bloqueaScroll(si){
+  const de = document.documentElement;
+  if (si){
+    const barra = innerWidth - de.clientWidth;
+    de.style.overflow = "hidden";
+    if (barra > 0) de.style.paddingRight = barra + "px";
+  } else {
+    de.style.overflow = "";
+    de.style.paddingRight = "";
+  }
+}
+
 /* Diálogo accesible: Esc cierra, el foco queda atrapado adentro y vuelve al
    botón que lo abrió; clic en el fondo también cierra. */
 function dialogo(el, {alAbrir, teclas} = {}){
@@ -226,13 +241,13 @@ function dialogo(el, {alAbrir, teclas} = {}){
     el.hidden = false;
     void el.offsetWidth;            /* fuerza el reflow para que corra la transición */
     el.classList.add("abierto");
-    document.body.style.overflow = "hidden";
+    bloqueaScroll(true);
     if (alAbrir) alAbrir();
   }
   function cierra(){
     if (!abierto()) return;
     el.classList.remove("abierto");
-    document.body.style.overflow = "";
+    bloqueaScroll(false);
     t = setTimeout(() => { el.hidden = true; }, menosMov() ? 0 : 300);
     if (previo && previo.focus) previo.focus();
   }
