@@ -192,31 +192,29 @@
 .pl-sombra{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .45s;background:linear-gradient(90deg,rgba(0,0,0,.18),transparent)}
 .girando .pl-sombra{opacity:1}
 
-/* bloc: agendas con anillado arriba, las hojas giran hacia arriba. Dos páginas de alto
-   (la de arriba es el dorso de la hoja ya girada), así que la proporción es --pag / 2 */
-.pl-bloc-marco{perspective:2400px;width:min(760px,94vw,calc((100vh - 210px) * var(--pag,1.42) / 2))}
-.pl-bloc{position:relative;width:100%;aspect-ratio:calc(var(--pag,1.42) / 2);transition:transform .7s cubic-bezier(.4,.1,.2,1);touch-action:pan-x}
-.pl-bloc.cerrado{transform:translateY(-25%)}
-.pl-bloc::after{content:"";position:absolute;left:6%;right:6%;bottom:-16px;height:22px;border-radius:50%;background:rgba(20,16,50,.35);filter:blur(10px);z-index:-1}
+/* bloc: agendas con anillado arriba, UNA hoja a la vez a tamaño completo (proporción = --pag).
+   Al avanzar, la hoja se levanta por arriba girando sobre el anillado y se desvanece. */
+.pl-bloc-marco{width:min(560px,94vw,calc((100vh - 240px) * var(--pag,.705)));padding-top:14px}
+.pl-bloc{position:relative;width:100%;aspect-ratio:var(--pag,.705);perspective:1600px;touch-action:pan-x}
+.pl-bloc::after{content:"";position:absolute;left:6%;right:6%;bottom:-26px;height:22px;border-radius:50%;background:rgba(20,16,50,.4);filter:blur(10px);z-index:-1}
+/* cantos de las hojas por debajo */
+.pl-bloc-cantos{position:absolute;left:10px;right:10px;bottom:-9px;height:14px;border-radius:0 0 10px 10px;
+  border:2px solid var(--ink);border-top:0;background:repeating-linear-gradient(180deg,#fff 0 2px,#e4dfd6 2px 3px)}
 /* debajo de todas las hojas: la contratapa (retiro), o cartón liso */
-.pl-base{position:absolute;left:0;right:0;top:50%;height:50%;background:#e8e2d8;border-radius:0 0 8px 8px;overflow:hidden}
+.pl-base{position:absolute;inset:0;background:#e8e2d8;border-radius:4px 4px 10px 10px;overflow:hidden}
 .pl-base img{width:100%;height:100%;object-fit:cover;display:block}
-/* anillado arriba (wire-o): mismo alambre blanco, girado; --anillos = cantidad de anillos */
-.pl-anillado-h{position:absolute;z-index:300;left:3%;width:94%;top:50%;transform:translateY(-50%);pointer-events:none;
-  aspect-ratio:calc(var(--anillos,20) / 2.5);
-  background:url(../productos/planners/anillado/alambre-h.svg),url(../productos/planners/anillado/hoyo-abajo.svg),url(../productos/planners/anillado/hoyo-arriba.svg);
-  background-size:calc(100% / var(--anillos,20)) 100%;background-repeat:repeat-x;background-position:left center}
-.pl-bloc.cerrado .pl-anillado-h{background-image:url(../productos/planners/anillado/alambre-h.svg),url(../productos/planners/anillado/hoyo-abajo.svg)}.pl-bhoja{position:absolute;left:0;top:50%;width:100%;height:50%;transform-origin:center top;transform-style:preserve-3d;
-  transition:transform .9s cubic-bezier(.45,.05,.25,1);cursor:pointer}
-.pl-bhoja.vuelta{transform:rotateX(180deg)}
-.pl-bcara{position:absolute;inset:0;overflow:hidden;background:#fff;border-radius:0 0 8px 8px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.pl-bcara img{width:100%;height:100%;display:block;object-fit:cover;user-select:none;-webkit-user-drag:none}
-.pl-bcara.dorso{transform:rotateX(180deg);border-radius:8px 8px 0 0}
-.pl-bcara.frente::after,.pl-bcara.dorso::after{content:"";position:absolute;inset:0;pointer-events:none}
-.pl-bcara.frente::after{background:linear-gradient(180deg,rgba(0,0,0,.13),rgba(0,0,0,0) 8%)}
-.pl-bcara.dorso::after{background:linear-gradient(0deg,rgba(0,0,0,.13),rgba(0,0,0,0) 8%)}
-.pl-bcara.carton{background:#e8e2d8}
+.pl-bhoja{position:absolute;inset:0;border-radius:4px 4px 10px 10px;overflow:hidden;background:#fff;cursor:pointer;
+  transform-origin:50% 0;box-shadow:0 2px 0 rgba(0,0,0,.08);
+  transition:transform .8s cubic-bezier(.45,.05,.25,1),opacity .35s ease}
+.pl-bhoja img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+/* leída: gira por arriba y se desvanece al pasar la vertical (al volver, aparece primero y luego baja) */
+.pl-bhoja.vuelta{transform:rotateX(165deg);opacity:0;transition:transform .8s cubic-bezier(.45,.05,.25,1),opacity .35s ease .3s}
 .pl-bhoja .pl-sombra{background:linear-gradient(180deg,rgba(0,0,0,.2),transparent)}
+/* anillado arriba (wire-o): alambre blanco sobre el borde superior; --anillos = cantidad de anillos */
+.pl-anillado-h{position:absolute;z-index:300;left:4%;width:92%;top:0;transform:translateY(-50%);pointer-events:none;
+  aspect-ratio:calc(var(--anillos,13) / 2.5);
+  background:url(../productos/planners/anillado/alambre-h.svg),url(../productos/planners/anillado/hoyo-abajo.svg);
+  background-size:calc(100% / var(--anillos,13)) 100%;background-repeat:repeat-x;background-position:left center}
 
 /* ---------- menos movimiento ---------- */
 @media (prefers-reduced-motion: reduce){

@@ -590,9 +590,11 @@ function abreAgenda(a){
   visorAgenda.abre();
 }
 
-/* ---- visor de las agendas con anillado arriba: las hojas giran hacia arriba ----
-   hoja 0: portada (su dorso, el cartón de la tapa); hoja i: frente = página 2i-2,
-   dorso = página 2i-1. Debajo de todo queda la contratapa (retiro). */
+/* ---- visor de las agendas con anillado arriba: una hoja a la vez ----
+   Se ve una sola página, a tamaño completo. Al avanzar, la hoja se levanta por
+   arriba girando sobre el anillado y se desvanece, dejando ver la siguiente.
+   Hojas: portada y cada página (tiro y retiro, por separado); debajo de todo
+   queda la contratapa, que se ve al final. */
 const visorBlocEl = $("plVisorBloc");
 const bloc = $("plBloc");
 const visorBloc = visor(visorBlocEl, {
@@ -601,34 +603,29 @@ const visorBloc = visor(visorBlocEl, {
     const a = agActual, k = agSel.get(a.id) || 0, c = a.portadas[k];
     const per = agPerso.get(a.id) || {}, propia = per.activo && per.url;
     const P = agPags = paginasDe(a, k);
-    const img = (p, alt) => `<img src="${src(p.src)}" alt="${esc(alt || p.t)}" draggable="false" loading="lazy">`;
-    const tapa = propia ? `<img src="${propia}" alt="Tu portada personalizada" draggable="false">` : `<img src="${src(agImg.portada(a, k))}" alt="Portada" draggable="false">`;
-    const contra = !propia && c.retiro ? img({ src: agImg.contratapa(a, k) }, "Contratapa") : "";
-    const defs = [{ f: tapa, d: "", cd: "carton" }];
-    for (let i = 0; i < P.length; i += 2) defs.push({ f: img(P[i]), d: P[i + 1] ? img(P[i + 1]) : "", cd: P[i + 1] ? "" : "carton" });
-    bloc.innerHTML = `<div class="pl-base">${contra}</div>`;
-    const hojas = defs.map(x => {
+    const img = (s, alt, perezosa = true) => `<img src="${s}" alt="${esc(alt)}" draggable="false"${perezosa ? ' loading="lazy"' : ""}>`;
+    const tapa = propia ? img(propia, "Tu portada personalizada", false) : img(src(agImg.portada(a, k)), "Portada", false);
+    const contra = !propia && c.retiro ? img(src(agImg.contratapa(a, k)), "Contratapa") : "";
+    bloc.innerHTML = `<span class="pl-bloc-cantos" aria-hidden="true"></span><div class="pl-base">${contra}</div>`;
+    const hojas = [tapa, ...P.map(p => img(src(p.src), p.t))].map(html => {
       const h = document.createElement("div");
       h.className = "pl-bhoja";
-      h.innerHTML = hojaHTML("pl-bcara", x.f, x.d, x.cd);
+      h.innerHTML = `${html}<div class="pl-sombra"></div>`;
       bloc.appendChild(h);
       return h;
     });
-    /* anillado arriba: perforaciones rectangulares + alambre doble blanco, siempre encima */
+    /* anillado arriba: perforaciones + alambre doble blanco, siempre encima */
     bloc.insertAdjacentHTML("beforeend", '<span class="pl-anillado-h" aria-hidden="true"></span>');
     return hojas;
   },
   rotulo(cur, n){
     if (cur === 0) return "Portada";
     if (cur === n) return "Contratapa";
-    const arriba = cur > 1 ? agPags[2 * cur - 3] : null, abajo = agPags[2 * cur - 2];
-    return [...new Set([arriba, abajo].filter(Boolean).map(p => p.t))].join(" · ");
+    return (agPags[cur - 1] || {}).t || "";
   },
-  alEstado: (cur, n) => { bloc.classList.toggle("cerrado", cur === 0); bloc.classList.toggle("al-final", cur === n); },
-  mitadClic(e, r, cur){
-    const mid = cur === 0 ? r.top + r.height * .25 : r.top + r.height / 2;
-    return e.clientY > mid ? 1 : -1;
-  }
+  alEstado: () => {},
+  /* toque en el tercio de arriba: volver; en el resto: avanzar */
+  mitadClic: (e, r) => e.clientY > r.top + r.height * .3 ? 1 : -1
 });
 
 /* JPG en CMYK (archivos para imprenta): en pantalla se ven más oscuros */
