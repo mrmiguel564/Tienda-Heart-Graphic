@@ -17,6 +17,8 @@ catalogo_heart_graphic.xlsx   Plantilla del catálogo para subir a Google Sheets
 planners_heart_graphic.xlsx   Pestañas de la sección Planners para la misma planilla (trae hoja "leeme").
 pestanas_planners_y_testimonios.xlsx  Versión simple para importar: planners (nombre, descripción, precio),
                               planners_portadas y testimonios, con su hoja leeme_nuevas.
+pestanas_planners.xlsx        Solo planners y planners_portadas, con el diseño de la tienda (encabezado tinta,
+                              filas alternadas, precio en $, listas desplegables), para importar a mano.
 instructivo_planners.pdf      Guía paso a paso (para cualquier persona) para usar esa planilla.
 assets/
   css/tienda.css              Estilos del sitio (trae embebidas Neulis Alt Regular y Neulis Bold)
