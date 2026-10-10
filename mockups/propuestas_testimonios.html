@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testimonios con foto</title>
+<link rel="stylesheet" href="../assets/css/tienda.css">
+<style>
+/* Propuestas para la sección Testimonios con foto del pedido (editable desde la pestaña "testimonios").
+   Cada propuesta muestra un testimonio con la foto a la izquierda y otro con la foto a la derecha. */
+body{padding:0 16px 70px;background:#f4f2ff}
+.pp-wrap{max-width:1040px;margin:0 auto}
+.pp-top{padding:40px 0 10px;text-align:center}
+.pp-top h1{font-family:'Neulis',sans-serif;font-weight:900;font-size:clamp(28px,4vw,40px);color:var(--ink);margin:0}
+.pp-top p{color:var(--ink-soft);max-width:62ch;margin:10px auto 0}
+.pp{margin:46px 0 0}
+.pp-h{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+.pp-h .l{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:#fff;font-family:'Neulis',sans-serif;font-weight:900;font-size:22px}
+.pp-h h2{font-family:'Neulis',sans-serif;font-weight:900;font-size:24px;color:var(--ink);margin:0}
+.pp-h p{margin:2px 0 0;color:var(--ink-soft);font-size:14.5px}
+.ig{font-family:'Neulis',sans-serif;font-weight:800;font-size:13px;color:var(--lila-deep, #8d6fe0);display:inline-flex;align-items:center;gap:5px}
+.ig svg{width:15px;height:15px}
+.estrellas{color:#f6b73c;letter-spacing:.12em;font-size:18px}
+
+/* ---------- A: tarjeta dividida ---------- */
+.a-card{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);background:#fff;border:4px solid var(--ink);border-radius:40px;
+  box-shadow:12px 12px 0 var(--lila),24px 24px 0 rgba(108,218,244,.5);overflow:hidden;margin:0 0 40px}
+.a-card.der{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
+.a-card.der .a-foto{order:2;border-right:0;border-left:4px solid var(--ink)}
+.a-foto{border-right:4px solid var(--ink);background:linear-gradient(135deg,var(--celeste),var(--lila));min-height:320px}
+.a-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.a-txt{padding:38px 40px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.a-txt .frase{font-size:19px;line-height:1.55;color:var(--ink);margin:0}
+.a-quien{display:flex;flex-direction:column;gap:3px}
+.a-quien b{font-family:'Neulis',sans-serif;font-size:16px;color:var(--ink)}
+.a-quien span{font-size:13px;color:var(--ink-soft)}
+
+/* ---------- B: polaroid + globo ---------- */
+.b-fila{display:flex;align-items:center;gap:34px;margin:0 0 50px;padding:10px 6px}
+.b-fila.der{flex-direction:row-reverse}
+.b-pola{flex:0 0 280px;background:#fff;padding:14px 14px 52px;border:3px solid var(--ink);border-radius:10px;box-shadow:8px 8px 0 var(--ink);transform:rotate(-4deg);position:relative}
+.b-fila.der .b-pola{transform:rotate(4deg)}
+.b-pola img{width:100%;aspect-ratio:1;object-fit:cover;display:block;border-radius:4px;border:2px solid var(--ink)}
+.b-pola::before{content:"";position:absolute;top:-16px;left:50%;width:96px;height:30px;transform:translateX(-50%) rotate(-3deg);background:rgba(205,185,249,.85);border:2px dashed rgba(63,60,102,.35)}
+.b-pola figcaption{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-family:'Neulis',sans-serif;font-weight:800;font-size:14px;color:var(--ink)}
+.b-globo{flex:1;position:relative;background:#fff;border:4px solid var(--ink);border-radius:34px;padding:30px 34px;box-shadow:10px 10px 0 var(--celeste)}
+.b-fila.der .b-globo{box-shadow:10px 10px 0 var(--lila)}
+.b-globo::before{content:"";position:absolute;left:-22px;top:50%;width:34px;height:34px;background:#fff;border-left:4px solid var(--ink);border-bottom:4px solid var(--ink);transform:translateY(-50%) rotate(45deg)}
+.b-fila.der .b-globo::before{left:auto;right:-22px;transform:translateY(-50%) rotate(-135deg)}
+.b-globo .frase{font-size:18.5px;line-height:1.55;margin:8px 0 16px;color:var(--ink)}
+.b-quien{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.b-quien b{font-family:'Neulis',sans-serif;font-size:16px;color:var(--ink)}
+
+/* ---------- C: estilo publicación de Instagram ---------- */
+.c-fila{display:grid;grid-template-columns:330px minmax(0,1fr);gap:34px;align-items:center;margin:0 0 50px}
+.c-fila.der{grid-template-columns:minmax(0,1fr) 330px}
+.c-fila.der .c-post{order:2}
+.c-post{background:#fff;border:4px solid var(--ink);border-radius:26px;overflow:hidden;box-shadow:10px 10px 0 var(--lila)}
+.c-cab{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:3px solid var(--ink)}
+.c-ava{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:'Neulis',sans-serif;font-weight:900;color:#fff;
+  background:linear-gradient(135deg,var(--celeste),var(--lila));border:2.5px solid var(--ink)}
+.c-cab .ig{color:var(--ink)}
+.c-cab small{display:block;font-size:11px;color:var(--ink-soft)}
+.c-post img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.c-pie{display:flex;gap:12px;padding:10px 14px;font-size:20px;border-top:3px solid var(--ink)}
+.c-txt .frase{font-size:20px;line-height:1.55;color:var(--ink);margin:10px 0 14px}
+.c-txt .comillas{font-family:'Neulis',sans-serif;font-weight:900;font-size:80px;line-height:.6;color:var(--celeste)}
+.c-txt b{font-family:'Neulis',sans-serif;color:var(--ink)}
+.c-txt .verif{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;background:#e9fbf1;color:#1c7a4a;border:2px solid #1c7a4a;border-radius:999px;padding:3px 10px}
+
+.pp-nota{background:#fff;border:2.5px dashed var(--ink-soft);border-radius:20px;padding:16px 20px;color:var(--ink);font-size:14.5px;margin-top:10px}
+.pp-nota code{background:#efeafe;padding:1px 6px;border-radius:6px}
+
+@media(max-width:760px){
+  .a-card,.a-card.der{grid-template-columns:1fr}
+  .a-card.der .a-foto{order:0;border-left:0}
+  .a-foto,.a-card.der .a-foto{border-right:0;border-bottom:4px solid var(--ink);min-height:230px}
+  .a-txt{padding:26px 24px}
+  .b-fila,.b-fila.der{flex-direction:column}
+  .b-pola{flex-basis:auto;width:240px}
+  .b-globo::before,.b-fila.der .b-globo::before{left:50%;top:-22px;right:auto;transform:translateX(-50%) rotate(135deg)}
+  .c-fila,.c-fila.der{grid-template-columns:1fr}
+  .c-fila.der .c-post{order:0}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><symbol id="ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/></symbol></svg>
+<div class="pp-wrap">
+  <header class="pp-top">
+    <h1>💬 Testimonios con foto</h1>
+    <p>Tres maneras de mostrarlos. En cada una, el primero lleva la foto a la izquierda y el segundo a la derecha (se elige en la planilla). El @instagram se muestra como texto, sin enlace.</p>
+  </header>
+
+  <!-- A -->
+  <section class="pp">
+    <div class="pp-h"><span class="l">A</span><div><h2>Tarjeta dividida</h2><p>La misma caja de hoy, partida en dos: la foto ocupa un lado completo. La más sobria.</p></div></div>
+    <article class="a-card">
+      <div class="a-foto"><img src="../assets/productos/07_carnet_de_vacunacion.webp" alt=""></div>
+      <div class="a-txt">
+        <span class="estrellas">★★★★★</span>
+        <p class="frase">“Los carnets quedaron hermosos y a mis clientes les encantan. El diseño fue gratis y el pedido llegó rapidísimo.”</p>
+        <div class="a-quien"><b>Constanza · Veterinaria Pelitos</b><span>Carnets de vacunación</span><span class="ig"><svg><use href="#ig"/></svg>@vetpelitos</span></div>
+      </div>
+    </article>
+    <article class="a-card der">
+      <div class="a-foto"><img src="../assets/productos/10_tarjetas_cliente_frecuente.webp" alt=""></div>
+      <div class="a-txt">
+        <span class="estrellas">★★★★★</span>
+        <p class="frase">“Mis clientas coleccionan los stickers de la tarjeta de citas. La atención por WhatsApp es súper cercana.”</p>
+        <div class="a-quien"><b>Camila · Nails Studio</b><span>Tarjetas cliente frecuente</span><span class="ig"><svg><use href="#ig"/></svg>@nails.studio.cami</span></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- B -->
+  <section class="pp">
+    <div class="pp-h"><span class="l">B</span><div><h2>Polaroid + globo de diálogo</h2><p>La foto como polaroid con cinta, inclinada, y el texto en un globo que la apunta. La más juguetona, con el estilo sticker de la web.</p></div></div>
+    <div class="b-fila">
+      <figure class="b-pola"><img src="../assets/productos/07_carnet_de_vacunacion.webp" alt=""><figcaption>Carnets de vacunación</figcaption></figure>
+      <div class="b-globo">
+        <span class="estrellas">★★★★★</span>
+        <p class="frase">“Los carnets quedaron hermosos y a mis clientes les encantan. El diseño fue gratis y el pedido llegó rapidísimo.”</p>
+        <div class="b-quien"><b>Constanza · Veterinaria Pelitos</b><span class="ig"><svg><use href="#ig"/></svg>@vetpelitos</span></div>
+      </div>
+    </div>
+    <div class="b-fila der">
+      <figure class="b-pola"><img src="../assets/productos/10_tarjetas_cliente_frecuente.webp" alt=""><figcaption>Tarjetas cliente frecuente</figcaption></figure>
+      <div class="b-globo">
+        <span class="estrellas">★★★★★</span>
+        <p class="frase">“Mis clientas coleccionan los stickers de la tarjeta de citas. La atención por WhatsApp es súper cercana.”</p>
+        <div class="b-quien"><b>Camila · Nails Studio</b><span class="ig"><svg><use href="#ig"/></svg>@nails.studio.cami</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="pp">
+    <div class="pp-h"><span class="l">C</span><div><h2>Como una publicación de Instagram</h2><p>La foto va dentro de una tarjeta tipo post con el @ de la persona arriba: refuerza que es alguien real. El texto grande al lado.</p></div></div>
+    <div class="c-fila">
+      <div class="c-post">
+        <div class="c-cab"><span class="c-ava">C</span><div><span class="ig">@vetpelitos</span><small>Carnets de vacunación</small></div></div>
+        <img src="../assets/productos/07_carnet_de_vacunacion.webp" alt="">
+        <div class="c-pie">♡ <span>💬</span></div>
+      </div>
+      <div class="c-txt">
+        <div class="comillas">“</div>
+        <p class="frase">Los carnets quedaron hermosos y a mis clientes les encantan. El diseño fue gratis y el pedido llegó rapidísimo.</p>
+        <span class="estrellas">★★★★★</span><br><b>Constanza · Veterinaria Pelitos</b><br><span class="verif">✓ Pedido real</span>
+      </div>
+    </div>
+    <div class="c-fila der">
+      <div class="c-post">
+        <div class="c-cab"><span class="c-ava">C</span><div><span class="ig">@nails.studio.cami</span><small>Tarjetas cliente frecuente</small></div></div>
+        <img src="../assets/productos/10_tarjetas_cliente_frecuente.webp" alt="">
+        <div class="c-pie">♡ <span>💬</span></div>
+      </div>
+      <div class="c-txt">
+        <div class="comillas">“</div>
+        <p class="frase">Mis clientas coleccionan los stickers de la tarjeta de citas. La atención por WhatsApp es súper cercana.</p>
+        <span class="estrellas">★★★★★</span><br><b>Camila · Nails Studio</b><br><span class="verif">✓ Pedido real</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="pp-nota">En todas: se muestra un testimonio a la vez y van rotando con los puntitos como hoy. En celular la foto queda arriba y el texto abajo. Si un testimonio no tiene foto, se ve como el de hoy (solo texto). Todo sale de la pestaña <code>testimonios</code> de la planilla.</p>
+</div>
+</body>
+</html>

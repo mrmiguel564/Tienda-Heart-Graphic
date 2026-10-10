@@ -997,8 +997,12 @@ const SALUD = (() => {
   return { pinta };
 })();
 
-/* ============ TESTIMONIOS (edítalos aquí) ============ */
-const TESTIMONIOS = [
+/* ============ TESTIMONIOS ============
+   Se editan en la pestaña "testimonios" de la planilla (columnas: activo, nombre,
+   instagram, producto, texto, foto, lado_foto). Si la pestaña no existe o está
+   vacía, se muestran estos. El @instagram se muestra como texto, sin enlace.
+   foto: URL de la foto del pedido · lado_foto: izquierda | derecha. */
+let TESTIMONIOS = [
   {emoji:"🐾", nombre:"Constanza · Veterinaria Pelitos", prod:"Carnets de vacunación",
    frase:"Los carnets quedaron hermosos y a mis clientes les encantan. El diseño fue gratis y el pedido llegó rapidísimo."},
   {emoji:"🌟", nombre:"Javiera · Dulce Encanto", prod:"Stickers troquelados",
@@ -1008,36 +1012,52 @@ const TESTIMONIOS = [
   {emoji:"🩺", nombre:"Dra. Fernanda · VetSur", prod:"Recetarios veterinarios",
    frase:"Los talonarios con mi logo se ven muy profesionales y el papel es de excelente calidad. Totalmente recomendados."}
 ];
-(function(){
+const TESTI = (() => {
   const track = document.getElementById("testiTrack");
   const dots = document.getElementById("testiDots");
-  TESTIMONIOS.forEach(t => {
-    const d = document.createElement("div");
-    d.className = "testi-slide";
-    d.innerHTML = `<div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <p class="frase">“${t.frase}”</p>
-      <div class="testi-quien"><span class="testi-ava">${t.emoji}</span>
-      <span class="datos"><span class="nombre">${t.nombre}</span><span class="testi-prod">${t.prod}</span></span></div>`;
-    track.appendChild(d);
-  });
-  const n = TESTIMONIOS.length; let i = 0, timer;
-  for (let k = 0; k < n; k++){
-    const d = document.createElement("button");
-    d.className = "testi-dot" + (k ? "" : " on");
-    d.addEventListener("click", () => go(k));
-    dots.appendChild(d);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+  let n = 0, i = 0, timer;
+
+  function pinta(){
+    const lista = TESTIMONIOS.filter(t => t.frase);
+    track.textContent = ""; dots.textContent = "";
+    n = lista.length; i = 0;
+    track.closest("section").hidden = !n;
+    lista.forEach(t => {
+      const d = document.createElement("div");
+      d.className = "testi-slide" + (t.foto ? " con-foto" : "") + (t.lado === "derecha" ? " der" : "");
+      const ava = t.emoji || esc(String(t.nombre || "?").trim().charAt(0).toUpperCase());
+      d.innerHTML = `${t.foto ? `<div class="testi-foto"><img src="${esc(cld(resolveImg(t.foto), 700))}" alt="Pedido de ${esc(t.nombre)}" loading="lazy"></div>` : ""}
+        <div class="testi-cuerpo"><div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <p class="frase">“${esc(t.frase)}”</p>
+        <div class="testi-quien"><span class="testi-ava">${ava}</span>
+        <span class="datos"><span class="nombre">${esc(t.nombre)}</span>${t.prod ? `<span class="testi-prod">${esc(t.prod)}</span>` : ""}${
+          t.ig ? `<span class="testi-ig">${esc(t.ig)}</span>` : ""}</span></div></div>`;
+      track.appendChild(d);
+    });
+    for (let k = 0; k < n; k++){
+      const d = document.createElement("button");
+      d.className = "testi-dot" + (k ? "" : " on");
+      d.setAttribute("aria-label", `Testimonio ${k + 1}`);
+      d.addEventListener("click", () => go(k));
+      dots.appendChild(d);
+    }
+    dots.hidden = n < 2;
+    go(0);
   }
   function go(k){
+    if (!n) return;
     i = (k + n) % n;
     track.style.transform = `translateX(-${i*100}%)`;
     dots.querySelectorAll(".testi-dot").forEach((d,j) => d.classList.toggle("on", j === i));
     reinicia();
   }
-  function reinicia(){ clearInterval(timer); timer = setInterval(() => go(i+1), 4500); }
+  function reinicia(){ clearInterval(timer); if (n > 1) timer = setInterval(() => go(i+1), 4500); }
   const box = track.closest(".testi-box");
   box.addEventListener("mouseenter", () => clearInterval(timer));
   box.addEventListener("mouseleave", reinicia);
-  reinicia();
+  pinta();
+  return { pinta };
 })();
 
 
@@ -1262,5 +1282,26 @@ function normDcto(raw){
     }
   } catch(e){
     console.warn("No se pudo leer el Sheet; se muestra el catálogo embebido.", e);
+  }
+})();
+
+/* ---------- Testimonios desde la planilla (pestaña "testimonios") ----------
+   Si la pestaña no existe gviz devuelve la primera hoja: por eso se exige la columna "texto". */
+(async () => {
+  if (!SHEET_ID) return;
+  try {
+    const T = await gvizHoja("testimonios");
+    if (!T.cols.includes("texto")) return;
+    const col = (r, nombre) => { const i = T.cols.indexOf(nombre); return i < 0 ? "" : String(r[i] ?? "").trim(); };
+    /* instagram: acepta "@usuario", "usuario" o el enlace completo; siempre se muestra como @usuario */
+    const arroba = v => { const u = v.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?#].*$/, "").replace(/^@/, ""); return u ? "@" + u : ""; };
+    const lista = T.rows
+      .filter(r => col(r, "texto") && !/^no$/i.test(col(r, "activo")))
+      .map(r => ({ nombre: col(r, "nombre"), ig: arroba(col(r, "instagram")), prod: col(r, "producto"),
+                   frase: col(r, "texto").replace(/^["“]|["”]$/g, ""), foto: col(r, "foto"),
+                   lado: /^der/i.test(col(r, "lado_foto")) ? "derecha" : "izquierda" }));
+    if (lista.length){ TESTIMONIOS = lista; TESTI.pinta(); }
+  } catch(e){
+    console.warn("No se pudo leer la pestaña testimonios; se muestran los del código.", e);
   }
 })();
