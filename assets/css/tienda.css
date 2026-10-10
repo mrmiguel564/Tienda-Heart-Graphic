@@ -548,3 +548,90 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
   .fila-pedir .pedir{padding:13px 8px}
   .fila-pedir .pedir .ic{width:20px;height:20px}
 }
+
+/* ============ Seccion ENTRADA SALUD (reemplaza al Cyber Day cuando ENTRADA = "salud") ============
+   Diseño de la tienda (hero-salud). Todo lleva prefijo .hg- para no chocar con el resto.
+   La tarjeta rota por los productos con tarjeta_inicio = si (módulo SALUD de tienda.js). */
+.hg-zona[hidden],.hg-zona [hidden]{display:none!important}
+.hg-hero{--hg-navy:#2E2A54;--hg-celeste:#29B0CF;--hg-celeste-claro:#BDEBF7;--hg-cian-cinta:#45C3DD;--hg-lila:#9B7FE6;
+  --hg-lila-claro:#DDD2FA;--hg-lila-cinta:#B9A6F2;--hg-texto-sec:#5B5679;--hg-font:'Neulis',sans-serif;--hg-font-alt:'NeulisAlt','Neulis',sans-serif;
+  position:relative;overflow:hidden;font-family:var(--hg-font);color:var(--hg-navy);
+  background:linear-gradient(115deg,#DCF2FB 0 57%,#ECE5FB 57% 100%);display:flex;flex-direction:column}
+.hg-hero *,.hg-hero *::before,.hg-hero *::after{box-sizing:border-box}
+.hg-ondas{position:absolute;left:0;top:160px;width:100%;height:400px;pointer-events:none}
+/* cintas */
+.hg-cinta{position:relative;z-index:2;background:var(--hg-navy);padding:12px 0;overflow:hidden}
+.hg-cinta--arriba{transform:rotate(-1.4deg);margin:-6px -40px 0}
+.hg-cinta--medio{transform:rotate(1.2deg);margin:0 -40px 14px}
+.hg-cinta--abajo{padding:14px 0}
+.hg-cinta__pista{display:flex;width:max-content;animation:hg-marquee 40s linear infinite}
+.hg-cinta--medio .hg-cinta__pista{animation-direction:reverse}
+.hg-cinta--abajo .hg-cinta__pista{animation-duration:50s}
+.hg-cinta__grupo{display:flex;flex:none;align-items:center;gap:18px;padding-right:18px;white-space:nowrap;
+  font-weight:800;font-size:15px;letter-spacing:.06em;color:#fff}
+.hg-cinta--abajo .hg-cinta__grupo{gap:34px;padding-right:34px;letter-spacing:.04em}
+.hg-estrella-cian{color:var(--hg-cian-cinta)}
+.hg-estrella-lila{color:var(--hg-lila-cinta)}
+.hg-txt-cian{color:var(--hg-cian-cinta)}
+.hg-txt-lila{color:var(--hg-lila-cinta)}
+@keyframes hg-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* contenido */
+.hg-contenido{position:relative;z-index:1;flex:1 1 auto;width:100%;max-width:1200px;margin:0 auto;padding:60px 32px 64px;
+  display:flex;flex-wrap:wrap;gap:56px;align-items:center;justify-content:space-between}
+.hg-texto{flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+.hg-titulo{margin:0;font-weight:900;letter-spacing:-.01em;line-height:.98}
+.hg-titulo__chico{display:block;font-size:clamp(26px,3.4vw,40px);color:var(--hg-navy)}
+.hg-titulo__grande{display:block;font-size:clamp(52px,7vw,88px)}
+.hg-titulo__grande--celeste{color:var(--hg-celeste)}
+.hg-titulo__grande--lila{color:var(--hg-lila)}
+.hg-bajada{margin:0;font-family:var(--hg-font-alt);font-size:18px;line-height:1.45;max-width:470px}
+/* botones */
+.hg-botones{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.hg-btn{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:13px 20px;border:3px solid var(--hg-navy);border-radius:999px;
+  font-family:inherit;font-weight:900;font-size:16px;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.hg-btn svg{flex:none}
+.hg-btn--primario{background:var(--hg-navy);color:#fff}
+.hg-btn--secundario{background:#fff;color:var(--hg-navy)}
+.hg-btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--hg-lila-cinta)}
+.hg-btn:focus-visible{outline:3px solid var(--hg-celeste);outline-offset:3px}
+/* rubros */
+.hg-rubros{display:flex;flex-wrap:wrap;gap:8px;max-width:560px;margin:0;padding:0;list-style:none}
+.hg-rubros li{border:2px solid var(--hg-navy);border-radius:10px;padding:6px 12px;font-weight:800;font-size:13px}
+.hg-rubros li:nth-child(3n+1){background:var(--hg-celeste-claro)}
+.hg-rubros li:nth-child(3n+2){background:var(--hg-lila-claro)}
+.hg-rubros li:nth-child(3n){background:#fff}
+/* tarjeta: rota por los productos marcados con tarjeta_inicio = si */
+.hg-card-wrap{flex:0 1 380px;min-width:300px;position:relative}
+.hg-sello{position:absolute;top:-34px;right:-30px;z-index:3;width:92px;height:92px;border-radius:50%;background:var(--hg-lila);
+  border:3px solid var(--hg-navy);box-shadow:0 0 0 5px var(--hg-lila-claro);color:#fff;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;font-weight:900;line-height:1}
+.hg-sello span:first-child{font-size:10px;letter-spacing:.06em}
+.hg-sello span:last-child{font-size:20px}
+.hg-card{background:#fff;border:3px solid var(--hg-navy);border-radius:22px;box-shadow:10px 10px 0 var(--hg-navy);padding:14px 14px 18px;
+  display:flex;flex-direction:column;gap:10px;cursor:pointer}
+.hg-card:focus-visible{outline:3px solid var(--hg-celeste);outline-offset:4px}
+.hg-card__etiqueta{align-self:flex-start;margin-top:-30px;background:var(--hg-navy);color:#fff;font-weight:800;font-size:12px;
+  letter-spacing:.08em;padding:6px 12px;border-radius:8px 8px 0 0}
+.hg-card__img{position:relative;height:240px;border-radius:14px;background:linear-gradient(135deg,#7FD6EE,#C6B5F3);overflow:hidden}
+.hg-card__img .hg-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .6s ease}
+.hg-card__img .hg-slide.on{opacity:1}
+.hg-card__img .hg-emoji{display:flex;align-items:center;justify-content:center;font-size:96px}
+.hg-card__nombre{display:block;font-family:var(--hg-font-alt);font-weight:800;font-size:18px}
+.hg-card__detalle{display:block;font-family:var(--hg-font-alt);font-size:13px;color:var(--hg-texto-sec)}
+.hg-card__precio{font-weight:900;font-size:24px;color:#7457D3}
+.hg-card__precio s{font-family:var(--hg-font-alt);font-weight:700;font-size:15px;color:var(--hg-texto-sec);margin-left:6px}
+.hg-card__dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.hg-card__dots button{width:12px;height:12px;padding:0;border-radius:50%;border:1.5px solid var(--hg-navy);background:transparent;cursor:pointer}
+.hg-card__dots button.on{background:var(--hg-navy)}
+/* móvil */
+@media(max-width:720px){
+  .hg-contenido{padding:40px 20px 48px;gap:48px}
+  .hg-bajada{font-size:16px}
+  .hg-card-wrap{min-width:0;flex-basis:100%}
+  .hg-sello{right:-8px}
+  .hg-btn{flex:1 1 auto;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .hg-cinta__pista{animation:none}
+  .hg-btn,.hg-card__img .hg-slide{transition:none}
+}

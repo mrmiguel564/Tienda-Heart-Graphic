@@ -42,6 +42,7 @@ Todo se ajusta en constantes al inicio de `assets/js/tienda.js`:
 | `ROTA_TARJETA` / `ROTA_MODAL` | Cada cuántos ms rotan las fotos en tarjetas y en la ficha |
 | `TESTIMONIOS` | Textos del carrusel de testimonios |
 | `OFERTA_WA`, `OFERTA_FIN`, `ROTA_OFERTA` | Sección de ofertas (ver más abajo) |
+| `ENTRADA` | Qué entrada va arriba: `"cyber"` (hoy) o `"salud"`. Cambio manual (ver Entrada salud) |
 
 ## Catálogo en Google Sheets
 
@@ -57,6 +58,7 @@ La hoja se llama `productos` y tiene una fila por producto. Las instrucciones de
 | `nombre`, `emoji`, `descripcion`, `notas` | Textos del producto. El emoji se muestra si no hay fotos |
 | `activo` | `si` / `no` para mostrar u ocultar sin borrar |
 | `carrusel` | `si` = aparece en la **Sección OFERTAS** |
+| `tarjeta_inicio` | `si` = rota en la **tarjeta de la entrada salud**. Solo afecta esa tarjeta, no el carrusel ni otros destacados. Si ninguno la tiene, rota por todo el catálogo |
 | `material` | Ficha de material (JSON) |
 | `imagen_principal`, `galeria` | URL de la foto principal y lista de fotos |
 | `colores` | Colores disponibles, cada uno con su foto opcional (JSON) |
@@ -80,6 +82,16 @@ Bloque de campaña bajo el hero. Hay dos campañas y solo una va activa a la vez
 - **Cintas:** la de arriba calcula sola el "HASTA -N%" con el mayor descuento de los productos marcados.
 - **Botón "Lo quiero":** abre WhatsApp con el mensaje de `OFERTA_WA`.
 - Si ningún producto tiene `carrusel = si`, la sección completa se oculta.
+
+### Entrada salud (lista, sin activar)
+
+Reemplaza al Cyber Day cuando termine. Está en el HTML como `hg-zona` (oculta) y su módulo `SALUD` en `tienda.js`; los estilos llevan prefijo `.hg-` en `tienda.css`.
+
+- **Activarla:** cambiar `const ENTRADA = "cyber";` por `"salud"` en `tienda.js` y publicar. **No cambia sola por fecha.**
+- **Mirarla sin activarla:** abrir la página con `?entrada=salud` (ej. `https://…/?entrada=salud`). Con `?entrada=cyber` se fuerza el Cyber.
+- **Tarjeta:** rota cada `ROTA_OFERTA` ms por los productos con `tarjeta_inicio = si` (si no hay ninguno, por todo el catálogo; no incluye los planners). Muestra foto, variante, precio con descuento tachado; puntos para elegir y clic para abrir la ficha.
+- **Botón "Cotiza gratis":** abre WhatsApp con un mensaje de cotización. **"Ver productos"** baja al catálogo.
+- **Cintas:** sus textos están en el objeto `CINTAS` del módulo `SALUD`.
 
 ### Especial veterinarias (guardada)
 

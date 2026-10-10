@@ -832,6 +832,17 @@ const VET = (() => {
    alterna celeste/morado. La cinta de arriba dice "hasta -N%" con el mayor
    descuento de los productos marcados. */
 const ROTA_OFERTA = 3200;
+
+/* ---------- ¿Qué entrada se muestra arriba de la página? ----------
+   "cyber"  → sección Cyber Day (ofertas relámpago con contador).
+   "salud"  → entrada "Tu consulta merece una buena impresión" (módulo SALUD).
+   El cambio es MANUAL: se edita esta línea y se publica. Para mirar la entrada
+   salud sin cambiar nada, abre la página con ?entrada=salud al final de la URL. */
+const ENTRADA = "cyber";
+const ENTRADA_ACTIVA = (() => {
+  const q = new URLSearchParams(location.search).get("entrada");
+  return q === "salud" || q === "cyber" ? q : ENTRADA;
+})();
 const ANCHOS_OFERTA = [320, 460, 700, 900], SIZES_OFERTA = "(max-width:860px) 92vw, 430px";
 
 const CYBER = (() => {
@@ -872,8 +883,8 @@ const CYBER = (() => {
 
   function pinta(){
     prods = CATALOGO.filter(p => p.carrusel && p.vars.length);
-    /* sin productos marcados la sección completa se oculta */
-    sec.parentElement.hidden = !prods.length;
+    /* sin productos marcados (o con la entrada salud activa) la sección completa se oculta */
+    sec.parentElement.hidden = ENTRADA_ACTIVA !== "cyber" || !prods.length;
     if (!prods.length) return;
     foto.innerHTML = prods.map(p => {
       const f = fotosDe(p)[0];
@@ -909,6 +920,80 @@ const CYBER = (() => {
   }
   const reloj = setInterval(tic, 1000);
   tic();
+
+  pinta();
+  return { pinta };
+})();
+
+/* ---------- Entrada SALUD: "Tu consulta merece una buena impresión" ----------
+   Se muestra en lugar del Cyber cuando ENTRADA_ACTIVA = "salud". La tarjeta rota
+   por los productos con tarjeta_inicio = si en la planilla (solo afecta a esta
+   tarjeta, no al carrusel ni a otros destacados); si ninguno está marcado, rota
+   por todo el catálogo. Los puntos permiten elegir y un clic abre la ficha. */
+const SALUD = (() => {
+  const zona = document.querySelector(".hg-zona");
+  const card = zona && zona.querySelector(".hg-card");
+  if (!card) return { pinta(){} };
+  zona.hidden = ENTRADA_ACTIVA !== "salud";
+
+  const wa = document.getElementById("waSalud");
+  if (wa) wa.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent("¡Hola Heart Graphic! 💜 Quiero cotizar papelería para mi consulta.")}`;
+
+  /* cintas: el grupo va duplicado para que el loop sea continuo */
+  const grupo = (items, clase) => `<div class="hg-cinta__grupo">${
+    [...items, ...items].map(t => clase ? `<span>${t}</span><span class="${clase}">✦</span>` : t).join("")}</div>`;
+  const CINTAS = {
+    arriba: grupo(["PAPELERÍA PARA LA SALUD", "DISEÑO GRATIS", "ENVÍOS A TODO CHILE", "HEART GRAPHIC", "DISEÑOS PERSONALIZADOS"], "hg-estrella-cian"),
+    medio:  grupo(["HEART GRAPHIC", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "DISEÑOS PERSONALIZADOS"], "hg-estrella-lila"),
+    abajo:  grupo(['<span class="hg-txt-cian">ENVÍOS A TODO CHILE</span>', "<span>✦ DISEÑO GRATIS</span>",
+                   '<span class="hg-txt-lila">HEART GRAPHIC</span>', "<span>♡ DISEÑOS PERSONALIZADOS</span>", "<span>✦ FULL COLOR</span>"])
+  };
+  zona.querySelectorAll("[data-cinta]").forEach(p => p.innerHTML = (CINTAS[p.dataset.cinta] || "").repeat(2));
+
+  const foto = card.querySelector(".hg-card__img"), puntos = card.querySelector(".hg-card__dots");
+  let prods = [], k = 0, timer;
+  const tramo = p => { const v = p.vars[0], t = v.p[0]; return { v: v.v, u: t[0], pr: t[1] }; };
+
+  function muestra(i){
+    k = i; const p = prods[i], t = tramo(p);
+    foto.querySelectorAll(".hg-slide").forEach((s,j) => s.classList.toggle("on", j === i));
+    puntos.querySelectorAll("button").forEach((b,j) => b.classList.toggle("on", j === i));
+    card.querySelector(".hg-card__nombre").textContent = p.n;
+    card.querySelector(".hg-card__detalle").textContent = `${t.v} · ${t.u} un.`;
+    card.querySelector(".hg-card__precio").innerHTML = tieneDcto(p)
+      ? `${fmt(precioFinal(p, t.pr))} <s>${fmt(t.pr)}</s>` : fmt(t.pr);
+    card.setAttribute("aria-label", `Ver ${p.n}`);
+  }
+  const auto = () => {
+    clearInterval(timer);
+    if (ENTRADA_ACTIVA === "salud" && prods.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+      timer = setInterval(() => muestra((k + 1) % prods.length), ROTA_OFERTA);
+  };
+
+  function pinta(){
+    const conPrecio = CATALOGO.filter(p => p.vars.length);
+    const marcados = conPrecio.filter(p => p.tarjetaInicio);
+    prods = marcados.length ? marcados : conPrecio;
+    card.hidden = !prods.length;
+    if (!prods.length) return;
+    foto.innerHTML = prods.map(p => {
+      const f = fotosDe(p)[0];
+      if (!f) return `<div class="hg-slide hg-emoji" aria-hidden="true">${p.e}</div>`;
+      const url = resolveImg(f);
+      return `<img class="hg-slide" src="${cld(url, 700)}"${cldAttrs(url, ANCHOS_OFERTA, SIZES_OFERTA)} alt="${p.n}" loading="lazy">`;
+    }).join("");
+    puntos.innerHTML = prods.length > 1
+      ? prods.map(p => `<button type="button" aria-label="Ver ${p.n}"></button>`).join("") : "";
+    puntos.querySelectorAll("button").forEach((b,j) => b.addEventListener("click", e => {
+      e.stopPropagation(); muestra(j); auto();
+    }));
+    muestra(Math.min(k, prods.length - 1)); auto();
+  }
+
+  card.addEventListener("click", () => prods[k] && abreModal(prods[k]));
+  card.addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target === card){ e.preventDefault(); card.click(); }
+  });
 
   pinta();
   return { pinta };
@@ -1150,6 +1235,7 @@ function normDcto(raw){
         carrusel: P.cols.includes("carrusel")
                     ? esSi(col(r, "carrusel"))
                     : /vet/i.test(String(col(r, "categoria") ?? "")),   /* respaldo: planilla antigua */
+        tarjetaInicio: esSi(col(r, "tarjeta_inicio")),   /* solo la tarjeta de la entrada salud */
         d: col(r, "descripcion") || "", notas: col(r, "notas") || "",
         img, fotos: normGaleria(col(r, "galeria"), img),
         mat: normMaterial(col(r, "material")),
@@ -1173,6 +1259,7 @@ function normDcto(raw){
       renderProductos();
       VET.pinta();
       CYBER.pinta();
+      SALUD.pinta();
       console.info(`Catálogo cargado desde Google Sheets: ${productos.length} productos.`);
     }
   } catch(e){

@@ -112,6 +112,58 @@
     <div class="cinta cinta-abajo" aria-hidden="true"><span></span></div>
   </section>
 </div>
+
+<!-- Seccion ENTRADA SALUD (lista para cuando termine el Cyber; hoy oculta)
+     Reemplaza a la sección Cyber Day. Se activa con ENTRADA = "salud" en
+     assets/js/tienda.js (o para probar: agregar ?entrada=salud a la dirección).
+     La tarjeta rota por los productos con tarjeta_inicio = si en la planilla. -->
+<div class="hg-zona" hidden>
+  <section class="hg-hero reveal vis" id="entrada-salud" aria-labelledby="hg-titulo">
+    <svg class="hg-ondas" aria-hidden="true" viewBox="0 0 1440 400" preserveAspectRatio="none">
+      <path d="M0 120 C 240 60, 480 180, 720 110 S 1200 60, 1440 130" fill="none" stroke="#9DDCF2" stroke-width="2"/>
+      <path d="M0 320 C 260 270, 520 370, 780 300 S 1220 260, 1440 320" fill="none" stroke="#C9B8F2" stroke-width="2"/>
+    </svg>
+    <div class="hg-cinta hg-cinta--arriba" aria-hidden="true"><div class="hg-cinta__pista" data-cinta="arriba"></div></div>
+    <div class="hg-contenido">
+      <div class="hg-texto">
+        <h2 class="hg-titulo" id="hg-titulo">
+          <span class="hg-titulo__chico">TU CONSULTA MERECE UNA</span>
+          <span class="hg-titulo__grande hg-titulo__grande--celeste">BUENA</span>
+          <span class="hg-titulo__grande hg-titulo__grande--lila">IMPRESIÓN</span>
+        </h2>
+        <p class="hg-bajada">Recetarios, carnets, tarjetas, imanes y flyers diseñados para tu consulta. Diseño gratis al agendar tu pedido.</p>
+        <div class="hg-botones">
+          <a class="hg-btn hg-btn--primario" id="waSalud" target="_blank" rel="noopener">
+            Cotiza gratis
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9DDCF2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="hg-btn hg-btn--secundario" href="#productos">
+            Ver productos
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <ul class="hg-rubros" aria-label="Hecho para">
+          <li>Médicos</li><li>Dentistas</li><li>Veterinarias</li><li>Psicólogos</li><li>Ópticas</li><li>Kinesiólogos</li>
+        </ul>
+      </div>
+      <div class="hg-card-wrap">
+        <div class="hg-sello" aria-hidden="true"><span>DISEÑO</span><span>GRATIS</span></div>
+        <article class="hg-card" role="button" tabindex="0" aria-label="Ver el producto destacado">
+          <span class="hg-card__etiqueta">★ MÁS VENDIDO</span>
+          <div class="hg-card__img"></div>
+          <div>
+            <span class="hg-card__nombre"></span>
+            <span class="hg-card__detalle"></span>
+          </div>
+          <span class="hg-card__precio"></span>
+          <div class="hg-card__dots"></div>
+        </article>
+      </div>
+    </div>
+    <div class="hg-cinta hg-cinta--medio" aria-hidden="true"><div class="hg-cinta__pista" data-cinta="medio"></div></div>
+    <div class="hg-cinta hg-cinta--abajo" aria-hidden="true"><div class="hg-cinta__pista" data-cinta="abajo"></div></div>
+  </section>
+</div>
 <div class="pv-lightbox" id="pvLightbox"><img alt="Diseño ampliado"></div>
 
 <div class="banda"><div class="track" id="marqueeTrack"></div></div>
