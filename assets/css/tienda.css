@@ -380,31 +380,54 @@ footer{text-align:center;font-weight:600;font-size:13px;color:var(--ink-soft);pa
 .pv-lightbox img{max-width:min(92vw,760px);max-height:88vh;background:#fff;border:4px solid #fff;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 
 /* ============ TESTIMONIOS (carrusel automático) ============ */
-#testimonios{max-width:980px;margin:0 auto;padding:40px 20px 30px}
+#testimonios{max-width:1060px;margin:0 auto;padding:40px 20px 30px}
 body[data-vista="planners"] #testimonios,#testimonios[hidden]{display:none}   /* solo con el catálogo */
-.testi-box{position:relative;background:#fff;border:4px solid var(--ink);border-radius:46px;box-shadow:12px 12px 0 var(--lila),24px 24px 0 rgba(108,218,244,.5);overflow:hidden}
+/* Cada testimonio es una conversación: la clienta (inicial + nombre + @instagram como texto, sin enlace)
+   escribe en globos, Heart Graphic responde, y al lado va la polaroid con la foto del pedido.
+   lado_foto (planilla) decide si la polaroid va a la izquierda o a la derecha. */
+.testi-box{position:relative;background:#f2fbfe;border:4px solid var(--ink);border-radius:46px;box-shadow:12px 12px 0 var(--lila),24px 24px 0 rgba(108,218,244,.5);overflow:hidden}
 .testi-track{display:flex;transition:transform .55s cubic-bezier(.25,.9,.3,1)}
-.testi-slide{flex:0 0 100%;padding:clamp(34px,5vw,54px) clamp(28px,7vw,80px) 62px;text-align:center}
-.testi-stars{font-size:22px;letter-spacing:.2em;margin-bottom:14px}
-.testi-slide p.frase{font-weight:400;font-size:clamp(16px,2.2vw,21px);color:var(--ink);line-height:1.55;max-width:56ch;margin:0 auto 22px}
-.testi-quien{display:flex;align-items:center;justify-content:center;gap:13px}
-.testi-ava{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--celeste),var(--lila));border:3px solid var(--ink);display:grid;place-items:center;font-size:24px}
-.testi-quien .datos{display:flex;flex-direction:column;gap:2px;text-align:left;line-height:1.25}
-.testi-quien .nombre{font-family:'Neulis',sans-serif;font-weight:800;font-size:15px;color:var(--ink)}
-.testi-quien .testi-prod{font-weight:400;font-size:12.5px;color:var(--ink-soft)}
-.testi-dots{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+.testi-slide{flex:0 0 100%;box-sizing:border-box;padding:clamp(30px,4.5vw,50px) clamp(22px,5vw,60px) 66px;display:flex;align-items:center;gap:clamp(28px,5vw,60px)}
+.testi-slide.izq{flex-direction:row-reverse}   /* foto a la izquierda */
+.testi-chat{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;text-align:left}
+.testi-cab{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.testi-ava{flex:none;width:50px;height:50px;border-radius:50%;background:var(--lila);border:3px solid var(--ink);display:grid;place-items:center;
+  font-family:'Neulis',sans-serif;font-weight:800;font-size:22px;color:var(--ink)}
+.testi-cab .datos{display:flex;flex-direction:column;gap:2px;line-height:1.25;min-width:0}
+.testi-cab .nombre{font-family:'Neulis',sans-serif;font-weight:800;font-size:17px;color:var(--ink)}
+.testi-cab .testi-ig{display:inline-flex;align-items:center;gap:5px;font-family:'Neulis',sans-serif;font-weight:800;font-size:13.5px;color:var(--lila-deep)}
+.testi-cab .testi-ig svg{width:15px;height:15px;fill:currentColor}
+.testi-cab .testi-prod{font-size:13px;color:var(--ink-soft)}
+.testi-real{margin-left:auto;display:inline-flex;align-items:center;gap:5px;background:#fff;border:2px solid #1c7a4a;color:#1c7a4a;border-radius:999px;
+  padding:4px 11px;font-family:'Neulis',sans-serif;font-weight:800;font-size:12px;white-space:nowrap}
+.testi-real svg{width:13px;height:13px}
+.testi-burbuja{align-self:flex-start;max-width:520px;margin:0;background:#fff;border:3px solid var(--ink);border-radius:24px 24px 24px 6px;
+  padding:14px 20px;font-size:clamp(15.5px,1.9vw,18.5px);line-height:1.5;color:var(--ink);box-shadow:5px 5px 0 var(--celeste)}
+.testi-burbuja + .testi-burbuja{border-radius:6px 24px 24px 24px}
+.testi-stars{font-size:18px;letter-spacing:.15em;margin:2px 0 0 6px}
+.testi-resp{align-self:flex-end;display:flex;align-items:flex-end;gap:9px;max-width:420px}
+.testi-resp p{margin:0;background:var(--ink);color:#fff;border:3px solid var(--ink);border-radius:24px 24px 6px 24px;padding:11px 18px;font-size:15.5px;line-height:1.45}
+.testi-hg{flex:none;width:38px;height:38px;border-radius:50%;background:#fff;border:3px solid var(--ink);display:grid;place-items:center}
+.testi-hg svg{width:24px;height:21px}
+/* polaroid con la foto del pedido; el producto va con la tipografía de la tienda */
+.testi-pola{flex:none;position:relative;width:clamp(220px,30vw,320px);margin:0;background:#fff;padding:13px 13px 56px;border:3px solid var(--ink);border-radius:8px;
+  box-shadow:9px 9px 0 var(--lila);transform:rotate(4deg)}
+.testi-slide.izq .testi-pola{transform:rotate(-4deg)}
+.testi-pola::before{content:"";position:absolute;top:-15px;left:50%;width:110px;height:28px;margin-left:-55px;transform:rotate(-4deg);
+  background:repeating-linear-gradient(45deg,var(--lila) 0 10px,#e4d9fc 10px 20px);opacity:.92;border:2px solid rgba(63,60,102,.25)}
+.testi-pola img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border:2px solid var(--ink);border-radius:3px;background:#f4f2ff}
+.testi-pola figcaption{position:absolute;left:10px;right:10px;bottom:7px;height:44px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:'Neulis',sans-serif;font-weight:800;font-size:clamp(13.5px,1.6vw,15.5px);line-height:1.15;
+  color:var(--ink);overflow:hidden}   /* hasta dos líneas */
+.testi-dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
 .testi-dot{width:13px;height:13px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;cursor:pointer;transition:.15s;padding:0}
 .testi-dot.on{background:var(--lila-deep)}
-.testi-quien .testi-ig{font-family:'Neulis',sans-serif;font-weight:800;font-size:12.5px;color:var(--lila-deep)}   /* solo texto, sin enlace */
-/* testimonio con foto del pedido (provisorio: tarjeta dividida, propuesta A) */
-.testi-slide.con-foto{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);padding:0;text-align:left}
-.testi-slide.con-foto.der{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
-.testi-slide.con-foto.der .testi-foto{order:2}
-.testi-foto{min-height:300px;background:linear-gradient(135deg,var(--celeste),var(--lila))}
-.testi-foto img{width:100%;height:100%;object-fit:cover;display:block}
-.testi-slide.con-foto .testi-cuerpo{padding:clamp(28px,4vw,44px) clamp(24px,4vw,44px) 62px;align-self:center}
-.testi-slide.con-foto .testi-quien{justify-content:flex-start}
-@media(max-width:720px){.testi-slide.con-foto,.testi-slide.con-foto.der{grid-template-columns:1fr}.testi-slide.con-foto.der .testi-foto{order:0}.testi-foto{min-height:220px;max-height:280px}}
+@media(max-width:720px){
+  .testi-slide,.testi-slide.izq{flex-direction:column-reverse;align-items:stretch}   /* en celular la foto va arriba */
+  .testi-pola{align-self:center;width:min(250px,72%)}
+  .testi-real{margin-left:0}
+  .testi-resp{max-width:none}
+}
 
 
 /* ============ VISTA POLÍTICAS ============ */

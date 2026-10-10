@@ -999,17 +999,17 @@ const SALUD = (() => {
 
 /* ============ TESTIMONIOS ============
    Se editan en la pestaña "testimonios" de la planilla (columnas: activo, nombre,
-   instagram, producto, texto, foto, lado_foto). Si la pestaña no existe o está
+   instagram, producto, texto, foto, lado_foto y respuesta opcional). Si la pestaña no existe o está
    vacía, se muestran estos. El @instagram se muestra como texto, sin enlace.
-   foto: URL de la foto del pedido · lado_foto: izquierda | derecha. */
+   foto: URL de la foto del pedido · lado_foto: izquierda | derecha (por defecto) · el avatar es la inicial. */
 let TESTIMONIOS = [
-  {emoji:"🐾", nombre:"Constanza · Veterinaria Pelitos", prod:"Carnets de vacunación",
+  {nombre:"Constanza · Veterinaria Pelitos", prod:"Carnets de vacunación",
    frase:"Los carnets quedaron hermosos y a mis clientes les encantan. El diseño fue gratis y el pedido llegó rapidísimo."},
-  {emoji:"🌟", nombre:"Javiera · Dulce Encanto", prod:"Stickers troquelados",
+  {nombre:"Javiera · Dulce Encanto", prod:"Stickers troquelados",
    frase:"La calidad de impresión es increíble, los colores quedaron tal cual el diseño. Ya voy en mi tercer pedido."},
-  {emoji:"💅", nombre:"Camila · Nails Studio", prod:"Tarjetas cliente frecuente",
+  {nombre:"Camila · Nails Studio", prod:"Tarjetas cliente frecuente",
    frase:"Mis clientas coleccionan los stickers de la tarjeta de citas. La atención por WhatsApp es súper cercana."},
-  {emoji:"🩺", nombre:"Dra. Fernanda · VetSur", prod:"Recetarios veterinarios",
+  {nombre:"Dra. Fernanda · VetSur", prod:"Recetarios veterinarios",
    frase:"Los talonarios con mi logo se ven muy profesionales y el papel es de excelente calidad. Totalmente recomendados."}
 ];
 const TESTI = (() => {
@@ -1018,6 +1018,18 @@ const TESTI = (() => {
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
   let n = 0, i = 0, timer;
 
+  /* "Dra. Fernanda · VetSur" → "Fernanda": para la inicial del avatar y el "¡Gracias, …!" */
+  const primerNombre = s => String(s || "").split("·")[0].trim().replace(/^(dra?|sra?|srta|prof[a]?)\.?\s+/i, "").split(/\s+/)[0] || "";
+  /* el texto se reparte en uno o dos globos, cortando entre oraciones */
+  const globos = s => {
+    const o = String(s).match(/[^.!?…]+[.!?…]+["”]?|[^.!?…]+$/g)?.map(x => x.trim()).filter(Boolean) || [s];
+    if (o.length < 2) return [o.join(" ")];
+    const m = Math.ceil(o.length / 2);
+    return [o.slice(0, m).join(" "), o.slice(m).join(" ")];
+  };
+  const IG = `<svg aria-hidden="true"><use href="#ic-ig"/></svg>`;
+  const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+
   function pinta(){
     const lista = TESTIMONIOS.filter(t => t.frase);
     track.textContent = ""; dots.textContent = "";
@@ -1025,14 +1037,21 @@ const TESTI = (() => {
     track.closest("section").hidden = !n;
     lista.forEach(t => {
       const d = document.createElement("div");
-      d.className = "testi-slide" + (t.foto ? " con-foto" : "") + (t.lado === "derecha" ? " der" : "");
-      const ava = t.emoji || esc(String(t.nombre || "?").trim().charAt(0).toUpperCase());
-      d.innerHTML = `${t.foto ? `<div class="testi-foto"><img src="${esc(cld(resolveImg(t.foto), 700))}" alt="Pedido de ${esc(t.nombre)}" loading="lazy"></div>` : ""}
-        <div class="testi-cuerpo"><div class="testi-stars">⭐⭐⭐⭐⭐</div>
-        <p class="frase">“${esc(t.frase)}”</p>
-        <div class="testi-quien"><span class="testi-ava">${ava}</span>
-        <span class="datos"><span class="nombre">${esc(t.nombre)}</span>${t.prod ? `<span class="testi-prod">${esc(t.prod)}</span>` : ""}${
-          t.ig ? `<span class="testi-ig">${esc(t.ig)}</span>` : ""}</span></div></div>`;
+      d.className = "testi-slide" + (t.foto && t.lado === "izquierda" ? " izq" : "");
+      /* avatar: siempre la inicial del nombre (no se usan fotos ni logos de la persona) */
+      const pn = primerNombre(t.nombre), ini = (pn || String(t.nombre || "?").trim()).charAt(0).toUpperCase();
+      const resp = t.resp || (pn ? `¡Gracias, ${pn}! Nos encantó hacerlo` : "¡Gracias por confiar en nosotras!");
+      d.innerHTML = `<div class="testi-chat">
+          <div class="testi-cab"><span class="testi-ava" aria-hidden="true">${esc(ini)}</span>
+            <span class="datos"><span class="nombre">${esc(t.nombre)}</span>${t.ig ? `<span class="testi-ig">${IG}${esc(t.ig)}</span>` : ""}${
+              t.prod && !t.foto ? `<span class="testi-prod">Pidió: ${esc(t.prod)}</span>` : ""}</span>
+            <span class="testi-real">${CHECK}Pedido real</span></div>
+          ${globos(t.frase).map(g => `<p class="testi-burbuja">${esc(g)}</p>`).join("")}
+          <div class="testi-stars" role="img" aria-label="5 de 5 estrellas">⭐⭐⭐⭐⭐</div>
+          <div class="testi-resp"><p>${esc(resp)}</p><span class="testi-hg" aria-hidden="true"><svg><use href="#ic-hg"/></svg></span></div>
+        </div>${t.foto ? `
+        <figure class="testi-pola"><img src="${esc(cld(resolveImg(t.foto), 700))}" alt="Pedido de ${esc(t.nombre)}${t.prod ? ": " + esc(t.prod) : ""}" loading="lazy">${
+          t.prod ? `<figcaption>${esc(t.prod)}</figcaption>` : ""}</figure>` : ""}`;
       track.appendChild(d);
     });
     for (let k = 0; k < n; k++){
@@ -1298,8 +1317,8 @@ function normDcto(raw){
     const lista = T.rows
       .filter(r => col(r, "texto") && !/^no$/i.test(col(r, "activo")))
       .map(r => ({ nombre: col(r, "nombre"), ig: arroba(col(r, "instagram")), prod: col(r, "producto"),
-                   frase: col(r, "texto").replace(/^["“]|["”]$/g, ""), foto: col(r, "foto"),
-                   lado: /^der/i.test(col(r, "lado_foto")) ? "derecha" : "izquierda" }));
+                   frase: col(r, "texto").replace(/^["“]|["”]$/g, ""), foto: col(r, "foto"), resp: col(r, "respuesta"),
+                   lado: /^izq/i.test(col(r, "lado_foto")) ? "izquierda" : "derecha" }));
     if (lista.length){ TESTIMONIOS = lista; TESTI.pinta(); }
   } catch(e){
     console.warn("No se pudo leer la pestaña testimonios; se muestran los del código.", e);
