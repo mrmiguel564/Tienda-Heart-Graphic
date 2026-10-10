@@ -562,9 +562,13 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 /* cintas */
 .hg-cinta{position:relative;z-index:2;background:var(--hg-navy);padding:12px 0;overflow:hidden}
 .hg-cinta--arriba{transform:rotate(-1.4deg);margin:calc(1.25vw + 8px) -40px 0}   /* el margen deja espacio a la punta que sube al inclinarse */
-.hg-cinta--medio{transform:rotate(1.2deg);margin:0 -40px calc(1.05vw + 4px)}
-/* con la entrada salud activa, la banda de la web sube y queda pegada bajo la cinta inclinada */
-.hg-zona:not([hidden]) + .pv-lightbox + .banda{margin-top:calc(-1.05vw - 4px);position:relative;z-index:1}
+.hg-cinta--medio{transform:rotate(1.2deg);margin:0 -40px calc(1.05vw + 26px)}   /* deja aire antes de la banda de la web */
+/* con la entrada salud activa, la banda de la web (mismos textos) toma el estilo de las cintas .hg-cinta */
+.hg-zona:not([hidden]) + .pv-lightbox + .banda{background:#2E2A54;border:0;padding:12px 0}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track{font-size:15px;letter-spacing:.06em}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track span{margin:0 22px}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track em{color:#45C3DD}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track i{color:#B9A6F2}
 .hg-cinta__pista{display:flex;width:max-content;animation:hg-marquee 40s linear infinite}
 .hg-cinta--medio .hg-cinta__pista{animation-direction:reverse}
 .hg-cinta__grupo{display:flex;flex:none;align-items:center;gap:18px;padding-right:18px;white-space:nowrap;

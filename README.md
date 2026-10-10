@@ -91,7 +91,7 @@ Reemplaza al Cyber Day cuando termine. Está en el HTML como `hg-zona` (oculta) 
 - **Mirarla sin activarla:** abrir la página con `?entrada=salud` (ej. `https://…/?entrada=salud`). Con `?entrada=cyber` se fuerza el Cyber.
 - **Tarjeta:** rota cada `ROTA_OFERTA` ms por los productos con `tarjeta_inicio = si` (si no hay ninguno, por todo el catálogo; no incluye los planners). Muestra foto, variante, precio con descuento tachado; puntos para elegir y clic para abrir la ficha.
 - **Botón "Cotiza gratis":** abre WhatsApp con un mensaje de cotización. **"Ver productos"** baja al catálogo.
-- **Cintas:** dos inclinadas (arriba y al medio); sus textos están en el objeto `CINTAS` del módulo `SALUD`. Debajo queda la banda de siempre de la web, pegada a la cinta del medio.
+- **Cintas:** dos inclinadas (arriba y al medio); sus textos están en el objeto `CINTAS` del módulo `SALUD`. Debajo queda la banda de siempre de la web (mismos textos), separada de la cinta del medio y con el mismo estilo que las cintas mientras la entrada salud esté activa.
 
 ### Especial veterinarias (guardada)
 
