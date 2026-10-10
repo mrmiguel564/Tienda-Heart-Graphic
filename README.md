@@ -46,7 +46,7 @@ Todo se ajusta en constantes al inicio de `assets/js/tienda.js`:
 | `ROTA_TARJETA` / `ROTA_MODAL` | Cada cuántos ms rotan las fotos en tarjetas y en la ficha |
 | `TESTIMONIOS` | Testimonios de respaldo (se usan si la pestaña `testimonios` de la planilla no existe o está vacía) |
 | `OFERTA_WA`, `OFERTA_FIN`, `ROTA_OFERTA` | Sección de ofertas (ver más abajo) |
-| `ENTRADA` | Qué entrada va arriba: `"cyber"` (hoy) o `"salud"`. Cambio manual (ver Entrada salud) |
+| `ENTRADA` | Qué entrada va arriba: `"auto"` (hoy: Cyber hasta `OFERTA_FIN`, luego salud), `"cyber"` o `"salud"` (ver Entrada salud) |
 
 ## Catálogo en Google Sheets
 
@@ -87,12 +87,12 @@ Bloque de campaña bajo el hero. Hay dos campañas y solo una va activa a la vez
 - **Botón "Lo quiero":** abre WhatsApp con el mensaje de `OFERTA_WA`.
 - Si ningún producto tiene `carrusel = si`, la sección completa se oculta.
 
-### Entrada salud (lista, sin activar)
+### Entrada salud (se activa sola al terminar el Cyber)
 
 Reemplaza al Cyber Day cuando termine. Está en el HTML como `hg-zona` (oculta) y su módulo `SALUD` en `tienda.js`; los estilos llevan prefijo `.hg-` en `tienda.css`.
 
-- **Activarla:** cambiar `const ENTRADA = "cyber";` por `"salud"` en `tienda.js` y publicar. **No cambia sola por fecha.**
-- **Mirarla sin activarla:** abrir la página con `?entrada=salud` (ej. `https://…/?entrada=salud`). Con `?entrada=cyber` se fuerza el Cyber.
+- **Cuándo aparece:** con `ENTRADA = "auto"` la página muestra el Cyber hasta `OFERTA_FIN` (sábado 11 de octubre, 23:59 de Chile) y desde ese momento la entrada salud, sin publicar nada más; si alguien tiene la página abierta a esa hora, cambia en vivo. Para fijar una u otra: `"cyber"` o `"salud"`.
+- **Mirarla antes de tiempo:** abrir la página con `?entrada=salud` (ej. `https://…/?entrada=salud`). Con `?entrada=cyber` se fuerza el Cyber.
 - **Tarjeta:** rota cada `ROTA_OFERTA` ms por los productos con `tarjeta_inicio = si` (si no hay ninguno, por todo el catálogo; no incluye los planners). Muestra foto, variante, precio con descuento tachado; puntos para elegir y clic para abrir la ficha.
 - **Botón "Cotiza gratis":** abre WhatsApp con un mensaje de cotización. **"Ver productos"** baja al catálogo.
 - **Cintas:** dos inclinadas (arriba y al medio); sus textos están en el objeto `CINTAS` del módulo `SALUD`. Debajo queda la banda de siempre de la web (mismos textos), separada de la cinta del medio y con el mismo estilo que las cintas mientras la entrada salud esté activa.

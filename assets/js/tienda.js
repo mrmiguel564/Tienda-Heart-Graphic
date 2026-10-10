@@ -834,15 +834,21 @@ const VET = (() => {
 const ROTA_OFERTA = 3200;
 
 /* ---------- ¿Qué entrada se muestra arriba de la página? ----------
-   "cyber"  → sección Cyber Day (ofertas relámpago con contador).
-   "salud"  → entrada "Tu consulta merece una buena impresión" (módulo SALUD).
-   El cambio es MANUAL: se edita esta línea y se publica. Para mirar la entrada
-   salud sin cambiar nada, abre la página con ?entrada=salud al final de la URL. */
-const ENTRADA = "cyber";
-const ENTRADA_ACTIVA = (() => {
-  const q = new URLSearchParams(location.search).get("entrada");
-  return q === "salud" || q === "cyber" ? q : ENTRADA;
-})();
+   "auto"   → Cyber hasta OFERTA_FIN y, desde ese momento, la entrada salud
+              (el cambio ocurre solo, aunque la página ya esté abierta).
+   "cyber"  → siempre la sección Cyber Day (ofertas relámpago con contador).
+   "salud"  → siempre la entrada "Tu consulta merece una buena impresión" (módulo SALUD).
+   Para mirar una u otra sin cambiar nada: ?entrada=salud o ?entrada=cyber en la URL. */
+const ENTRADA = "auto";
+const ENTRADA_URL = new URLSearchParams(location.search).get("entrada");
+let ENTRADA_ACTIVA = ENTRADA_URL === "salud" || ENTRADA_URL === "cyber" ? ENTRADA_URL
+  : ENTRADA === "auto" ? (Date.now() >= Date.parse(OFERTA_FIN) ? "salud" : "cyber") : ENTRADA;
+/* al terminar el Cyber con la página abierta: se cambia a la entrada salud sin recargar */
+function cambiaASalud(){
+  if (ENTRADA !== "auto" || ENTRADA_URL || ENTRADA_ACTIVA === "salud") return;
+  ENTRADA_ACTIVA = "salud";
+  CYBER.pinta(); SALUD.activa();
+}
 const ANCHOS_OFERTA = [320, 460, 700, 900], SIZES_OFERTA = "(max-width:860px) 92vw, 430px";
 
 const CYBER = (() => {
@@ -913,7 +919,11 @@ const CYBER = (() => {
   const fin = Date.parse(OFERTA_FIN);
   function tic(){
     const s = Math.floor((fin - Date.now()) / 1000);
-    if (!(s > 0)){ barra.hidden = true; if (termina) termina.hidden = true; clearInterval(reloj); return; }
+    if (!(s > 0)){
+      barra.hidden = true; if (termina) termina.hidden = true; clearInterval(reloj);
+      cambiaASalud();   /* en la carga no hace nada: si ya terminó, la página parte en salud */
+      return;
+    }
     const v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60]
       .map(x => String(x).padStart(2, "0"));
     barra.querySelectorAll("b").forEach((b,i) => b.textContent = v[i]);
@@ -933,7 +943,7 @@ const CYBER = (() => {
 const SALUD = (() => {
   const zona = document.querySelector(".hg-zona");
   const card = zona && zona.querySelector(".hg-card");
-  if (!card) return { pinta(){} };
+  if (!card) return { pinta(){}, activa(){} };
   zona.hidden = ENTRADA_ACTIVA !== "salud";
 
   const wa = document.getElementById("waSalud");
@@ -994,7 +1004,8 @@ const SALUD = (() => {
   });
 
   pinta();
-  return { pinta };
+  /* activa(): la muestra cuando el Cyber termina con la página abierta (cambiaASalud) */
+  return { pinta, activa(){ zona.hidden = false; auto(); } };
 })();
 
 /* ============ TESTIMONIOS ============
