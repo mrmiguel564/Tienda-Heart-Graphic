@@ -1027,7 +1027,19 @@ const TESTI = (() => {
     const m = Math.ceil(o.length / 2);
     return [o.slice(0, m).join(" "), o.slice(m).join(" ")];
   };
-  const IG = `<svg aria-hidden="true"><use href="#ic-ig"/></svg>`;
+  /* columna instagram: "@usuario", "usuario" o el enlace → @usuario con el ícono de Instagram;
+     un texto que nombra WhatsApp ("Pedido directo de WhatsApp") → con el ícono de WhatsApp;
+     cualquier otro texto ("Pedido personalizado") → tal cual, sin ícono. Nunca es un enlace. */
+  const origen = v => {
+    const s = String(v || "").trim();
+    if (!s) return "";
+    if (/instagram\.com/i.test(s) || /^@?[\w.]+$/.test(s)){
+      const u = s.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?#].*$/, "").replace(/^@/, "");
+      return u ? `<span class="testi-ig"><svg aria-hidden="true"><use href="#ic-ig"/></svg>@${esc(u)}</span>` : "";
+    }
+    if (/whats\s*app/i.test(s)) return `<span class="testi-ig testi-wa"><svg aria-hidden="true"><use href="#ic-wa"/></svg>${esc(s)}</span>`;
+    return `<span class="testi-ig">${esc(s)}</span>`;
+  };
   const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
 
   function pinta(){
@@ -1043,7 +1055,7 @@ const TESTI = (() => {
       const resp = t.resp || (pn ? `¡Gracias, ${pn}! Nos encantó hacerlo` : "¡Gracias por confiar en nosotras!");
       d.innerHTML = `<div class="testi-chat">
           <div class="testi-cab"><span class="testi-ava" aria-hidden="true">${esc(ini)}</span>
-            <span class="datos"><span class="nombre">${esc(t.nombre)}</span>${t.ig ? `<span class="testi-ig">${IG}${esc(t.ig)}</span>` : ""}${
+            <span class="datos"><span class="nombre">${esc(t.nombre)}</span>${origen(t.ig)}${
               t.prod && !t.foto ? `<span class="testi-prod">Pidió: ${esc(t.prod)}</span>` : ""}</span>
             <span class="testi-real">${CHECK}Pedido real</span></div>
           ${globos(t.frase).map(g => `<p class="testi-burbuja">${esc(g)}</p>`).join("")}
@@ -1312,11 +1324,9 @@ function normDcto(raw){
     const T = await gvizHoja("testimonios");
     if (!T.cols.includes("texto")) return;
     const col = (r, nombre) => { const i = T.cols.indexOf(nombre); return i < 0 ? "" : String(r[i] ?? "").trim(); };
-    /* instagram: acepta "@usuario", "usuario" o el enlace completo; siempre se muestra como @usuario */
-    const arroba = v => { const u = v.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?#].*$/, "").replace(/^@/, ""); return u ? "@" + u : ""; };
     const lista = T.rows
       .filter(r => col(r, "texto") && !/^no$/i.test(col(r, "activo")))
-      .map(r => ({ nombre: col(r, "nombre"), ig: arroba(col(r, "instagram")), prod: col(r, "producto"),
+      .map(r => ({ nombre: col(r, "nombre"), ig: col(r, "instagram"), prod: col(r, "producto"),   /* instagram: TESTI.origen */
                    frase: col(r, "texto").replace(/^["“]|["”]$/g, ""), foto: col(r, "foto"), resp: col(r, "respuesta"),
                    lado: /^izq/i.test(col(r, "lado_foto")) ? "izquierda" : "derecha" }));
     if (lista.length){ TESTIMONIOS = lista; TESTI.pinta(); }

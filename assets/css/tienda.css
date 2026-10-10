@@ -395,8 +395,9 @@ body[data-vista="planners"] #testimonios,#testimonios[hidden]{display:none}   /*
   font-family:'Neulis',sans-serif;font-weight:800;font-size:22px;color:var(--ink)}
 .testi-cab .datos{display:flex;flex-direction:column;gap:2px;line-height:1.25;min-width:0}
 .testi-cab .nombre{font-family:'Neulis',sans-serif;font-weight:800;font-size:17px;color:var(--ink)}
-.testi-cab .testi-ig{display:inline-flex;align-items:center;gap:5px;font-family:'Neulis',sans-serif;font-weight:800;font-size:13.5px;color:var(--lila-deep)}
+.testi-cab .testi-ig{display:inline-flex;align-items:center;gap:5px;font-family:'Neulis',sans-serif;font-weight:800;font-size:13.5px;color:#6a4cc9}
 .testi-cab .testi-ig svg{width:15px;height:15px;fill:currentColor}
+.testi-cab .testi-wa{color:#1f8a4c}   /* "Pedido directo de WhatsApp" */
 .testi-cab .testi-prod{font-size:13px;color:var(--ink-soft)}
 .testi-real{margin-left:auto;display:inline-flex;align-items:center;gap:5px;background:#fff;border:2px solid #1c7a4a;color:#1c7a4a;border-radius:999px;
   padding:4px 11px;font-family:'Neulis',sans-serif;font-weight:800;font-size:12px;white-space:nowrap}
@@ -420,6 +421,7 @@ body[data-vista="planners"] #testimonios,#testimonios[hidden]{display:none}   /*
   font-family:'Neulis',sans-serif;font-weight:800;font-size:clamp(13.5px,1.6vw,15.5px);line-height:1.15;
   color:var(--ink);overflow:hidden}   /* hasta dos líneas */
 .testi-dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+.testi-dots[hidden]{display:none}   /* con un solo testimonio */
 .testi-dot{width:13px;height:13px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;cursor:pointer;transition:.15s;padding:0}
 .testi-dot.on{background:var(--lila-deep)}
 @media(max-width:720px){
