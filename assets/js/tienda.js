@@ -941,13 +941,11 @@ const SALUD = (() => {
 
   /* cintas: el grupo va duplicado para que el loop sea continuo */
   const grupo = (items, clase) => `<div class="hg-cinta__grupo">${
-    [...items, ...items].map(t => clase ? `<span>${t}</span><span class="${clase}">✦</span>` : t).join("")}</div>`;
+    [...items, ...items].map(t => `<span>${t}</span><span class="${clase}">✦</span>`).join("")}</div>`;
   const CINTAS = {
     arriba: grupo(["PAPELERÍA PARA LA SALUD", "DISEÑO GRATIS", "ENVÍOS A TODO CHILE", "HEART GRAPHIC", "DISEÑOS PERSONALIZADOS"], "hg-estrella-cian"),
-    medio:  grupo(["HEART GRAPHIC", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "DISEÑOS PERSONALIZADOS"], "hg-estrella-lila"),
-    abajo:  grupo(['<span class="hg-txt-cian">ENVÍOS A TODO CHILE</span>', "<span>✦ DISEÑO GRATIS</span>",
-                   '<span class="hg-txt-lila">HEART GRAPHIC</span>', "<span>♡ DISEÑOS PERSONALIZADOS</span>", "<span>✦ FULL COLOR</span>"])
-  };
+    medio:  grupo(["HEART GRAPHIC", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "DISEÑOS PERSONALIZADOS"], "hg-estrella-lila")
+  };   /* debajo de la cinta "medio" va la banda de siempre de la web */
   zona.querySelectorAll("[data-cinta]").forEach(p => p.innerHTML = (CINTAS[p.dataset.cinta] || "").repeat(2));
 
   const foto = card.querySelector(".hg-card__img"), puntos = card.querySelector(".hg-card__dots");

@@ -561,19 +561,16 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 .hg-ondas{position:absolute;left:0;top:160px;width:100%;height:400px;pointer-events:none}
 /* cintas */
 .hg-cinta{position:relative;z-index:2;background:var(--hg-navy);padding:12px 0;overflow:hidden}
-.hg-cinta--arriba{transform:rotate(-1.4deg);margin:-6px -40px 0}
-.hg-cinta--medio{transform:rotate(1.2deg);margin:0 -40px 14px}
-.hg-cinta--abajo{padding:14px 0}
+.hg-cinta--arriba{transform:rotate(-1.4deg);margin:calc(1.25vw + 8px) -40px 0}   /* el margen deja espacio a la punta que sube al inclinarse */
+.hg-cinta--medio{transform:rotate(1.2deg);margin:0 -40px calc(1.05vw + 4px)}
+/* con la entrada salud activa, la banda de la web sube y queda pegada bajo la cinta inclinada */
+.hg-zona:not([hidden]) + .pv-lightbox + .banda{margin-top:calc(-1.05vw - 4px);position:relative;z-index:1}
 .hg-cinta__pista{display:flex;width:max-content;animation:hg-marquee 40s linear infinite}
 .hg-cinta--medio .hg-cinta__pista{animation-direction:reverse}
-.hg-cinta--abajo .hg-cinta__pista{animation-duration:50s}
 .hg-cinta__grupo{display:flex;flex:none;align-items:center;gap:18px;padding-right:18px;white-space:nowrap;
   font-weight:800;font-size:15px;letter-spacing:.06em;color:#fff}
-.hg-cinta--abajo .hg-cinta__grupo{gap:34px;padding-right:34px;letter-spacing:.04em}
 .hg-estrella-cian{color:var(--hg-cian-cinta)}
 .hg-estrella-lila{color:var(--hg-lila-cinta)}
-.hg-txt-cian{color:var(--hg-cian-cinta)}
-.hg-txt-lila{color:var(--hg-lila-cinta)}
 @keyframes hg-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 /* contenido */
 .hg-contenido{position:relative;z-index:1;flex:1 1 auto;width:100%;max-width:1200px;margin:0 auto;padding:60px 32px 64px;
