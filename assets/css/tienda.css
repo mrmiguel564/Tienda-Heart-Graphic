@@ -380,20 +380,56 @@ footer{text-align:center;font-weight:600;font-size:13px;color:var(--ink-soft);pa
 .pv-lightbox img{max-width:min(92vw,760px);max-height:88vh;background:#fff;border:4px solid #fff;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 
 /* ============ TESTIMONIOS (carrusel automático) ============ */
-#testimonios{max-width:980px;margin:0 auto;padding:40px 20px 30px}
-.testi-box{position:relative;background:#fff;border:4px solid var(--ink);border-radius:46px;box-shadow:12px 12px 0 var(--lila),24px 24px 0 rgba(108,218,244,.5);overflow:hidden}
+#testimonios{max-width:1060px;margin:0 auto;padding:40px 20px 30px}
+body[data-vista="planners"] #testimonios,#testimonios[hidden]{display:none}   /* solo con el catálogo */
+/* Cada testimonio es una conversación: la clienta (inicial + nombre + @instagram como texto, sin enlace)
+   escribe en globos, Heart Graphic responde, y al lado va la polaroid con la foto del pedido.
+   lado_foto (planilla) decide si la polaroid va a la izquierda o a la derecha. */
+.testi-box{position:relative;background:#f2fbfe;border:4px solid var(--ink);border-radius:46px;box-shadow:12px 12px 0 var(--lila),24px 24px 0 rgba(108,218,244,.5);overflow:hidden}
 .testi-track{display:flex;transition:transform .55s cubic-bezier(.25,.9,.3,1)}
-.testi-slide{flex:0 0 100%;padding:clamp(34px,5vw,54px) clamp(28px,7vw,80px) 62px;text-align:center}
-.testi-stars{font-size:22px;letter-spacing:.2em;margin-bottom:14px}
-.testi-slide p.frase{font-weight:400;font-size:clamp(16px,2.2vw,21px);color:var(--ink);line-height:1.55;max-width:56ch;margin:0 auto 22px}
-.testi-quien{display:flex;align-items:center;justify-content:center;gap:13px}
-.testi-ava{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--celeste),var(--lila));border:3px solid var(--ink);display:grid;place-items:center;font-size:24px}
-.testi-quien .datos{display:flex;flex-direction:column;gap:2px;text-align:left;line-height:1.25}
-.testi-quien .nombre{font-family:'Neulis',sans-serif;font-weight:800;font-size:15px;color:var(--ink)}
-.testi-quien .testi-prod{font-weight:400;font-size:12.5px;color:var(--ink-soft)}
-.testi-dots{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+.testi-slide{flex:0 0 100%;box-sizing:border-box;padding:clamp(30px,4.5vw,50px) clamp(22px,5vw,60px) 66px;display:flex;align-items:center;gap:clamp(28px,5vw,60px)}
+.testi-slide.izq{flex-direction:row-reverse}   /* foto a la izquierda */
+.testi-chat{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;text-align:left}
+.testi-cab{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.testi-ava{flex:none;width:50px;height:50px;border-radius:50%;background:var(--lila);border:3px solid var(--ink);display:grid;place-items:center;
+  font-family:'Neulis',sans-serif;font-weight:800;font-size:22px;color:var(--ink)}
+.testi-cab .datos{display:flex;flex-direction:column;gap:2px;line-height:1.25;min-width:0}
+.testi-cab .nombre{font-family:'Neulis',sans-serif;font-weight:800;font-size:17px;color:var(--ink)}
+.testi-cab .testi-ig{display:inline-flex;align-items:center;gap:5px;font-family:'Neulis',sans-serif;font-weight:800;font-size:13.5px;color:#6a4cc9}
+.testi-cab .testi-ig svg{width:15px;height:15px;fill:currentColor}
+.testi-cab .testi-wa{color:#1f8a4c}   /* "Pedido directo de WhatsApp" */
+.testi-cab .testi-prod{font-size:13px;color:var(--ink-soft)}
+.testi-real{margin-left:auto;display:inline-flex;align-items:center;gap:5px;background:#fff;border:2px solid #1c7a4a;color:#1c7a4a;border-radius:999px;
+  padding:4px 11px;font-family:'Neulis',sans-serif;font-weight:800;font-size:12px;white-space:nowrap}
+.testi-real svg{width:13px;height:13px}
+.testi-burbuja{align-self:flex-start;max-width:520px;margin:0;background:#fff;border:3px solid var(--ink);border-radius:24px 24px 24px 6px;
+  padding:14px 20px;font-size:clamp(15.5px,1.9vw,18.5px);line-height:1.5;color:var(--ink);box-shadow:5px 5px 0 var(--celeste)}
+.testi-burbuja + .testi-burbuja{border-radius:6px 24px 24px 24px}
+.testi-stars{font-size:18px;letter-spacing:.15em;margin:2px 0 0 6px}
+.testi-resp{align-self:flex-end;display:flex;align-items:flex-end;gap:9px;max-width:420px}
+.testi-resp p{margin:0;background:var(--ink);color:#fff;border:3px solid var(--ink);border-radius:24px 24px 6px 24px;padding:11px 18px;font-size:15.5px;line-height:1.45}
+.testi-hg{flex:none;width:38px;height:38px;border-radius:50%;background:#fff;border:3px solid var(--ink);display:grid;place-items:center}
+.testi-hg svg{width:24px;height:21px}
+/* polaroid con la foto del pedido; el producto va con la tipografía de la tienda */
+.testi-pola{flex:none;position:relative;width:clamp(220px,30vw,320px);margin:0;background:#fff;padding:13px 13px 56px;border:3px solid var(--ink);border-radius:8px;
+  box-shadow:9px 9px 0 var(--lila);transform:rotate(4deg)}
+.testi-slide.izq .testi-pola{transform:rotate(-4deg)}
+.testi-pola::before{content:"";position:absolute;top:-15px;left:50%;width:110px;height:28px;margin-left:-55px;transform:rotate(-4deg);
+  background:repeating-linear-gradient(45deg,var(--lila) 0 10px,#e4d9fc 10px 20px);opacity:.92;border:2px solid rgba(63,60,102,.25)}
+.testi-pola img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border:2px solid var(--ink);border-radius:3px;background:#f4f2ff}
+.testi-pola figcaption{position:absolute;left:10px;right:10px;bottom:7px;height:44px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:'Neulis',sans-serif;font-weight:800;font-size:clamp(13.5px,1.6vw,15.5px);line-height:1.15;
+  color:var(--ink);overflow:hidden}   /* hasta dos líneas */
+.testi-dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+.testi-dots[hidden]{display:none}   /* con un solo testimonio */
 .testi-dot{width:13px;height:13px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;cursor:pointer;transition:.15s;padding:0}
 .testi-dot.on{background:var(--lila-deep)}
+@media(max-width:720px){
+  .testi-slide,.testi-slide.izq{flex-direction:column-reverse;align-items:stretch}   /* en celular la foto va arriba */
+  .testi-pola{align-self:center;width:min(250px,72%)}
+  .testi-real{margin-left:0}
+  .testi-resp{max-width:none}
+}
 
 
 /* ============ VISTA POLÍTICAS ============ */
@@ -547,4 +583,92 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
   .fila-pedir .pedir .lbl{display:none}
   .fila-pedir .pedir{padding:13px 8px}
   .fila-pedir .pedir .ic{width:20px;height:20px}
+}
+
+/* ============ Seccion ENTRADA SALUD (reemplaza al Cyber Day cuando ENTRADA = "salud") ============
+   Diseño de la tienda (hero-salud). Todo lleva prefijo .hg- para no chocar con el resto.
+   La tarjeta rota por los productos con tarjeta_inicio = si (módulo SALUD de tienda.js). */
+.hg-zona[hidden],.hg-zona [hidden]{display:none!important}
+.hg-hero{--hg-navy:#2E2A54;--hg-celeste:#29B0CF;--hg-celeste-claro:#BDEBF7;--hg-cian-cinta:#45C3DD;--hg-lila:#9B7FE6;
+  --hg-lila-claro:#DDD2FA;--hg-lila-cinta:#B9A6F2;--hg-texto-sec:#5B5679;--hg-font:'Neulis',sans-serif;--hg-font-alt:'NeulisAlt','Neulis',sans-serif;
+  position:relative;overflow:hidden;font-family:var(--hg-font);color:var(--hg-navy);
+  background:linear-gradient(115deg,#DCF2FB 0 57%,#ECE5FB 57% 100%);display:flex;flex-direction:column}
+.hg-hero *,.hg-hero *::before,.hg-hero *::after{box-sizing:border-box}
+.hg-ondas{position:absolute;left:0;top:160px;width:100%;height:400px;pointer-events:none}
+/* cintas */
+.hg-cinta{position:relative;z-index:2;background:var(--hg-navy);padding:12px 0;overflow:hidden}
+.hg-cinta--arriba{transform:rotate(-1.4deg);margin:calc(1.25vw + 8px) -40px 0}   /* el margen deja espacio a la punta que sube al inclinarse */
+.hg-cinta--medio{transform:rotate(1.2deg);margin:0 -40px calc(1.05vw + 26px)}   /* deja aire antes de la banda de la web */
+/* con la entrada salud activa, la banda de la web (mismos textos) toma el estilo de las cintas .hg-cinta */
+.hg-zona:not([hidden]) + .pv-lightbox + .banda{background:#2E2A54;border:0;padding:12px 0}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track{font-size:15px;letter-spacing:.06em}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track span{margin:0 22px}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track em{color:#45C3DD}
+.hg-zona:not([hidden]) + .pv-lightbox + .banda .track i{color:#B9A6F2}
+.hg-cinta__pista{display:flex;width:max-content;animation:hg-marquee 40s linear infinite}
+.hg-cinta--medio .hg-cinta__pista{animation-direction:reverse}
+.hg-cinta__grupo{display:flex;flex:none;align-items:center;gap:18px;padding-right:18px;white-space:nowrap;
+  font-weight:800;font-size:15px;letter-spacing:.06em;color:#fff}
+.hg-estrella-cian{color:var(--hg-cian-cinta)}
+.hg-estrella-lila{color:var(--hg-lila-cinta)}
+@keyframes hg-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* contenido */
+.hg-contenido{position:relative;z-index:1;flex:1 1 auto;width:100%;max-width:1200px;margin:0 auto;padding:60px 32px 64px;
+  display:flex;flex-wrap:wrap;gap:56px;align-items:center;justify-content:space-between}
+.hg-texto{flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+.hg-titulo{margin:0;font-weight:900;letter-spacing:-.01em;line-height:.98}
+.hg-titulo__chico{display:block;font-size:clamp(26px,3.4vw,40px);color:var(--hg-navy)}
+.hg-titulo__grande{display:block;font-size:clamp(52px,7vw,88px)}
+.hg-titulo__grande--celeste{color:var(--hg-celeste)}
+.hg-titulo__grande--lila{color:var(--hg-lila)}
+.hg-bajada{margin:0;font-family:var(--hg-font-alt);font-size:18px;line-height:1.45;max-width:470px}
+/* botones */
+.hg-botones{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.hg-btn{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:13px 20px;border:3px solid var(--hg-navy);border-radius:999px;
+  font-family:inherit;font-weight:900;font-size:16px;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.hg-btn svg{flex:none}
+.hg-btn--primario{background:var(--hg-navy);color:#fff}
+.hg-btn--secundario{background:#fff;color:var(--hg-navy)}
+.hg-btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--hg-lila-cinta)}
+.hg-btn:focus-visible{outline:3px solid var(--hg-celeste);outline-offset:3px}
+/* rubros */
+.hg-rubros{display:flex;flex-wrap:wrap;gap:8px;max-width:560px;margin:0;padding:0;list-style:none}
+.hg-rubros li{border:2px solid var(--hg-navy);border-radius:10px;padding:6px 12px;font-weight:800;font-size:13px}
+.hg-rubros li:nth-child(3n+1){background:var(--hg-celeste-claro)}
+.hg-rubros li:nth-child(3n+2){background:var(--hg-lila-claro)}
+.hg-rubros li:nth-child(3n){background:#fff}
+/* tarjeta: rota por los productos marcados con tarjeta_inicio = si */
+.hg-card-wrap{flex:0 1 380px;min-width:300px;position:relative}
+.hg-sello{position:absolute;top:-34px;right:-30px;z-index:3;width:92px;height:92px;border-radius:50%;background:var(--hg-lila);
+  border:3px solid var(--hg-navy);box-shadow:0 0 0 5px var(--hg-lila-claro);color:#fff;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;font-weight:900;line-height:1}
+.hg-sello span:first-child{font-size:10px;letter-spacing:.06em}
+.hg-sello span:last-child{font-size:20px}
+.hg-card{background:#fff;border:3px solid var(--hg-navy);border-radius:22px;box-shadow:10px 10px 0 var(--hg-navy);padding:14px 14px 18px;
+  display:flex;flex-direction:column;gap:10px;cursor:pointer}
+.hg-card:focus-visible{outline:3px solid var(--hg-celeste);outline-offset:4px}
+.hg-card__etiqueta{align-self:flex-start;margin-top:-30px;background:var(--hg-navy);color:#fff;font-weight:800;font-size:12px;
+  letter-spacing:.08em;padding:6px 12px;border-radius:8px 8px 0 0}
+.hg-card__img{position:relative;height:240px;border-radius:14px;background:linear-gradient(135deg,#7FD6EE,#C6B5F3);overflow:hidden}
+.hg-card__img .hg-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .6s ease}
+.hg-card__img .hg-slide.on{opacity:1}
+.hg-card__img .hg-emoji{display:flex;align-items:center;justify-content:center;font-size:96px}
+.hg-card__nombre{display:block;font-family:var(--hg-font-alt);font-weight:800;font-size:18px}
+.hg-card__detalle{display:block;font-family:var(--hg-font-alt);font-size:13px;color:var(--hg-texto-sec)}
+.hg-card__precio{font-weight:900;font-size:24px;color:#7457D3}
+.hg-card__precio s{font-family:var(--hg-font-alt);font-weight:700;font-size:15px;color:var(--hg-texto-sec);margin-left:6px}
+.hg-card__dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.hg-card__dots button{width:12px;height:12px;padding:0;border-radius:50%;border:1.5px solid var(--hg-navy);background:transparent;cursor:pointer}
+.hg-card__dots button.on{background:var(--hg-navy)}
+/* móvil */
+@media(max-width:720px){
+  .hg-contenido{padding:40px 20px 48px;gap:48px}
+  .hg-bajada{font-size:16px}
+  .hg-card-wrap{min-width:0;flex-basis:100%}
+  .hg-sello{right:-8px}
+  .hg-btn{flex:1 1 auto;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .hg-cinta__pista{animation:none}
+  .hg-btn,.hg-card__img .hg-slide{transition:none}
 }

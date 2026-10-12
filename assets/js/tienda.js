@@ -832,6 +832,23 @@ const VET = (() => {
    alterna celeste/morado. La cinta de arriba dice "hasta -N%" con el mayor
    descuento de los productos marcados. */
 const ROTA_OFERTA = 3200;
+
+/* ---------- ¿Qué entrada se muestra arriba de la página? ----------
+   "auto"   → Cyber hasta OFERTA_FIN y, desde ese momento, la entrada salud
+              (el cambio ocurre solo, aunque la página ya esté abierta).
+   "cyber"  → siempre la sección Cyber Day (ofertas relámpago con contador).
+   "salud"  → siempre la entrada "Tu consulta merece una buena impresión" (módulo SALUD).
+   Para mirar una u otra sin cambiar nada: ?entrada=salud o ?entrada=cyber en la URL. */
+const ENTRADA = "auto";
+const ENTRADA_URL = new URLSearchParams(location.search).get("entrada");
+let ENTRADA_ACTIVA = ENTRADA_URL === "salud" || ENTRADA_URL === "cyber" ? ENTRADA_URL
+  : ENTRADA === "auto" ? (Date.now() >= Date.parse(OFERTA_FIN) ? "salud" : "cyber") : ENTRADA;
+/* al terminar el Cyber con la página abierta: se cambia a la entrada salud sin recargar */
+function cambiaASalud(){
+  if (ENTRADA !== "auto" || ENTRADA_URL || ENTRADA_ACTIVA === "salud") return;
+  ENTRADA_ACTIVA = "salud";
+  CYBER.pinta(); SALUD.activa();
+}
 const ANCHOS_OFERTA = [320, 460, 700, 900], SIZES_OFERTA = "(max-width:860px) 92vw, 430px";
 
 const CYBER = (() => {
@@ -872,8 +889,8 @@ const CYBER = (() => {
 
   function pinta(){
     prods = CATALOGO.filter(p => p.carrusel && p.vars.length);
-    /* sin productos marcados la sección completa se oculta */
-    sec.parentElement.hidden = !prods.length;
+    /* sin productos marcados (o con la entrada salud activa) la sección completa se oculta */
+    sec.parentElement.hidden = ENTRADA_ACTIVA !== "cyber" || !prods.length;
     if (!prods.length) return;
     foto.innerHTML = prods.map(p => {
       const f = fotosDe(p)[0];
@@ -902,7 +919,11 @@ const CYBER = (() => {
   const fin = Date.parse(OFERTA_FIN);
   function tic(){
     const s = Math.floor((fin - Date.now()) / 1000);
-    if (!(s > 0)){ barra.hidden = true; if (termina) termina.hidden = true; clearInterval(reloj); return; }
+    if (!(s > 0)){
+      barra.hidden = true; if (termina) termina.hidden = true; clearInterval(reloj);
+      cambiaASalud();   /* en la carga no hace nada: si ya terminó, la página parte en salud */
+      return;
+    }
     const v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60]
       .map(x => String(x).padStart(2, "0"));
     barra.querySelectorAll("b").forEach((b,i) => b.textContent = v[i]);
@@ -914,47 +935,171 @@ const CYBER = (() => {
   return { pinta };
 })();
 
-/* ============ TESTIMONIOS (edítalos aquí) ============ */
-const TESTIMONIOS = [
-  {emoji:"🐾", nombre:"Constanza · Veterinaria Pelitos", prod:"Carnets de vacunación",
+/* ---------- Entrada SALUD: "Tu consulta merece una buena impresión" ----------
+   Se muestra en lugar del Cyber cuando ENTRADA_ACTIVA = "salud". La tarjeta rota
+   por los productos con tarjeta_inicio = si en la planilla (solo afecta a esta
+   tarjeta, no al carrusel ni a otros destacados); si ninguno está marcado, rota
+   por todo el catálogo. Los puntos permiten elegir y un clic abre la ficha. */
+const SALUD = (() => {
+  const zona = document.querySelector(".hg-zona");
+  const card = zona && zona.querySelector(".hg-card");
+  if (!card) return { pinta(){}, activa(){} };
+  zona.hidden = ENTRADA_ACTIVA !== "salud";
+
+  const wa = document.getElementById("waSalud");
+  if (wa) wa.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent("¡Hola Heart Graphic! 💜 Quiero cotizar papelería para mi consulta.")}`;
+
+  /* cintas: el grupo va duplicado para que el loop sea continuo */
+  const grupo = (items, clase) => `<div class="hg-cinta__grupo">${
+    [...items, ...items].map(t => `<span>${t}</span><span class="${clase}">✦</span>`).join("")}</div>`;
+  const CINTAS = {
+    arriba: grupo(["PAPELERÍA PARA LA SALUD", "DISEÑO GRATIS", "ENVÍOS A TODO CHILE", "HEART GRAPHIC", "DISEÑOS PERSONALIZADOS"], "hg-estrella-cian"),
+    medio:  grupo(["HEART GRAPHIC", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "DISEÑOS PERSONALIZADOS"], "hg-estrella-lila")
+  };   /* debajo de la cinta "medio" va la banda de siempre de la web */
+  zona.querySelectorAll("[data-cinta]").forEach(p => p.innerHTML = (CINTAS[p.dataset.cinta] || "").repeat(2));
+
+  const foto = card.querySelector(".hg-card__img"), puntos = card.querySelector(".hg-card__dots");
+  let prods = [], k = 0, timer;
+  const tramo = p => { const v = p.vars[0], t = v.p[0]; return { v: v.v, u: t[0], pr: t[1] }; };
+
+  function muestra(i){
+    k = i; const p = prods[i], t = tramo(p);
+    foto.querySelectorAll(".hg-slide").forEach((s,j) => s.classList.toggle("on", j === i));
+    puntos.querySelectorAll("button").forEach((b,j) => b.classList.toggle("on", j === i));
+    card.querySelector(".hg-card__nombre").textContent = p.n;
+    card.querySelector(".hg-card__detalle").textContent = `${t.v} · ${t.u} un.`;
+    card.querySelector(".hg-card__precio").innerHTML = tieneDcto(p)
+      ? `${fmt(precioFinal(p, t.pr))} <s>${fmt(t.pr)}</s>` : fmt(t.pr);
+    card.setAttribute("aria-label", `Ver ${p.n}`);
+  }
+  const auto = () => {
+    clearInterval(timer);
+    if (ENTRADA_ACTIVA === "salud" && prods.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+      timer = setInterval(() => muestra((k + 1) % prods.length), ROTA_OFERTA);
+  };
+
+  function pinta(){
+    const conPrecio = CATALOGO.filter(p => p.vars.length);
+    const marcados = conPrecio.filter(p => p.tarjetaInicio);
+    prods = marcados.length ? marcados : conPrecio;
+    card.hidden = !prods.length;
+    if (!prods.length) return;
+    foto.innerHTML = prods.map(p => {
+      const f = fotosDe(p)[0];
+      if (!f) return `<div class="hg-slide hg-emoji" aria-hidden="true">${p.e}</div>`;
+      const url = resolveImg(f);
+      return `<img class="hg-slide" src="${cld(url, 700)}"${cldAttrs(url, ANCHOS_OFERTA, SIZES_OFERTA)} alt="${p.n}" loading="lazy">`;
+    }).join("");
+    puntos.innerHTML = prods.length > 1
+      ? prods.map(p => `<button type="button" aria-label="Ver ${p.n}"></button>`).join("") : "";
+    puntos.querySelectorAll("button").forEach((b,j) => b.addEventListener("click", e => {
+      e.stopPropagation(); muestra(j); auto();
+    }));
+    muestra(Math.min(k, prods.length - 1)); auto();
+  }
+
+  card.addEventListener("click", () => prods[k] && abreModal(prods[k]));
+  card.addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target === card){ e.preventDefault(); card.click(); }
+  });
+
+  pinta();
+  /* activa(): la muestra cuando el Cyber termina con la página abierta (cambiaASalud) */
+  return { pinta, activa(){ zona.hidden = false; auto(); } };
+})();
+
+/* ============ TESTIMONIOS ============
+   Se editan en la pestaña "testimonios" de la planilla (columnas: activo, nombre,
+   instagram, producto, texto, foto, lado_foto y respuesta opcional). Si la pestaña no existe o está
+   vacía, se muestran estos. El @instagram se muestra como texto, sin enlace.
+   foto: URL de la foto del pedido · lado_foto: izquierda | derecha (por defecto) · el avatar es la inicial. */
+let TESTIMONIOS = [
+  {nombre:"Constanza · Veterinaria Pelitos", prod:"Carnets de vacunación",
    frase:"Los carnets quedaron hermosos y a mis clientes les encantan. El diseño fue gratis y el pedido llegó rapidísimo."},
-  {emoji:"🌟", nombre:"Javiera · Dulce Encanto", prod:"Stickers troquelados",
+  {nombre:"Javiera · Dulce Encanto", prod:"Stickers troquelados",
    frase:"La calidad de impresión es increíble, los colores quedaron tal cual el diseño. Ya voy en mi tercer pedido."},
-  {emoji:"💅", nombre:"Camila · Nails Studio", prod:"Tarjetas cliente frecuente",
+  {nombre:"Camila · Nails Studio", prod:"Tarjetas cliente frecuente",
    frase:"Mis clientas coleccionan los stickers de la tarjeta de citas. La atención por WhatsApp es súper cercana."},
-  {emoji:"🩺", nombre:"Dra. Fernanda · VetSur", prod:"Recetarios veterinarios",
+  {nombre:"Dra. Fernanda · VetSur", prod:"Recetarios veterinarios",
    frase:"Los talonarios con mi logo se ven muy profesionales y el papel es de excelente calidad. Totalmente recomendados."}
 ];
-(function(){
+const TESTI = (() => {
   const track = document.getElementById("testiTrack");
   const dots = document.getElementById("testiDots");
-  TESTIMONIOS.forEach(t => {
-    const d = document.createElement("div");
-    d.className = "testi-slide";
-    d.innerHTML = `<div class="testi-stars">⭐⭐⭐⭐⭐</div>
-      <p class="frase">“${t.frase}”</p>
-      <div class="testi-quien"><span class="testi-ava">${t.emoji}</span>
-      <span class="datos"><span class="nombre">${t.nombre}</span><span class="testi-prod">${t.prod}</span></span></div>`;
-    track.appendChild(d);
-  });
-  const n = TESTIMONIOS.length; let i = 0, timer;
-  for (let k = 0; k < n; k++){
-    const d = document.createElement("button");
-    d.className = "testi-dot" + (k ? "" : " on");
-    d.addEventListener("click", () => go(k));
-    dots.appendChild(d);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+  let n = 0, i = 0, timer;
+
+  /* "Dra. Fernanda · VetSur" → "Fernanda": para la inicial del avatar y el "¡Gracias, …!" */
+  const primerNombre = s => String(s || "").split("·")[0].trim().replace(/^(dra?|sra?|srta|prof[a]?)\.?\s+/i, "").split(/\s+/)[0] || "";
+  /* el texto se reparte en uno o dos globos, cortando entre oraciones */
+  const globos = s => {
+    const o = String(s).match(/[^.!?…]+[.!?…]+["”]?|[^.!?…]+$/g)?.map(x => x.trim()).filter(Boolean) || [s];
+    if (o.length < 2) return [o.join(" ")];
+    const m = Math.ceil(o.length / 2);
+    return [o.slice(0, m).join(" "), o.slice(m).join(" ")];
+  };
+  /* columna instagram: "@usuario", "usuario" o el enlace → @usuario con el ícono de Instagram;
+     un texto que nombra WhatsApp ("Pedido directo de WhatsApp") → con el ícono de WhatsApp;
+     cualquier otro texto ("Pedido personalizado") → tal cual, sin ícono. Nunca es un enlace. */
+  const origen = v => {
+    const s = String(v || "").trim();
+    if (!s) return "";
+    if (/instagram\.com/i.test(s) || /^@?[\w.]+$/.test(s)){
+      const u = s.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?#].*$/, "").replace(/^@/, "");
+      return u ? `<span class="testi-ig"><svg aria-hidden="true"><use href="#ic-ig"/></svg>@${esc(u)}</span>` : "";
+    }
+    if (/whats\s*app/i.test(s)) return `<span class="testi-ig testi-wa"><svg aria-hidden="true"><use href="#ic-wa"/></svg>${esc(s)}</span>`;
+    return `<span class="testi-ig">${esc(s)}</span>`;
+  };
+  const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+
+  function pinta(){
+    const lista = TESTIMONIOS.filter(t => t.frase);
+    track.textContent = ""; dots.textContent = "";
+    n = lista.length; i = 0;
+    track.closest("section").hidden = !n;
+    lista.forEach(t => {
+      const d = document.createElement("div");
+      d.className = "testi-slide" + (t.foto && t.lado === "izquierda" ? " izq" : "");
+      /* avatar: siempre la inicial del nombre (no se usan fotos ni logos de la persona) */
+      const pn = primerNombre(t.nombre), ini = (pn || String(t.nombre || "?").trim()).charAt(0).toUpperCase();
+      const resp = t.resp || (pn ? `¡Gracias, ${pn}! Nos encantó hacerlo` : "¡Gracias por confiar en nosotras!");
+      d.innerHTML = `<div class="testi-chat">
+          <div class="testi-cab"><span class="testi-ava" aria-hidden="true">${esc(ini)}</span>
+            <span class="datos"><span class="nombre">${esc(t.nombre)}</span>${origen(t.ig)}${
+              t.prod && !t.foto ? `<span class="testi-prod">Pidió: ${esc(t.prod)}</span>` : ""}</span>
+            <span class="testi-real">${CHECK}Pedido real</span></div>
+          ${globos(t.frase).map(g => `<p class="testi-burbuja">${esc(g)}</p>`).join("")}
+          <div class="testi-stars" role="img" aria-label="5 de 5 estrellas">⭐⭐⭐⭐⭐</div>
+          <div class="testi-resp"><p>${esc(resp)}</p><span class="testi-hg" aria-hidden="true"><svg><use href="#ic-hg"/></svg></span></div>
+        </div>${t.foto ? `
+        <figure class="testi-pola"><img src="${esc(cld(resolveImg(t.foto), 700))}" alt="Pedido de ${esc(t.nombre)}${t.prod ? ": " + esc(t.prod) : ""}" loading="lazy">${
+          t.prod ? `<figcaption>${esc(t.prod)}</figcaption>` : ""}</figure>` : ""}`;
+      track.appendChild(d);
+    });
+    for (let k = 0; k < n; k++){
+      const d = document.createElement("button");
+      d.className = "testi-dot" + (k ? "" : " on");
+      d.setAttribute("aria-label", `Testimonio ${k + 1}`);
+      d.addEventListener("click", () => go(k));
+      dots.appendChild(d);
+    }
+    dots.hidden = n < 2;
+    go(0);
   }
   function go(k){
+    if (!n) return;
     i = (k + n) % n;
     track.style.transform = `translateX(-${i*100}%)`;
     dots.querySelectorAll(".testi-dot").forEach((d,j) => d.classList.toggle("on", j === i));
     reinicia();
   }
-  function reinicia(){ clearInterval(timer); timer = setInterval(() => go(i+1), 4500); }
+  function reinicia(){ clearInterval(timer); if (n > 1) timer = setInterval(() => go(i+1), 4500); }
   const box = track.closest(".testi-box");
   box.addEventListener("mouseenter", () => clearInterval(timer));
   box.addEventListener("mouseleave", reinicia);
-  reinicia();
+  pinta();
+  return { pinta };
 })();
 
 
@@ -1150,6 +1295,7 @@ function normDcto(raw){
         carrusel: P.cols.includes("carrusel")
                     ? esSi(col(r, "carrusel"))
                     : /vet/i.test(String(col(r, "categoria") ?? "")),   /* respaldo: planilla antigua */
+        tarjetaInicio: esSi(col(r, "tarjeta_inicio")),   /* solo la tarjeta de la entrada salud */
         d: col(r, "descripcion") || "", notas: col(r, "notas") || "",
         img, fotos: normGaleria(col(r, "galeria"), img),
         mat: normMaterial(col(r, "material")),
@@ -1173,9 +1319,29 @@ function normDcto(raw){
       renderProductos();
       VET.pinta();
       CYBER.pinta();
+      SALUD.pinta();
       console.info(`Catálogo cargado desde Google Sheets: ${productos.length} productos.`);
     }
   } catch(e){
     console.warn("No se pudo leer el Sheet; se muestra el catálogo embebido.", e);
+  }
+})();
+
+/* ---------- Testimonios desde la planilla (pestaña "testimonios") ----------
+   Si la pestaña no existe gviz devuelve la primera hoja: por eso se exige la columna "texto". */
+(async () => {
+  if (!SHEET_ID) return;
+  try {
+    const T = await gvizHoja("testimonios");
+    if (!T.cols.includes("texto")) return;
+    const col = (r, nombre) => { const i = T.cols.indexOf(nombre); return i < 0 ? "" : String(r[i] ?? "").trim(); };
+    const lista = T.rows
+      .filter(r => col(r, "texto") && !/^no$/i.test(col(r, "activo")))
+      .map(r => ({ nombre: col(r, "nombre"), ig: col(r, "instagram"), prod: col(r, "producto"),   /* instagram: TESTI.origen */
+                   frase: col(r, "texto").replace(/^["“]|["”]$/g, ""), foto: col(r, "foto"), resp: col(r, "respuesta"),
+                   lado: /^izq/i.test(col(r, "lado_foto")) ? "izquierda" : "derecha" }));
+    if (lista.length){ TESTIMONIOS = lista; TESTI.pinta(); }
+  } catch(e){
+    console.warn("No se pudo leer la pestaña testimonios; se muestran los del código.", e);
   }
 })();

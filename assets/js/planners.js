@@ -89,9 +89,9 @@ const AGENDAS = [
     desc: "Planner para profes con calendarios 2026-2027, horario, evaluaciones y apoderados. Elige entre 2 diseños.",
     portadas: [{ nom: "Enseñar es Inspirar", retiro: true }, { nom: "Gran Corazón", retiro: true }],
     paginas: DOCENTE },
-  { id: "universitario", nombre: "Planner Universitario", precio: 11990, desc: "Planner para la U con calendario 2027. Elige entre 6 portadas.", formato: A5_100,
+  { id: "universitario", nombre: "Planner Universitario", precio: 11990, desc: "Planner para la U con calendarios 2026-2027. Elige entre 6 portadas.", formato: A5_100,
     portadas: [1, 2, 3, 4, 5, 6].map(n => ({ nom: "N° " + n, retiro: n !== 5 })),   /* la 5 no trae contratapa */
-    paginas: [D, CAL(2027), "Calendarios", "Calendarios", "Fechas importantes", "Horario", "Información académica",
+    paginas: [D, pg(4, CAL(2026)), pg(2, CAL(2027)), pg(5, "Fechas importantes"), "Horario", "Información académica",
       "Semana de pruebas", DIA, PSEM] },
   { id: "diario", nombre: "Planner Diario", precio: 11990, interiorPorPortada: true, formato: A5_100,
     desc: "Un día por página para planificar con calma, con cumpleaños, hábitos y mes a mes. Elige entre 3 diseños.",
@@ -122,7 +122,7 @@ const AGENDAS = [
   { id: "gastos", nombre: "Planner Control de Gastos", precio: 11990, formato: A5_100,
     desc: "“Planificarme es mi superpoder”: ingresos, gastos fijos, gastos hormiga, ahorros y balance del mes. Elige entre 2 portadas.",
     portadas: [{ nom: "Turquesa", retiro: true }, { nom: "Coral", retiro: true }],
-    paginas: [D, CAL(2025), CAL(2026), "Mi mes", "Ingresos y gastos fijos", par("Gastos hormiga"), "Mis ahorros",
+    paginas: [D, pg(3, CAL(2026)), "Mi mes", "Ingresos y gastos fijos", par("Gastos hormiga"), "Mis ahorros",
       "Balance mensual", "Notas y observaciones"] },
   /* ---- 100 Citas: álbum de citas con reglas al inicio (el modelo con nombres de una pareja queda fuera) ---- */
   { id: "citas-juntos", nombre: "100 Citas Juntos", precio: 9990, tema: true, formato: A5_70,
@@ -138,15 +138,13 @@ const AGENDAS = [
     desc: "Álbum de 100 citas para compartir con mamá: carta, compromiso y una página por cita con foto.",
     portadas: [{ nom: "Flores", retiro: true }],
     paginas: [pg(2, "Carta para mamá"), pg(4, ""), pg(3, "Nuestro compromiso"), pg(4, ""), ...citas(5, 8)] },
-  /* ---- control veterinario: 3 gatos y un perro y gato, cada uno con su interior ---- */
-  { id: "control-vet", nombre: "Carnet de Control Veterinario", precio: 9990, tema: true, ratio: .66, interiorPorPortada: true, formato: A5,
-    desc: "Agenda de control para tu gato o perro: datos, vacunas, desparasitación, controles y aseo. Elige entre 4 portadas.",
+  /* ---- agenda de control veterinario: gato verde y perro y gato (cada uno con su interior) ---- */
+  { id: "control-vet", nombre: "Agenda de Control Veterinario", precio: 9990, tema: true, ratio: .66, interiorPorPortada: true, formato: A5,
+    desc: "Agenda de control para tu gato o perro: datos, vacunas, desparasitación, controles y aseo. Elige entre 2 portadas.",
     portadas: [
-      { nom: "Gato negro", color: "#ef5b4c", paginas: [hoja1(1, "Datos de la mascota"), "Registro de vacunación", "Registro de desparasitación", "Observaciones", "Otros controles", "Aseo de la mascota"] },
-      { nom: "Gato patita", color: "#35c2d8", paginas: [hoja1(1, "Datos de la mascota"), "Registro de vacunación", "Observaciones", "Otros controles", "Aseo de la mascota"] },
       { nom: "Gato verde", color: "#8fd171" },
       { nom: "Perro y gato", color: "#9b86e0" }],
-    /* gato verde y perro y gato: cada sección es un pliego, su portadilla a la izquierda y el registro a la derecha */
+    /* cada sección es un pliego, su portadilla a la izquierda y el registro a la derecha */
     paginas: ["Datos de la mascota", par("Vacunación"), par("Desparasitación"), par("Observaciones"), par("Otros controles"),
       par("Aseo de la mascota")] },
   { id: "recetas", nombre: "Agenda Mis Recetas", precio: 7990, tema: true, lomo: "arriba", interiorPorPortada: true, formato: A5_70,
@@ -158,19 +156,19 @@ const AGENDAS = [
   /* Mini Planner Semanal: 5 portadas y 3 juegos de hojas (1 celeste y rosa, 2 lila, 3 rosa).
      TODO: confirmar qué juego de hojas va con cada portada (interior = número de juego) */
   { id: "mini-semanal", nombre: "Mini Planner Semanal", precio: 5990, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
-    formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Planner semanal de bolsillo con calendario y planificación mensual. Elige entre 5 portadas.",
+    formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Planner semanal de bolsillo con planificación mensual. Elige entre 5 portadas.",
     portadas: [{ nom: "Tú puedes", retiro: true, interior: 1 },
       { nom: "Sigue tus sueños", retiro: true, interior: 3 }, { nom: "Un día a la vez", retiro: true, interior: 2 },
       { nom: "Yo soy capaz", retiro: true, interior: 3 }, { nom: "Si puedes creerlo", retiro: true, interior: 2 }],
-    paginas: [D, CAL(2024), CAL(2025), pg(9, MENS), pg(7, PSEM), PSEM, pg(6, "Hojas de puntos")] },
+    paginas: [D, pg(9, MENS), pg(7, PSEM), PSEM, pg(6, "Hojas de puntos")] },
   { id: "mis-pedidos", nombre: "Agenda Mis Pedidos", precio: 5990, tema: true, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "Para emprendedoras: registra cada pedido con cliente, productos, pago y entrega. Elige entre 2 portadas.",
     portadas: [{ nom: "Rosado", retiro: true }, { nom: "Verde", retiro: true }],
-    paginas: [D, CAL(2024), CAL(2025), "Registro de pedido", pg(4, "Registro de pedido"), pg(4, "Registro de pedido")] },
+    paginas: [D, pg(4, "Registro de pedido"), pg(4, "Registro de pedido"), pg(4, "Registro de pedido")] },
   { id: "mini-escritorio", nombre: "Mini Planner de Escritorio", precio: 6990, tam: "A6", lomo: "arriba", ratio: 1.41, interiorPorPortada: true,
     formato: "Tamaño A6 apaisado (14,8 × 10,5 cm) · anillado", desc: "“Pequeños planes, grandes logros”: pendientes del día y calendario. Elige entre 3 diseños.",
     portadas: [{ nom: "Celeste", color: "#cfe0f3" }, { nom: "Rosa y morado", color: "#f6cfe0" }, { nom: "Verde", color: "#d7ebc6" }],
-    paginas: [D, CAL(2025), CAL(2026), "Pendientes de hoy", pg(4, "Pendientes de hoy"), pg(4, "Pendientes de hoy")] },
+    paginas: [D, pg(3, CAL(2026)), "Pendientes de hoy", pg(4, "Pendientes de hoy"), pg(4, "Pendientes de hoy")] },
   /* Planner Semanal apaisado, anillado arriba: cada portada trae su propio interior
      (pagina-K-01 = tiro: planificación semanal, pagina-K-02 = retiro: hábitos) */
   { id: "semanal", nombre: "Planner Semanal", precio: PRECIOS.semanal, lomo: "arriba", ratio: 1.42, interiorPorPortada: true,
@@ -294,6 +292,8 @@ function muestraVista(v, enfoca){
     sale.classList.remove("pl-fuera");
     $("bajadaSec").textContent = VISTAS[v].bajada;
     entra.hidden = false;
+    /* los testimonios solo van con el catálogo (tienda.css: body[data-vista="planners"] #testimonios) */
+    document.body.dataset.vista = v;
     scrollBy({top: cabecera.getBoundingClientRect().top - antes, behavior: "instant"});
     entra.querySelectorAll(".reveal").forEach(el => el.classList.add("vis"));
     [entra, ...cambian].forEach(el => el.classList.add("pl-entra"));
@@ -773,6 +773,12 @@ function aplicaPlanilla(P, Po, H){
       (a.extra = a.extra || []).push({ t: txt(c("titulo")), url: propia ? `agendas/${a.id}/${u.toLowerCase()}` : u,
         portada: num(c("portada")) || null, pliego: siNo(c("pliego"), false), rep });
     });
+  /* "Elige entre N portadas": el número sigue a las portadas que se ven (las de la planilla suman) */
+  AGENDAS.concat(nuevos).forEach(a => {
+    if (!a.desc) return;
+    a.desc = a.portadas.length > 1 ? a.desc.replace(/Elige entre \d+/, "Elige entre " + a.portadas.length)
+                                   : a.desc.replace(/\s*Elige entre \d+[^.]*\./, "");
+  });
   nuevos.forEach(a => {
     if (!a.portadas.length) return console.warn(`Planilla › planner "${a.id}" no se muestra: no tiene portadas en planners_portadas`);
     AGENDAS.push(a);
@@ -781,9 +787,11 @@ function aplicaPlanilla(P, Po, H){
 /* la planilla es opcional: si una pestaña no existe (o gviz devuelve otra), se ignora */
 (async () => {
   if (typeof SHEET_ID === "undefined" || !SHEET_ID || typeof gvizHoja !== "function") return;
-  const lee = async (nombre, debe) => { try { const h = await gvizHoja(nombre); return debe.every(c => h.cols.includes(c)) ? h : null; } catch (_) { return null; } };
+  /* debe: columnas obligatorias; alguna: al menos una de estas (distingue la pestaña de la hoja productos) */
+  const lee = async (nombre, debe, alguna = []) => { try { const h = await gvizHoja(nombre);
+    return debe.every(c => h.cols.includes(c)) && (!alguna.length || alguna.some(c => h.cols.includes(c))) ? h : null; } catch (_) { return null; } };
   const [P, Po, H] = await Promise.all([
-    lee("planners", ["id", "tamano"]), lee("planners_portadas", ["id_planner", "url_portada"]), lee("planners_hojas", ["id_planner", "titulo", "url"])
+    lee("planners", ["id"], ["precio", "tamano"]), lee("planners_portadas", ["id_planner", "url_portada"]), lee("planners_hojas", ["id_planner", "titulo", "url"])
   ]);
   if (!P && !Po && !H) return;
   try { aplicaPlanilla(P, Po, H); pintaTarjetas(); }
