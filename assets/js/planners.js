@@ -556,10 +556,9 @@ function tarjetaAgenda(a){
       <div class="materiales">
         <div class="mat"><span class="ico">${ANILLO_SVG}</span><b>Anillado metálico</b><i>Full color</i></div>
       </div>
-      <div class="fila-pedir">
+      <div class="fila-pedir fila-tarjeta">
         <a class="pedir" target="_blank" rel="noopener" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
-        <button class="pedir pedir-ig" type="button" title="Pedir por Instagram" aria-label="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> <span class="lbl">Instagram</span></button>
-        ${a.precio ? `<button class="add-cart" type="button" title="Agregar al carrito" aria-label="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg></button>` : ""}
+        ${a.precio ? `<button class="add-cart" type="button" title="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg> <span class="lbl">Agregar al carrito</span></button>` : ""}
       </div>
     </div>`;
   art.style.setProperty("--pag", ratioDe(a));
@@ -661,7 +660,6 @@ function tarjetaAgenda(a){
     pista.addEventListener("scroll", pintaFlechas, { passive: true });
     new ResizeObserver(pintaFlechas).observe(pista);
   }
-  art.querySelector(".pedir-ig").addEventListener("click", () => { if (!faltaImagen()) CART.pedirIg(agMsg(a)); });
   const carro = art.querySelector(".add-cart");
   if (carro) carro.addEventListener("click", () => {
     if (faltaImagen()) return;

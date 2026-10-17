@@ -31,10 +31,15 @@ h1,h2,h3,h4{font-family:'Neulis',sans-serif}
     radial-gradient(54vw 42vh at 80% 50%, rgba(221,204,251,.58) 0%, rgba(221,204,251,.24) 50%, transparent 78%),
     radial-gradient(46vw 34vh at 52% 50%, rgba(191,238,251,.40) 0%, transparent 74%),
     linear-gradient(180deg,#e2f4fd 0%,#eae4fc 25%,#e0f2fd 50%,#eae4fc 75%,#e2f4fd 100%);
-  background-size:100vw 200vh;background-repeat:repeat}
+  background-size:100vw 200vh;background-repeat:repeat;
+  /* más alto que la pantalla: el parallax lo desliza con transform dentro de un tile (200vh) */
+  bottom:auto;height:300vh;will-change:transform}
 .fondo-lineas{position:fixed;inset:0;z-index:-4;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221400%22%20height%3D%221000%22%20viewBox%3D%220%200%201400%201000%22%3E%3Cg%20fill%3D%22none%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M0%20150%20C%20233%2060%20467%20240%20700%20150%20C%20933%2060%201167%20240%201400%20150%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%22.9%22/%3E%3Cpath%20d%3D%22M0%20480%20C%20233%20390%20467%20570%20700%20480%20C%20933%20390%201167%20570%201400%20480%22%20stroke%3D%22%236cdaf4%22%20stroke-opacity%3D%22.5%22/%3E%3Cpath%20d%3D%22M0%20820%20C%20233%20730%20467%20910%20700%20820%20C%20933%20730%201167%20910%201400%20820%22%20stroke%3D%22%23cdb9f9%22%20stroke-opacity%3D%22.6%22/%3E%3C/g%3E%3C/svg%3E");
-  background-size:1400px 1000px;background-repeat:repeat}
+  background-size:1400px 1000px;background-repeat:repeat;
+  bottom:auto;height:calc(100vh + 1000px);will-change:transform}
+/* animaciones de los productos fuera de pantalla: en pausa (las reactiva tienda.js al acercarse) */
+.prod.quieto .anim,.prod.quieto .deco,.prod.quieto .dcto-burbuja{animation-play-state:paused!important}
 /* chispitas flotantes (animación de la alternativa 1) */
 .spark{position:fixed;z-index:-2;pointer-events:none;will-change:transform;opacity:.9;color:#fff;text-shadow:0 2px 6px rgba(108,218,244,.6)}
 .spark.l{color:#fff;text-shadow:0 2px 6px rgba(205,185,249,.8)}
@@ -46,7 +51,7 @@ h1,h2,h3,h4{font-family:'Neulis',sans-serif}
 
 /* ============ NAV ============ */
 nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:4px;background:#fff;border:3px solid var(--ink);border-radius:var(--r-pill);padding:7px 9px;box-shadow:6px 6px 0 rgba(63,60,102,.9);max-width:94vw;white-space:nowrap}
-nav .brand{font-weight:900;font-size:19px;padding:0 12px;color:var(--ink)}
+nav .brand{font-weight:900;font-size:19px;padding:0 12px;color:var(--ink);text-decoration:none;cursor:pointer}
 nav .brand b.c1{color:var(--celeste-deep)}
 nav .brand b.c2{color:var(--lila-deep)}
 nav a.link{font-weight:700;font-size:14px;color:var(--ink);text-decoration:none;padding:9px 15px;border-radius:var(--r-pill);transition:.15s}
@@ -77,7 +82,10 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
 .hero h1 .c1{color:var(--celeste-deep);text-shadow:4px 4px 0 rgba(108,218,244,.35)}
 .hero h1 .c2{color:var(--lila-deep);text-shadow:4px 4px 0 rgba(205,185,249,.45)}
 .hero h1 .heart{display:inline-block;animation:latido 1.4s ease-in-out infinite}
-.hero p.tag{font-weight:600;font-size:clamp(15px,2.2vw,20px);color:var(--ink-soft);margin:18px auto 0;max-width:46ch}
+.hero p.tag{font-weight:600;font-size:clamp(15px,2.2vw,20px);color:var(--ink-soft);margin:30px auto 0;max-width:46ch}
+/* sellos bajo los botones del hero */
+.hero-confianza{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+.hero-confianza span{font-family:'Neulis',sans-serif;font-weight:800;font-size:13px;color:var(--ink);display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-pill);background:#f6f4ff;border:2px dashed rgba(63,60,102,.35);white-space:nowrap}
 .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:30px}
 .btn{font-weight:800;font-size:17px;text-decoration:none;display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:var(--r-pill);border:3px solid var(--ink);cursor:pointer;transition:.15s;box-shadow:5px 5px 0 var(--ink)}
 .btn:hover{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
@@ -476,7 +484,7 @@ body.en-politicas .nav-volver{display:inline-block !important}
 .pol-destacado{background:#e8f8ff;border:3px solid var(--ink);border-radius:20px;padding:16px 20px;font-size:14px;margin-top:6px}
 .pol-destacado b{color:var(--celeste-deep)}
 
-.pol-contacto{background:linear-gradient(135deg,rgba(108,218,244,.2),rgba(205,185,249,.25));border:4px solid var(--ink);border-radius:32px;padding:clamp(26px,4vw,42px);text-align:center;box-shadow:9px 9px 0 var(--celeste)}
+.pol-contacto{background:#fff;border:4px solid var(--ink);border-radius:32px;padding:clamp(26px,4vw,42px);text-align:center;box-shadow:9px 9px 0 var(--celeste)}
 .pol-contacto h2{font-size:clamp(22px,3.4vw,32px);font-weight:900;margin-bottom:8px}
 .pol-contacto p{font-size:14.5px;color:var(--ink-soft);margin-bottom:20px}
 .pol-btnrow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
@@ -499,6 +507,12 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 .add-cart{font-family:'Neulis',sans-serif;font-weight:900;font-size:15px;flex:0 0 auto;display:flex;align-items:center;gap:6px;background:#fff;border:3px solid var(--ink);color:var(--ink);padding:13px 16px;border-radius:var(--r-pill);cursor:pointer;box-shadow:5px 5px 0 var(--ink);transition:.15s;white-space:nowrap}
 .add-cart:hover{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
 .add-cart.ok{background:var(--rosa)}
+/* tarjetas: solo WhatsApp + carrito con texto (el modal mantiene sus 3 botones)
+   (texto en una línea; si no caben lado a lado, el carrito baja a una segunda fila a lo ancho) */
+.fila-pedir.fila-tarjeta{display:flex;flex-wrap:wrap;gap:8px}
+.fila-pedir.fila-tarjeta>*{flex:1 1 auto;white-space:nowrap}
+.fila-pedir.fila-tarjeta .pedir,.fila-pedir.fila-tarjeta .add-cart{font-size:16px;padding:13px 12px;gap:7px}
+.fila-pedir.fila-tarjeta .ic{width:20px;height:20px}
 
 .carro-btn{position:fixed;right:18px;bottom:18px;z-index:150;width:64px;height:64px;border-radius:50%;background:var(--btn-lila);border:3px solid var(--ink);color:#fff;font-size:26px;cursor:pointer;box-shadow:5px 5px 0 var(--ink);display:grid;place-items:center;transition:.15s}
 .carro-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
@@ -583,6 +597,7 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
   .fila-pedir .pedir .lbl{display:none}
   .fila-pedir .pedir{padding:13px 8px}
   .fila-pedir .pedir .ic{width:20px;height:20px}
+  .fila-pedir.fila-tarjeta .pedir .lbl{display:inline}
 }
 
 /* ============ Seccion ENTRADA SALUD (reemplaza al Cyber Day cuando ENTRADA = "salud") ============
@@ -591,13 +606,16 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 .hg-zona[hidden],.hg-zona [hidden]{display:none!important}
 .hg-hero{--hg-navy:#2E2A54;--hg-celeste:#29B0CF;--hg-celeste-claro:#BDEBF7;--hg-cian-cinta:#45C3DD;--hg-lila:#9B7FE6;
   --hg-lila-claro:#DDD2FA;--hg-lila-cinta:#B9A6F2;--hg-texto-sec:#5B5679;--hg-font:'Neulis',sans-serif;--hg-font-alt:'NeulisAlt','Neulis',sans-serif;
-  position:relative;overflow:hidden;font-family:var(--hg-font);color:var(--hg-navy);
+  position:relative;overflow:hidden;overflow:clip visible;font-family:var(--hg-font);color:var(--hg-navy);
   background:linear-gradient(115deg,#DCF2FB 0 57%,#ECE5FB 57% 100%);display:flex;flex-direction:column}
 .hg-hero *,.hg-hero *::before,.hg-hero *::after{box-sizing:border-box}
 .hg-ondas{position:absolute;left:0;top:160px;width:100%;height:400px;pointer-events:none}
 /* cintas */
 .hg-cinta{position:relative;z-index:2;background:var(--hg-navy);padding:12px 0;overflow:hidden}
-.hg-cinta--arriba{transform:rotate(-1.4deg);margin:calc(1.25vw + 8px) -40px 0}   /* el margen deja espacio a la punta que sube al inclinarse */
+.hg-cinta--arriba{transform:rotate(-1.4deg);margin:-22px -40px 0}   /* centrada sobre el borde superior de la sección: tapa la unión de fondos en ambos extremos (la sección recorta solo a los lados) */
+/* en pantallas anchas la inclinación sube más la punta: la cinta crece un poco para seguir tapando la unión */
+@media(min-width:1400px){.hg-cinta--arriba{padding:15px 0;margin-top:-25px}}
+@media(min-width:2000px){.hg-cinta--arriba{padding:19px 0;margin-top:-30px}}
 .hg-cinta--medio{transform:rotate(1.2deg);margin:0 -40px calc(1.05vw + 26px)}   /* deja aire antes de la banda de la web */
 /* con la entrada salud activa, la banda de la web (mismos textos) toma el estilo de las cintas .hg-cinta */
 .hg-zona:not([hidden]) + .pv-lightbox + .banda{background:#2E2A54;border:0;padding:12px 0}
@@ -615,7 +633,7 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 /* contenido */
 .hg-contenido{position:relative;z-index:1;flex:1 1 auto;width:100%;max-width:1200px;margin:0 auto;padding:60px 32px 64px;
   display:flex;flex-wrap:wrap;gap:56px;align-items:center;justify-content:space-between}
-.hg-texto{flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+.hg-texto{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:20px;align-items:flex-start}
 .hg-titulo{margin:0;font-weight:900;letter-spacing:-.01em;line-height:.98}
 .hg-titulo__chico{display:block;font-size:clamp(26px,3.4vw,40px);color:var(--hg-navy)}
 .hg-titulo__grande{display:block;font-size:clamp(52px,7vw,88px)}
@@ -638,7 +656,7 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 .hg-rubros li:nth-child(3n+2){background:var(--hg-lila-claro)}
 .hg-rubros li:nth-child(3n){background:#fff}
 /* tarjeta: rota por los productos marcados con tarjeta_inicio = si */
-.hg-card-wrap{flex:0 1 380px;min-width:300px;position:relative}
+.hg-card-wrap{flex:0 1 380px;min-width:280px;position:relative}
 .hg-sello{position:absolute;top:-34px;right:-30px;z-index:3;width:92px;height:92px;border-radius:50%;background:var(--hg-lila);
   border:3px solid var(--hg-navy);box-shadow:0 0 0 5px var(--hg-lila-claro);color:#fff;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;font-weight:900;line-height:1}
@@ -661,10 +679,17 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 .hg-card__dots button{width:12px;height:12px;padding:0;border-radius:50%;border:1.5px solid var(--hg-navy);background:transparent;cursor:pointer}
 .hg-card__dots button.on{background:var(--hg-navy)}
 /* móvil */
-@media(max-width:720px){
+/* pantallas medianas: texto y tarjeta siguen lado a lado (la tarjeta se angosta un poco) */
+@media(max-width:1000px){
+  .hg-contenido{gap:36px;padding:56px 28px 60px}
+  .hg-card-wrap{flex-basis:320px}
+  .hg-sello{right:-14px}
+}
+/* desde 760px se apilan: la tarjeta va centrada bajo el texto */
+@media(max-width:760px){
   .hg-contenido{padding:40px 20px 48px;gap:48px}
   .hg-bajada{font-size:16px}
-  .hg-card-wrap{min-width:0;flex-basis:100%}
+  .hg-card-wrap{min-width:0;flex-basis:100%;max-width:420px;margin:0 auto}
   .hg-sello{right:-8px}
   .hg-btn{flex:1 1 auto;justify-content:center}
 }

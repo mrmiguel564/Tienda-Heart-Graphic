@@ -351,10 +351,9 @@ function renderProductos(){
         <div class="tabla"></div>
         <p class="notas">${p.notas}</p>
         ${htmlMateriales(p.mat)}
-        <div class="fila-pedir">
+        <div class="fila-pedir fila-tarjeta">
           <a class="pedir" target="_blank" title="Pedir por WhatsApp"><svg class="ic"><use href="#ic-wa"/></svg> <span class="lbl">WhatsApp</span></a>
-          <button class="pedir pedir-ig" type="button" title="Pedir por Instagram" aria-label="Pedir por Instagram"><svg class="ic"><use href="#ic-ig"/></svg> <span class="lbl">Instagram</span></button>
-          <button class="add-cart" type="button" title="Agregar al carrito" aria-label="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg></button>
+          <button class="add-cart" type="button" title="Agregar al carrito"><svg class="ic"><use href="#ic-cart-add"/></svg> <span class="lbl">Agregar al carrito</span></button>
         </div>
       </div>`;
     cont.appendChild(sec);
@@ -455,11 +454,6 @@ function renderProductos(){
       const v = p.vars[varIdx];
       const [un, pr] = v.p[Math.min(filaSel, v.p.length - 1)];
       CART.add(p, v.v, un, pr, colorSel >= 0 ? paleta[colorSel].nom : "");
-    });
-    sec.querySelector(".pedir-ig").addEventListener("click", () => {
-      const v = p.vars[varIdx];
-      const [un, pr] = v.p[Math.min(filaSel, v.p.length - 1)];
-      CART.pedirIg(msgPedido(p, v.v, un, pr, colorSel >= 0 ? paleta[colorSel].nom : ""));
     });
 
     const abre = () => abreModal(p, varIdx, filaSel);
@@ -671,23 +665,56 @@ function abreModal(p, varIdx0 = 0, filaSel0 = 0){
 
 /* ============ PARALLAX: contenido más rápido que el fondo ============ */
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* Rendimiento: el fondo se mueve con transform (lo hace la tarjeta gráfica, sin repintar
+   la pantalla), y el arte de los productos primero se mide entero y después se mueve,
+   solo el que está cerca de la pantalla. */
+var fondos, chispas, artes;   /* var: parallax() también se llama al pintar el catálogo */
 function parallax(){
-  const y = scrollY;
-  document.querySelectorAll(".fondo,.fondo-lineas").forEach(el => {
-    el.style.backgroundPosition = `0 ${-(y * el.dataset.speed)}px`;
+  const y = scrollY, alto = innerHeight;
+  if (!fondos){
+    fondos = [...document.querySelectorAll(".fondo,.fondo-lineas")];
+    chispas = [...document.querySelectorAll(".spark")];
+    midoTiles();
+  }
+  artes = document.querySelectorAll("[data-par]");   /* el catálogo puede volver a pintarse */
+  fondos.forEach(el => {
+    /* el fondo se repite cada "tile" de alto: basta moverlo dentro de un tile */
+    el.style.transform = `translate3d(0, ${-((y * el.dataset.speed) % el._tile)}px, 0)`;
   });
-  document.querySelectorAll(".spark").forEach(el => {
+  chispas.forEach(el => {
     el.style.transform = `translate3d(0, ${-(y * el.dataset.speed)}px, 0)`;
   });
-  document.querySelectorAll("[data-par]").forEach(el => {
-    /* En móvil el arte va apilado sobre la tarjeta: desplazarlo le comería la
-       burbuja de material. Además ahí el efecto casi no se nota. */
-    if (innerWidth <= 760){ if (el.style.transform) el.style.transform = ""; return; }
-    const r = el.getBoundingClientRect();
-    const centro = r.top + r.height/2 - innerHeight/2;
+  /* En móvil el arte va apilado sobre la tarjeta: desplazarlo le comería la
+     burbuja de material. Además ahí el efecto casi no se nota. */
+  if (innerWidth <= 760){
+    artes.forEach(el => { if (el.style.transform) el.style.transform = ""; });
+    return;
+  }
+  const medidas = [...artes].map(el => el.getBoundingClientRect());   /* primero se lee todo… */
+  artes.forEach((el, i) => {                                          /* …y después se escribe */
+    const r = medidas[i];
+    if (r.bottom < -300 || r.top > alto + 300) return;
+    const centro = r.top + r.height/2 - alto/2;
     el.style.transform = `translate3d(0, ${centro * el.dataset.par}px, 0)`;
   });
 }
+/* alto de un tile del fondo: .fondo mide 300vh y su dibujo se repite cada 200vh; las líneas, cada 1000px */
+function midoTiles(){
+  fondos.forEach(el => { el._tile = el.classList.contains("fondo") ? el.offsetHeight * 2 / 3 : 1000; });
+}
+addEventListener("resize", () => { if (fondos){ midoTiles(); parallax(); } }, {passive:true});
+
+/* los productos que están lejos de la pantalla pausan sus animaciones (clase .quieto) */
+if ("IntersectionObserver" in window){
+  const ioProd = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle("quieto", !e.isIntersecting)), { rootMargin: "200px 0px" });
+  const vigila = raiz => raiz.querySelectorAll?.(".prod").forEach(p => ioProd.observe(p));
+  vigila(document);
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
+    if (n.nodeType !== 1) return;
+    if (n.classList.contains("prod")) ioProd.observe(n); else vigila(n);
+  }))).observe(document.body, { childList: true, subtree: true });
+}
+
 let tick = false;
 addEventListener("scroll", () => {
   if (reduceMotion || tick) return;
@@ -1112,6 +1139,8 @@ const TESTI = (() => {
   let actual = "tienda", scrollTienda = 0, animando = false, iniciado = false;
 
   const irA = id => {
+    /* #inicio = el logo del menú: sube hasta arriba, donde está el logo grande */
+    if (id === "inicio") return scrollTo({top:0, behavior: suave ? "smooth" : "instant"});
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({behavior: suave ? "smooth" : "instant", block: "start"});
   };
@@ -1169,6 +1198,10 @@ const TESTI = (() => {
   })();
 
   addEventListener("hashchange", ruta);
+  /* si la URL ya es #inicio no hay hashchange: el clic igual sube */
+  document.getElementById("brandInicio").addEventListener("click", e => {
+    if (location.hash === "#inicio"){ e.preventDefault(); activa("tienda", "inicio"); }
+  });
   const waPol = document.getElementById("waPol");
   if (waPol) waPol.href = `https://wa.me/${WHATSAPP}`;
 })();
