@@ -35,9 +35,10 @@
 @media(max-width:520px){
   .pl-switch{--p:6px;border-width:3px;box-shadow:6px 6px 0 var(--celeste)}
   .pl-switch[data-vista="planners"]{box-shadow:6px 6px 0 var(--lila)}
-  .pl-switch-op{height:58px;font-size:18px}
-  .pl-switch-op[aria-selected="true"]{font-size:23px}
-  #tabPlanners[aria-selected="true"]{font-size:21px}   /* "Planners" es más largo que "Catálogo" */
+  /* las opciones usan casi todo el ancho y la letra de la elegida se ajusta a la pantalla,
+     para que el corazón nunca quede pegado (o encima) del borde del óvalo tinta */
+  .pl-switch-op{height:58px;font-size:18px;width:calc((100vw - 64px) / 2)}
+  .pl-switch-op[aria-selected="true"]{font-size:clamp(16px,calc(7.9vw - 9px),23px)}
 }
 /* el contenido sale hacia el costado contrario y el nuevo entra desde el lado al que
    se movió el switch: --pl-dir es 1 (hacia Planner) o -1 (hacia Catálogo) */
