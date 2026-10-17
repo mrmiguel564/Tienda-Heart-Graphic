@@ -1136,7 +1136,7 @@ const TESTI = (() => {
   const vPol = document.getElementById("vistaPoliticas");
   const suave = !matchMedia("(prefers-reduced-motion: reduce)").matches;
   const DUR = suave ? 320 : 0;
-  let actual = "tienda", scrollTienda = 0, animando = false, iniciado = false;
+  let actual = "tienda", scrollTienda = 0, animando = false, pendiente = false, iniciado = false;
 
   const irA = id => {
     /* #inicio = el logo del menú: sube hasta arriba, donde está el logo grande */
@@ -1146,12 +1146,14 @@ const TESTI = (() => {
   };
 
   function activa(destino, ancla){
+    /* si llega otro destino durante la transición, se aplica al terminar (antes se perdía el toque).
+       Va antes de comparar con "actual", que durante la transición todavía es la vista que sale. */
+    if (animando){ pendiente = true; return; }
     if (destino === actual){
       if (ancla) irA(ancla);
       else if (destino === "politicas") scrollTo({top:0, behavior: suave ? "smooth" : "instant"});
       return;
     }
-    if (animando) return;
     animando = true;
     const aPol = destino === "politicas";
     const sale = aPol ? vTienda : vPol;
@@ -1167,12 +1169,20 @@ const TESTI = (() => {
       document.body.classList.toggle("en-politicas", aPol);
       document.title = aPol ? "Políticas · Heart Graphic" : "Heart Graphic · Diseños Personalizados";
       scrollTo({top: aPol ? 0 : (ancla ? scrollY : scrollTienda), behavior:"instant"});
-      requestAnimationFrame(() => requestAnimationFrame(() => {
+      /* dos cuadros para que la vista entre deslizándose; si la pestaña está en segundo plano
+         (sin cuadros), el respaldo de 120ms termina igual la navegación */
+      let listo = false;
+      const termina = () => {
+        if (listo) return;
+        listo = true;
         entra.classList.remove("fuera-izq","fuera-der");
         actual = destino;
         animando = false;
+        if (pendiente){ pendiente = false; ruta(); return; }
         if (ancla) irA(ancla);
-      }));
+      };
+      requestAnimationFrame(() => requestAnimationFrame(termina));
+      setTimeout(termina, 120);
     }, DUR);
   }
 
