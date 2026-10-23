@@ -39,7 +39,14 @@ h1,h2,h3,h4{font-family:'Neulis',sans-serif}
   background-size:1400px 1000px;background-repeat:repeat;
   bottom:auto;height:calc(100vh + 1000px);will-change:transform}
 /* animaciones de los productos fuera de pantalla: en pausa (las reactiva tienda.js al acercarse) */
-.prod.quieto .anim,.prod.quieto .deco,.prod.quieto .dcto-burbuja{animation-play-state:paused!important}
+/* sin animación (no solo en pausa): así el navegador también suelta la capa gráfica de cada imagen */
+.prod.quieto .anim,.prod.quieto .deco,.prod.quieto .dcto-burbuja{animation:none!important}
+/* celular: el parallax del fondo y del arte no corre (tienda.js), así que el fondo queda fijo del
+   alto de la pantalla y sin capas extra; un fondo de 3 pantallas de alto pesa mucho en la memoria gráfica */
+@media(max-width:760px){
+  .fondo,.fondo-lineas{bottom:0;height:auto;will-change:auto;transform:none!important}
+  .prod .arte{will-change:auto!important}   /* !important: la regla base de .prod .arte va más abajo */
+}
 /* chispitas flotantes (animación de la alternativa 1) */
 .spark{position:fixed;z-index:-2;pointer-events:none;will-change:transform;opacity:.9;color:#fff;text-shadow:0 2px 6px rgba(108,218,244,.6)}
 .spark.l{color:#fff;text-shadow:0 2px 6px rgba(205,185,249,.8)}
