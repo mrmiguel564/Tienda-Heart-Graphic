@@ -677,19 +677,21 @@ function parallax(){
     midoTiles();
   }
   artes = document.querySelectorAll("[data-par]");   /* el catálogo puede volver a pintarse */
-  fondos.forEach(el => {
-    /* el fondo se repite cada "tile" de alto: basta moverlo dentro de un tile */
-    el.style.transform = `translate3d(0, ${-((y * el.dataset.speed) % el._tile)}px, 0)`;
-  });
   chispas.forEach(el => {
     el.style.transform = `translate3d(0, ${-(y * el.dataset.speed)}px, 0)`;
   });
   /* En móvil el arte va apilado sobre la tarjeta: desplazarlo le comería la
-     burbuja de material. Además ahí el efecto casi no se nota. */
+     burbuja de material. Además ahí el efecto casi no se nota. Tampoco se mueve el
+     fondo: queda fijo (tienda.css), que en un celular es mucho más liviano. */
   if (innerWidth <= 760){
     artes.forEach(el => { if (el.style.transform) el.style.transform = ""; });
+    fondos.forEach(el => { if (el.style.transform) el.style.transform = ""; });
     return;
   }
+  fondos.forEach(el => {
+    /* el fondo se repite cada "tile" de alto: basta moverlo dentro de un tile */
+    el.style.transform = `translate3d(0, ${-((y * el.dataset.speed) % el._tile)}px, 0)`;
+  });
   const medidas = [...artes].map(el => el.getBoundingClientRect());   /* primero se lee todo… */
   artes.forEach((el, i) => {                                          /* …y después se escribe */
     const r = medidas[i];
