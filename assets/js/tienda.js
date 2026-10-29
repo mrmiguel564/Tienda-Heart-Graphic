@@ -71,13 +71,14 @@ const CLD = /^(https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.+)$/i;
 const CLD_PARAM = /^(a|ar|b|bo|c|co|d|dl|dn|dpr|e|f|fl|fn|g|h|if|l|o|pg|q|r|t|u|vc|w|x|y|z)_/;
 const cldYaTransf = seg => !seg.includes(".") && seg.split(",").every(t => CLD_PARAM.test(t));
 
-/* GIF animado: muchos cuadros pesan mucho, así que se pide en calidad "eco"
-   (Cloudinary lo entrega como WebP animado, bastante más liviano y casi igual a la vista) */
+/* GIF animado: muchos cuadros pesan mucho, así que se pide en calidad 50. Cloudinary lo
+   entrega como WebP animado; probado con el carnet tipo libro: se ve igual que la calidad
+   automática y pesa ~37% menos (451 KB vs 721 KB a 460px). "q_auto:eco" no lo reducía. */
 const esGif = url => /\.gif($|[?#])/i.test(String(url || ""));
 const cld = (url, ancho) => {
   const m = CLD.exec(String(url || ""));
   if (!m || cldYaTransf(m[2].split("/")[0])) return url;
-  return `${m[1]}f_auto,${esGif(url) ? "q_auto:eco" : "q_auto"},c_limit,w_${ancho}/${m[2]}`;
+  return `${m[1]}f_auto,${esGif(url) ? "q_50" : "q_auto"},c_limit,w_${ancho}/${m[2]}`;
 };
 /* La misma foto en varios anchos: el navegador elige según el tamaño real en
    pantalla y la densidad (retina). Vacío si la URL no es transformable. */
