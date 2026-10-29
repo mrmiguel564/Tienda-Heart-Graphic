@@ -71,18 +71,27 @@ const CLD = /^(https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.+)$/i;
 const CLD_PARAM = /^(a|ar|b|bo|c|co|d|dl|dn|dpr|e|f|fl|fn|g|h|if|l|o|pg|q|r|t|u|vc|w|x|y|z)_/;
 const cldYaTransf = seg => !seg.includes(".") && seg.split(",").every(t => CLD_PARAM.test(t));
 
-/* GIF animado: muchos cuadros pesan mucho, así que se pide en calidad "eco"
-   (Cloudinary lo entrega como WebP animado, bastante más liviano y casi igual a la vista) */
-const esGif = url => /\.gif($|[?#])/i.test(String(url || ""));
+/* Imágenes animadas (GIF o WebP animado, ej. el carnet tipo libro que se abre).
+   f_auto NO sirve aquí: a un WebP animado Cloudinary lo devolvía convertido en un GIF de 2,8 MB.
+   Se piden siempre como WebP animado (f_webp,fl_awebp) en calidad 50 —se ve igual y pesa mucho
+   menos— y como máximo a 700 px, porque más ancho Cloudinary rechaza la animación (error 400
+   a 900 px). Probado con el carnet de 960 px: 367 KB a 460 px y 663 KB a 700 px. */
+const ANIM_MAX = 700;
+const esAnimada = url => /\.(gif|webp)($|[?#])/i.test(String(url || ""));
 const cld = (url, ancho) => {
   const m = CLD.exec(String(url || ""));
   if (!m || cldYaTransf(m[2].split("/")[0])) return url;
-  return `${m[1]}f_auto,${esGif(url) ? "q_auto:eco" : "q_auto"},c_limit,w_${ancho}/${m[2]}`;
+  if (esAnimada(url)) return `${m[1]}f_webp,fl_awebp,q_50,c_limit,w_${Math.min(ancho, ANIM_MAX)}/${m[2]}`;
+  return `${m[1]}f_auto,q_auto,c_limit,w_${ancho}/${m[2]}`;
 };
 /* La misma foto en varios anchos: el navegador elige según el tamaño real en
-   pantalla y la densidad (retina). Vacío si la URL no es transformable. */
-const cldSet = (url, anchos) =>
-  cld(url, anchos[0]) === url ? "" : anchos.map(w => `${cld(url, w)} ${w}w`).join(", ");
+   pantalla y la densidad (retina). Vacío si la URL no es transformable.
+   Las animadas no pasan de ANIM_MAX (ver arriba). */
+const cldSet = (url, anchos) => {
+  if (cld(url, anchos[0]) === url) return "";
+  const lista = esAnimada(url) ? [...new Set(anchos.map(w => Math.min(w, ANIM_MAX)))] : anchos;
+  return lista.map(w => `${cld(url, w)} ${w}w`).join(", ");
+};
 /* Atributos listos para pegar dentro de un <img>. */
 const cldAttrs = (url, anchos, sizes) => {
   const set = cldSet(url, anchos);
@@ -357,7 +366,7 @@ function renderProductos(){
     const art = fotos.length
       ? `<div class="capa">${fotos.map((f,i) => {
           const u = resolveImg(f);
-          return `<img class="anim${i ? " oculta" : ""}${esGif(u) ? " es-gif" : ""}" src="${cld(u, 700)}"${cldAttrs(u, ANCHOS_TARJETA, SIZES_TARJETA)} alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`;
+          return `<img class="anim${i ? " oculta" : ""}${esAnimada(u) ? " es-animada" : ""}" src="${cld(u, 700)}"${cldAttrs(u, ANCHOS_TARJETA, SIZES_TARJETA)} alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`;
         }).join("")}</div>`
       : `<div class="pegatina anim"><span class="emoji">${p.e}</span></div>`;
     const sec = document.createElement("article");
