@@ -30,6 +30,10 @@ assets\
 
 mockups\ ...................... Capturas y versiones de exploración del diseño.
 
+_redirects .................... Regla de Netlify: NO publica mockups\, assets\referencias\ ni las
+                                planillas .xlsx (tienen precios antiguos). Siguen aquí para ti; en
+                                heartgraphic.cl esas direcciones muestran la tienda.
+
 _para_borrar\ ................. Archivos que ya no se usan. Elimina esta carpeta cuando quieras
                                 (el puente de Claude no puede borrar archivos de tu equipo).
 

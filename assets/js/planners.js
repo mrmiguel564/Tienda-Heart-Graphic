@@ -785,6 +785,13 @@ function aplicaPlanilla(P, Po, H){
 /* la planilla es opcional: si una pestaña no existe (o gviz devuelve otra), se ignora */
 (async () => {
   if (typeof SHEET_ID === "undefined" || !SHEET_ID || typeof gvizHoja !== "function") return;
+  /* botones de pedir en espera hasta que lleguen los precios (máximo ESPERA_PRECIOS de tienda.js) */
+  const listo = () => document.body.classList.remove("cargando-planners");
+  document.body.classList.add("cargando-planners");
+  const espera = setTimeout(listo, typeof ESPERA_PRECIOS === "number" ? ESPERA_PRECIOS : 8000);
+  try { await cargaPlanilla(); } finally { clearTimeout(espera); listo(); }
+})();
+async function cargaPlanilla(){
   /* debe: columnas obligatorias; alguna: al menos una de estas (distingue la pestaña de la hoja productos) */
   const lee = async (nombre, debe, alguna = []) => { try { const h = await gvizHoja(nombre);
     return debe.every(c => h.cols.includes(c)) && (!alguna.length || alguna.some(c => h.cols.includes(c))) ? h : null; } catch (_) { return null; } };
@@ -792,9 +799,19 @@ function aplicaPlanilla(P, Po, H){
     lee("planners", ["id"], ["precio", "tamano"]), lee("planners_portadas", ["id_planner", "url_portada"]), lee("planners_hojas", ["id_planner", "titulo", "url"])
   ]);
   if (!P && !Po && !H) return;
-  try { aplicaPlanilla(P, Po, H); pintaTarjetas(); }
+  try {
+    aplicaPlanilla(P, Po, H); pintaTarjetas();
+    /* el carrito toma el precio vigente de cada planner (y del recargo por portada personalizada) */
+    if (typeof CART !== "undefined" && CART.reprecia) CART.reprecia(it => {
+      if (!String(it.p.id).startsWith("pl-")) return undefined;
+      const a = AGENDAS.find(x => "pl-" + x.id === it.p.id);
+      if (!a || a.oculto || !precioDe(a)) return null;
+      const perso = /^Portada personalizada/.test(it.variante) ? PRECIOS.perso : 0;
+      return {p: pCarro(a), pr: precioDe(a) + perso};
+    });
+  }
   catch (e) { console.error("Planilla de planners: no se pudo aplicar; se muestran los datos de AGENDAS.", e); }
-})();
+}
 
 /* ---- visor compartido de las agendas ---- */
 const visorAgEl = $("plVisorAgenda");

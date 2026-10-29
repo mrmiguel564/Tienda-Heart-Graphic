@@ -534,6 +534,9 @@ footer .legal{display:block;max-width:70ch;margin:10px auto 0;font-size:11.5px;o
 .add-cart{font-family:'Neulis',sans-serif;font-weight:900;font-size:15px;flex:0 0 auto;display:flex;align-items:center;gap:6px;background:#fff;border:3px solid var(--ink);color:var(--ink);padding:13px 16px;border-radius:var(--r-pill);cursor:pointer;box-shadow:5px 5px 0 var(--ink);transition:.15s;white-space:nowrap}
 .add-cart:hover{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
 .add-cart.ok{background:var(--rosa)}
+/* mientras llegan los precios de la planilla (tienda.js / planners.js): botones de pedir en espera */
+body.cargando-precios .pedir,body.cargando-precios .add-cart,body.cargando-precios #carroEnviar,body.cargando-precios #carroEnviarIg,
+body.cargando-planners .pl-prod .pedir,body.cargando-planners .pl-prod .add-cart{pointer-events:none;opacity:.5;cursor:progress;filter:saturate(.6)}
 /* tarjetas: solo WhatsApp + carrito con texto (el modal mantiene sus 3 botones)
    (texto en una línea; si no caben lado a lado, el carrito baja a una segunda fila a lo ancho) */
 .fila-pedir.fila-tarjeta{display:flex;flex-wrap:wrap;gap:8px}

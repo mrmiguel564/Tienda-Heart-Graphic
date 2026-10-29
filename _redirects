@@ -1,0 +1,10 @@
+# Reglas de Netlify (se leen en cada publicación).
+# Archivos internos del proyecto que NO deben verse en heartgraphic.cl: maquetas antiguas
+# (copias de la tienda con precios viejos y botones de WhatsApp), planillas Excel de trabajo
+# y material de referencia. Siguen en el repositorio; quien abra estas direcciones ve la tienda.
+/mockups/*                              /   404!
+/assets/referencias/*                   /   404!
+/catalogo_heart_graphic.xlsx            /   404!
+/planners_heart_graphic.xlsx            /   404!
+/pestanas_planners.xlsx                 /   404!
+/pestanas_planners_y_testimonios.xlsx   /   404!
