@@ -98,6 +98,77 @@ const cldAttrs = (url, anchos, sizes) => {
   return set ? ` srcset="${set}" sizes="${sizes}"` : "";
 };
 
+/* ============ LIBRO ANIMADO (columna 'paginas' de la planilla) ============
+   Para productos tipo libro (ej. el carnet corcheteado): en vez de una foto o un GIF, el
+   navegador arma el libro en 3D con las imágenes de cada página, en orden de lectura
+   (portada, interiores..., contratapa). Se ve nítido en cualquier pantalla porque cada
+   página es una imagen normal en alta resolución. Ciclo: cerrado → se abre → pasa cada
+   hoja → contratapa → se desvanece y vuelve a la portada. Solo se anima en pantalla. */
+const ANCHOS_PAGINA = [300, 460, 700], SIZES_PAGINA = "(max-width:760px) 180px, 250px";
+function htmlLibro(paginas, alt){
+  const pg = paginas.slice();
+  if (pg.length % 2) pg.push("");   /* número impar: la última hoja queda con el dorso liso */
+  /* cada página: una URL completa (Cloudinary u otra) o un archivo dentro de assets/productos/,
+     ej. "carnet-libro/01-portada.jpg" (igual que las fotos) */
+  const cara = (u, lado) => {
+    if (!u) return `<div class="cara ${lado} lisa"></div>`;
+    const r = resolveImg(u);
+    return `<div class="cara ${lado}"><img src="${cld(r, 460)}"${cldAttrs(r, ANCHOS_PAGINA, SIZES_PAGINA)} alt="" loading="lazy" draggable="false"></div>`;
+  };
+  let hojas = "";
+  for (let k = 0; k < pg.length / 2; k++)
+    hojas += `<div class="hoja" style="z-index:${pg.length - k}">${cara(pg[2 * k], "frente")}${cara(pg[2 * k + 1], "dorso")}</div>`;
+  return `<div class="libro" role="img" aria-label="${alt}: se abre y muestra sus páginas">${hojas}</div>`;
+}
+const GIRO_HOJA = 1100;   /* ms, igual que la transición de .hoja en tienda.css */
+function animaLibro(libro){
+  const hojas = [...libro.querySelectorAll(".hoja")], n = hojas.length;
+  let paso = 0, t = null, activo = false;
+  /* sin girar: la primera arriba · giradas: la última girada arriba */
+  const capas = () => hojas.forEach((h, k) => { h.style.zIndex = h.classList.contains("vuelta") ? k + 1 : n * 2 - k; });
+  const espera = ms => { clearTimeout(t); t = setTimeout(sigue, ms); };
+  function aLaPortada(){
+    libro.classList.add("sin-trans");
+    hojas.forEach(h => h.classList.remove("vuelta"));
+    libro.classList.remove("abierto", "final");
+    capas();
+    void libro.offsetWidth;
+    libro.classList.remove("sin-trans");
+  }
+  function sigue(){
+    if (!activo) return;
+    if (paso < n){
+      const h = hojas[paso];
+      h.style.zIndex = n * 3;                      /* la que gira pasa por encima de todo */
+      h.classList.add("vuelta");
+      libro.classList.toggle("abierto", paso < n - 1);
+      libro.classList.toggle("final", paso === n - 1);   /* última hoja: queda la contratapa al centro */
+      setTimeout(capas, GIRO_HOJA);
+      paso++;
+      espera(GIRO_HOJA + 1300);
+    } else {
+      libro.classList.add("fundido");
+      setTimeout(() => { aLaPortada(); libro.classList.remove("fundido"); paso = 0; espera(1700); }, 450);
+    }
+  }
+  return {
+    play(){ if (activo || reduceMotion) return; activo = true; espera(paso ? 500 : 1400); },
+    pause(){ activo = false; clearTimeout(t); }
+  };
+}
+/* solo se anima el libro que está en pantalla */
+const ioLibro = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+  const c = e.target._anim;
+  if (c) e.isIntersecting ? c.play() : c.pause();
+}), { threshold: .25 }) : null;
+function activaLibro(libro){
+  const c = animaLibro(libro);
+  libro._anim = c;
+  if (ioLibro) ioLibro.observe(libro); else c.play();
+  return () => { c.pause(); ioLibro && ioLibro.unobserve(libro); };
+}
+const esLibro = p => Array.isArray(p.paginas) && p.paginas.length > 1;
+
 /* Anchos por lugar de la página (ver el CSS de cada uno):
    tarjeta .prod .arte img → hasta 430px · carrusel .pv-item img → hasta 225px */
 const ANCHOS_TARJETA = [300, 460, 700, 900], SIZES_TARJETA = "(max-width:760px) 330px, 430px";
@@ -363,7 +434,9 @@ function renderProductos(){
   lista.forEach((p, idx) => {
     const fotos = fotosTodas(p);
     const nGen = fotosDe(p).length;          /* solo estas rotan solas */
-    const art = fotos.length
+    const art = esLibro(p)
+      ? `<div class="capa-libro anim">${htmlLibro(p.paginas, p.n)}</div>`
+      : fotos.length
       ? `<div class="capa">${fotos.map((f,i) => {
           const u = resolveImg(f);
           return `<img class="anim${i ? " oculta" : ""}${esAnimada(u) ? " es-animada" : ""}" src="${cld(u, 700)}"${cldAttrs(u, ANCHOS_TARJETA, SIZES_TARJETA)} alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`;
@@ -373,11 +446,11 @@ function renderProductos(){
     sec.className = "prod reveal";
     sec.innerHTML = `
       <div class="arte" data-par="${idx % 2 ? '-0.05' : '-0.08'}" role="button" tabindex="0" aria-label="Ver detalle de ${p.n}">
-        ${nGen > 1 ? `<span class="cont-fotos">📷 ${nGen} fotos</span>` : ""}
+        ${nGen > 1 && !esLibro(p) ? `<span class="cont-fotos">📷 ${nGen} fotos</span>` : ""}
         <span class="deco d1">${idx % 2 ? '♥' : '✦'}</span>
         ${art}
         <span class="deco d2">${idx % 2 ? '✧' : '♥'}</span>
-        <button class="ver-mas" type="button">🔍 Ver fotos y detalle</button>
+        <button class="ver-mas" type="button">🔍 ${esLibro(p) ? "Ver detalle" : "Ver fotos y detalle"}</button>
       </div>
       <div class="tarjeta">
         ${tieneDcto(p) ? `<span class="dcto-burbuja" aria-label="Descuento ${etqDcto(p).slice(1)}"><small>descuento</small><b>${etqDcto(p)}</b></span>` : ""}
@@ -395,6 +468,7 @@ function renderProductos(){
         </div>
       </div>`;
     cont.appendChild(sec);
+    if (esLibro(p)) rotadores.push(activaLibro(sec.querySelector(".libro")));
 
     const varCont = sec.querySelector(".variantes");
     const tabla = sec.querySelector(".tabla");
@@ -561,8 +635,25 @@ const MODAL = (() => {
     arrancaRot();
   }
 
+  /* producto tipo libro: el libro animado ocupa el lugar de la galería */
+  let paraLibro = null;
+  function pintaLibro(paginas, alt){
+    paraRot();
+    if (paraLibro) paraLibro();
+    foto.innerHTML = `<div class="m-libro">${htmlLibro(paginas, alt)}</div>`;
+    thumbs.innerHTML = "";
+    thumbs.hidden = true;
+    ims = []; nGen = 0;
+    const c = animaLibro(foto.querySelector(".libro"));
+    c.play();
+    paraLibro = () => { c.pause(); paraLibro = null; };
+    avisoRot.hidden = true;
+    foto.appendChild(avisoRot);
+  }
+
   function cierra(){
     paraRot();
+    if (paraLibro) paraLibro();
     raiz.classList.remove("vis");
     setTimeout(() => {
       raiz.classList.remove("abierto");
@@ -585,7 +676,7 @@ const MODAL = (() => {
     }
   });
 
-  return { raiz, card, foto, thumbs, pintaFotos, paraRot, muestra, arrancaRot, cierra,
+  return { raiz, card, foto, thumbs, pintaFotos, pintaLibro, paraRot, muestra, arrancaRot, cierra,
            get ims(){ return ims; },
            set foco(v){ ultimoFoco = v; } };
 })();
@@ -608,7 +699,7 @@ function abreModal(p, varIdx0 = 0, filaSel0 = 0){
   tintaIconos(raiz);
   raiz.querySelector(".m-notas").textContent = p.notas || "";
   raiz.querySelector(".m-notas").hidden = !p.notas;
-  m.pintaFotos(fotos, p.e, nGenericas);
+  if (esLibro(p)) m.pintaLibro(p.paginas, p.n); else m.pintaFotos(fotos, p.e, nGenericas);
 
   /* colores */
   const cajaCol = raiz.querySelector(".m-colores");
@@ -1373,7 +1464,11 @@ function normDcto(raw){
     P.rows.forEach(r => {
       const id = col(r, "id"), nombre = col(r, "nombre");
       if (!nombre || String(col(r, "activo") ?? "si").toLowerCase() === "no") return;
-      const img = String(col(r, "imagen_principal") ?? "").trim();
+      /* 'paginas' (opcional): imágenes de cada página en orden de lectura, separadas por | o
+         en líneas distintas → el producto se muestra como libro animado. Sin imagen_principal,
+         la portada (primera página) hace de foto en las secciones de ofertas. */
+      const paginas = normGaleria(col(r, "paginas"), "");
+      const img = String(col(r, "imagen_principal") ?? "").trim() || paginas[0] || "";
       mapa.set(id, {
         id, n: String(nombre).trim(), e: col(r, "emoji") || "💜",
         carrusel: P.cols.includes("carrusel")
@@ -1381,7 +1476,7 @@ function normDcto(raw){
                     : /vet/i.test(String(col(r, "categoria") ?? "")),   /* respaldo: planilla antigua */
         tarjetaInicio: esSi(col(r, "tarjeta_inicio")),   /* solo la tarjeta de la entrada salud */
         d: col(r, "descripcion") || "", notas: col(r, "notas") || "",
-        img, fotos: normGaleria(col(r, "galeria"), img),
+        img, fotos: normGaleria(col(r, "galeria"), img), paginas,
         mat: normMaterial(col(r, "material")),
         cols: normColores(col(r, "colores")),
         vars: normCantidades(col(r, "cantidades")),
