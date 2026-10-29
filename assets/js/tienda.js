@@ -443,7 +443,7 @@ function renderProductos(){
         }).join("")}</div>`
       : `<div class="pegatina anim"><span class="emoji">${p.e}</span></div>`;
     const sec = document.createElement("article");
-    sec.className = "prod reveal";
+    sec.className = "prod reveal" + (esLibro(p) ? " es-libro" : "");
     sec.innerHTML = `
       <div class="arte" data-par="${idx % 2 ? '-0.05' : '-0.08'}" role="button" tabindex="0" aria-label="Ver detalle de ${p.n}">
         ${nGen > 1 && !esLibro(p) ? `<span class="cont-fotos">📷 ${nGen} fotos</span>` : ""}
