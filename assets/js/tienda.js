@@ -71,10 +71,13 @@ const CLD = /^(https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.+)$/i;
 const CLD_PARAM = /^(a|ar|b|bo|c|co|d|dl|dn|dpr|e|f|fl|fn|g|h|if|l|o|pg|q|r|t|u|vc|w|x|y|z)_/;
 const cldYaTransf = seg => !seg.includes(".") && seg.split(",").every(t => CLD_PARAM.test(t));
 
+/* GIF animado: muchos cuadros pesan mucho, así que se pide en calidad "eco"
+   (Cloudinary lo entrega como WebP animado, bastante más liviano y casi igual a la vista) */
+const esGif = url => /\.gif($|[?#])/i.test(String(url || ""));
 const cld = (url, ancho) => {
   const m = CLD.exec(String(url || ""));
   if (!m || cldYaTransf(m[2].split("/")[0])) return url;
-  return `${m[1]}f_auto,q_auto,c_limit,w_${ancho}/${m[2]}`;
+  return `${m[1]}f_auto,${esGif(url) ? "q_auto:eco" : "q_auto"},c_limit,w_${ancho}/${m[2]}`;
 };
 /* La misma foto en varios anchos: el navegador elige según el tamaño real en
    pantalla y la densidad (retina). Vacío si la URL no es transformable. */
@@ -354,7 +357,7 @@ function renderProductos(){
     const art = fotos.length
       ? `<div class="capa">${fotos.map((f,i) => {
           const u = resolveImg(f);
-          return `<img class="anim${i ? " oculta" : ""}" src="${cld(u, 700)}"${cldAttrs(u, ANCHOS_TARJETA, SIZES_TARJETA)} alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`;
+          return `<img class="anim${i ? " oculta" : ""}${esGif(u) ? " es-gif" : ""}" src="${cld(u, 700)}"${cldAttrs(u, ANCHOS_TARJETA, SIZES_TARJETA)} alt="${p.n}" loading="lazy"${i ? ' style="position:absolute;inset:0;margin:auto"' : ""}>`;
         }).join("")}</div>`
       : `<div class="pegatina anim"><span class="emoji">${p.e}</span></div>`;
     const sec = document.createElement("article");

@@ -137,6 +137,9 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
 .prod:nth-child(even) .arte .pegatina::after{border-color:var(--lila)}
 .prod .arte .emoji{font-size:clamp(110px,15vw,170px);filter:drop-shadow(0 10px 0 rgba(63,60,102,.12))}
 .prod .arte img{width:clamp(230px,31vw,430px);max-width:none;height:auto;filter:drop-shadow(6px 10px 0 rgba(63,60,102,.18))}
+/* GIF animado (ej. el carnet que se abre): trae margen alrededor para la animación, así que va un 15% más grande */
+.prod .arte img.es-gif{width:clamp(265px,35.5vw,495px)}
+@media(max-width:760px){.prod .arte img.es-gif{width:clamp(250px,71vw,330px)}}
 .prod .arte .deco{position:absolute;font-size:24px;opacity:.95;color:#fff;text-shadow:0 2px 8px rgba(124,109,190,.5)}
 .prod .arte .deco.d1{top:4%;left:6%;animation:floaty 4.5s ease-in-out infinite}
 .prod .arte .deco.d2{bottom:8%;right:4%;animation:floaty 5.2s ease-in-out .6s infinite}
