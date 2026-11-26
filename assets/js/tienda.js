@@ -376,7 +376,7 @@ function htmlMateriales(mats){
   if (!mats || !mats.length) return "";
   return `<div class="materiales">` + mats.map(m => {
     const desc = m.detalle.join(" · ");
-    return `<div class="mat">` +
+    return `<div class="mat${m.icono || m.emoji ? "" : " sin-ico"}">` +
       (m.icono ? `<span class="ico" data-svg="${resolveImg(m.icono)}"><img src="${resolveImg(m.icono)}" alt="" loading="lazy"></span>`
                : m.emoji ? `<span class="ico"><span>${m.emoji}</span></span>` : "") +
       (m.titulo ? `<b>${m.titulo}</b>` : "") +
@@ -444,6 +444,7 @@ function renderProductos(){
       : `<div class="pegatina anim"><span class="emoji">${p.e}</span></div>`;
     const sec = document.createElement("article");
     sec.className = "prod reveal" + (esLibro(p) ? " es-libro" : "");
+    sec.dataset.pid = p.id;   /* el buscador del menú lo usa para llegar al producto */
     sec.innerHTML = `
       <div class="arte" data-par="${idx % 2 ? '-0.05' : '-0.08'}" role="button" tabindex="0" aria-label="Ver detalle de ${p.n}">
         ${nGen > 1 && !esLibro(p) ? `<span class="cont-fotos">📷 ${nGen} fotos</span>` : ""}
@@ -992,6 +993,26 @@ const VET = (() => {
    descuento de los productos marcados. */
 const ROTA_OFERTA = 3200;
 
+/* ---------- Hora confiable para fechas y contadores ----------
+   Las fechas de las ofertas ya están en hora de Chile (-03:00), así que el cambio y el contador
+   ocurren al mismo instante para todos, estén donde estén. Lo único que podría fallar es un
+   celular o computador con el reloj mal puesto: por eso se pregunta la hora al servidor de la
+   web (cabecera Date) y, si el equipo está desfasado en más de 5 segundos, se corrige.
+   Si no hay respuesta (sin internet, etc.) se usa el reloj del equipo, como siempre. */
+let RELOJ_DESFASE = 0;
+function ahora(){ return Date.now() + RELOJ_DESFASE; }
+(async () => {
+  try {
+    const t0 = Date.now();
+    const r = await fetch(location.pathname + "?hora=" + t0, { method: "HEAD", cache: "no-store" });
+    const srv = Date.parse(r.headers.get("Date"));
+    if (!isNaN(srv)){
+      const dif = srv + 500 - (t0 + Date.now()) / 2;   /* +500: la cabecera viene sin milisegundos */
+      if (Math.abs(dif) > 5000) RELOJ_DESFASE = dif;
+    }
+  } catch (e) { /* sin conexión: queda el reloj del equipo */ }
+})();
+
 /* ---------- ¿Qué entrada se muestra arriba de la página? ----------
    "auto"   → Cyber hasta OFERTA_FIN y, desde ese momento, la entrada salud
               (el cambio ocurre solo, aunque la página ya esté abierta).
@@ -1001,7 +1022,32 @@ const ROTA_OFERTA = 3200;
 const ENTRADA = "auto";
 const ENTRADA_URL = new URLSearchParams(location.search).get("entrada");
 let ENTRADA_ACTIVA = ENTRADA_URL === "salud" || ENTRADA_URL === "cyber" ? ENTRADA_URL
-  : ENTRADA === "auto" ? (Date.now() >= Date.parse(OFERTA_FIN) ? "salud" : "cyber") : ENTRADA;
+  : ENTRADA_URL === "blackfriday" || ENTRADA_URL === "bfextendido" ? "salud"
+  : ENTRADA === "auto" ? (ahora() >= Date.parse(OFERTA_FIN) ? "salud" : "cyber") : ENTRADA;
+
+/* ---------- BLACK FRIDAY (sobre la entrada salud) ----------
+   Entre BF_INICIO y BF_FIN (hora de Chile) la entrada salud se viste de Black Friday,
+   con los mismos colores de siempre: etiqueta con las fechas, título "OFERTAS / BLACK FRIDAY",
+   contador, botón "Aprovechar ofertas", tarjeta "★ BLACK FRIDAY", sello "HASTA -N%" (si hay
+   productos con descuento en la planilla) y cintas con textos de Black Friday. Fuera de esas
+   fechas la sección queda exactamente como siempre: se activa y se apaga sola, aunque la
+   página esté abierta. Los descuentos se ponen como siempre en la columna 'descuento' de la
+   planilla (y se quitan al terminar).
+   Después de BF_FIN y hasta BF_EXT_FIN va la etapa "extendemos las ofertas" (mismo diseño,
+   con sus textos y el contador hasta BF_EXT_FIN). Pasado BF_EXT_FIN, todo vuelve a la normalidad.
+   Para mirarlas antes de la fecha: ?entrada=blackfriday o ?entrada=bfextendido en la dirección. */
+const BF_INICIO  = "2026-11-27T00:00:00-03:00";   /* viernes 27 de noviembre */
+const BF_FIN     = "2026-11-30T23:59:59-03:00";   /* lunes 30 de noviembre, 23:59 */
+const BF_EXT_FIN = "2026-12-04T23:59:59-03:00";   /* extensión: hasta el viernes 4 de diciembre, 23:59 */
+/* "" = sin Black Friday · "bf" = Black Friday · "ext" = ofertas extendidas */
+function etapaBF(){
+  if (ENTRADA_URL === "blackfriday") return "bf";
+  if (ENTRADA_URL === "bfextendido") return "ext";
+  const t = ahora();
+  if (t >= Date.parse(BF_INICIO) && t <= Date.parse(BF_FIN)) return "bf";
+  if (t > Date.parse(BF_FIN) && t <= Date.parse(BF_EXT_FIN)) return "ext";
+  return "";
+}
 /* al terminar el Cyber con la página abierta: se cambia a la entrada salud sin recargar */
 function cambiaASalud(){
   if (ENTRADA !== "auto" || ENTRADA_URL || ENTRADA_ACTIVA === "salud") return;
@@ -1077,7 +1123,7 @@ const CYBER = (() => {
   /* contador hasta OFERTA_FIN */
   const fin = Date.parse(OFERTA_FIN);
   function tic(){
-    const s = Math.floor((fin - Date.now()) / 1000);
+    const s = Math.floor((fin - ahora()) / 1000);
     if (!(s > 0)){
       barra.hidden = true; if (termina) termina.hidden = true; clearInterval(reloj);
       cambiaASalud();   /* en la carga no hace nada: si ya terminó, la página parte en salud */
@@ -1106,16 +1152,91 @@ const SALUD = (() => {
   zona.hidden = ENTRADA_ACTIVA !== "salud";
 
   const wa = document.getElementById("waSalud");
-  if (wa) wa.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent("¡Hola Heart Graphic! 💜 Quiero cotizar papelería para mi consulta.")}`;
+  const hero = zona.querySelector(".hg-hero");
+  const chip = zona.querySelector(".hg-bf-chip"), relojBF = zona.querySelector(".hg-bf-reloj");
+  const titulo = zona.querySelector(".hg-titulo"), bajada = zona.querySelector(".hg-bajada");
+  const sello = zona.querySelector(".hg-sello"), etiqueta = card.querySelector(".hg-card__etiqueta");
+  /* texto del botón principal (el primer texto antes de la flecha) */
+  const txtBoton = wa && [...wa.childNodes].find(n => n.nodeType === 3 && n.nodeValue.trim());
 
   /* cintas: el grupo va duplicado para que el loop sea continuo */
   const grupo = (items, clase) => `<div class="hg-cinta__grupo">${
     [...items, ...items].map(t => `<span>${t}</span><span class="${clase}">✦</span>`).join("")}</div>`;
-  const CINTAS = {
-    arriba: grupo(["PAPELERÍA PARA LA SALUD", "DISEÑO GRATIS", "ENVÍOS A TODO CHILE", "HEART GRAPHIC", "DISEÑOS PERSONALIZADOS"], "hg-estrella-cian"),
-    medio:  grupo(["HEART GRAPHIC", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "DISEÑOS PERSONALIZADOS"], "hg-estrella-lila")
+  /* textos normales y de Black Friday (ver BF_INICIO / BF_FIN) */
+  const TXT = {
+    normal: {
+      arriba: ["PAPELERÍA PARA TU CONSULTA", "DISEÑO GRATIS", "ENVÍOS A TODO CHILE", "HEART GRAPHIC", "DISEÑOS PERSONALIZADOS"],
+      medio:  ["HEART GRAPHIC", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "DISEÑOS PERSONALIZADOS"],
+      titulo: titulo ? titulo.innerHTML : "",
+      etiqueta: "★ MÁS VENDIDO",
+      bajada: bajada ? bajada.textContent : "",
+      boton: txtBoton ? txtBoton.nodeValue : "",
+      wa: "¡Hola Heart Graphic! 💜 Quiero cotizar papelería para mi consulta."
+    },
+    bf: {
+      arriba: ["BLACK FRIDAY", "27 AL 30 DE NOVIEMBRE", "PAPELERÍA PARA TU CONSULTA", "DISEÑO GRATIS", "ENVÍOS A TODO CHILE"],
+      medio:  ["OFERTAS BLACK FRIDAY", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "HEART GRAPHIC"],
+      /* "BLACK FRIDAY" en una sola línea, con los colores de "BUENA IMPRESIÓN" */
+      titulo: `<span class="hg-titulo__chico">OFERTAS</span>` +
+              `<span class="hg-titulo__grande hg-titulo__bf"><span class="hg-titulo__grande--celeste">BLACK</span> <span class="hg-titulo__grande--lila">FRIDAY</span></span>`,
+      chip: "🩺 Papelería para tu consulta · 27 al 30 de noviembre",
+      etiqueta: "★ BLACK FRIDAY",
+      bajada: "Recetarios, carnets, tarjetas, imanes y flyers con precios especiales por 4 días. Diseño gratis al agendar tu pedido.",
+      boton: "\n            Aprovechar ofertas\n            ",
+      wa: "¡Hola Heart Graphic! 💜 Quiero aprovechar las ofertas Black Friday para mi consulta.",
+      fin: BF_FIN
+    },
+    /* extensión: del 1 al 4 de diciembre */
+    ext: {
+      arriba: ["EXTENDEMOS EL BLACK FRIDAY", "HASTA EL VIERNES 4 DE DICIEMBRE", "PAPELERÍA PARA TU CONSULTA", "DISEÑO GRATIS", "ENVÍOS A TODO CHILE"],
+      medio:  ["OFERTAS BLACK FRIDAY EXTENDIDAS", "RECETARIOS", "CARNETS", "IMANES", "TARJETAS", "FLYERS", "HEART GRAPHIC"],
+      titulo: `<span class="hg-titulo__chico">EXTENDEMOS LAS OFERTAS</span>` +
+              `<span class="hg-titulo__grande hg-titulo__bf"><span class="hg-titulo__grande--celeste">BLACK</span> <span class="hg-titulo__grande--lila">FRIDAY</span></span>`,
+      chip: "🩺 Papelería para tu consulta · hasta el viernes 4 de diciembre",
+      etiqueta: "★ BLACK FRIDAY",
+      bajada: "¡Te dimos más tiempo! Recetarios, carnets, tarjetas, imanes y flyers con precios especiales hasta el viernes 4 de diciembre. Diseño gratis al agendar tu pedido.",
+      boton: "\n            Aprovechar ofertas\n            ",
+      wa: "¡Hola Heart Graphic! 💜 Quiero aprovechar las ofertas Black Friday extendidas para mi consulta.",
+      fin: BF_EXT_FIN
+    }
   };   /* debajo de la cinta "medio" va la banda de siempre de la web */
-  zona.querySelectorAll("[data-cinta]").forEach(p => p.innerHTML = (CINTAS[p.dataset.cinta] || "").repeat(2));
+
+  /* aplica los textos de la etapa actual ("" normal · "bf" · "ext"); se revisa cada segundo,
+     así el Black Friday, su extensión y la vuelta a la normalidad ocurren solos */
+  let modoBF = null, maxDcto = 0;
+  function pintaSello(){
+    if (!sello) return;
+    const [a, b] = !modoBF ? ["DISEÑO", "GRATIS"] : maxDcto ? ["HASTA", etqDcto({ dcto: maxDcto })] : ["BLACK", "FRIDAY"];
+    sello.innerHTML = `<span>${a}</span><span>${b}</span>`;
+  }
+  function aplicaModo(){
+    const etapa = etapaBF();
+    if (etapa === modoBF) return;
+    modoBF = etapa;
+    const bf = !!etapa;
+    const t = TXT[etapa] || TXT.normal;
+    hero.classList.toggle("hg-bf", bf);
+    if (chip){ chip.hidden = !bf; if (bf) chip.textContent = t.chip; }
+    if (relojBF) relojBF.hidden = !bf;
+    if (titulo) titulo.innerHTML = t.titulo;
+    if (etiqueta) etiqueta.textContent = t.etiqueta;
+    if (bajada) bajada.textContent = t.bajada;
+    if (txtBoton) txtBoton.nodeValue = t.boton;
+    if (wa) wa.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t.wa)}`;
+    const clase = { arriba: "hg-estrella-cian", medio: "hg-estrella-lila" };
+    zona.querySelectorAll("[data-cinta]").forEach(p => p.innerHTML = grupo(t[p.dataset.cinta] || [], clase[p.dataset.cinta]).repeat(2));
+    pintaSello();
+  }
+  /* contador: días · horas · min · seg hasta el fin de la etapa (BF_FIN o BF_EXT_FIN) */
+  function ticBF(){
+    if (!modoBF || !relojBF) return;
+    const s = Math.max(0, Math.floor((Date.parse(TXT[modoBF].fin) - ahora()) / 1000));
+    const v = [Math.floor(s / 86400), Math.floor(s % 86400 / 3600), Math.floor(s % 3600 / 60), s % 60]
+      .map(x => String(x).padStart(2, "0"));
+    relojBF.innerHTML = ["días", "horas", "min", "seg"].map((l, i) => `<div><b>${v[i]}</b><small>${l}</small></div>`).join("");
+  }
+  aplicaModo(); ticBF();
+  setInterval(() => { aplicaModo(); ticBF(); }, 1000);
 
   const foto = card.querySelector(".hg-card__img"), puntos = card.querySelector(".hg-card__dots");
   let prods = [], k = 0, timer;
@@ -1141,6 +1262,9 @@ const SALUD = (() => {
     const conPrecio = CATALOGO.filter(p => p.vars.length);
     const marcados = conPrecio.filter(p => p.tarjetaInicio);
     prods = marcados.length ? marcados : conPrecio;
+    /* el sello Black Friday muestra el mayor descuento de los productos de la tarjeta */
+    maxDcto = Math.max(0, ...prods.filter(tieneDcto).map(p => Number(p.dcto)));
+    pintaSello();
     card.hidden = !prods.length;
     if (!prods.length) return;
     foto.innerHTML = prods.map(p => {
@@ -1538,4 +1662,95 @@ function normDcto(raw){
   } catch(e){
     console.warn("No se pudo leer la pestaña testimonios; se muestran los del código.", e);
   }
+})();
+
+/* ============ BUSCADOR DEL MENÚ (celular) ============
+   En celular la lupa reemplaza a WhatsApp e Instagram del menú (tienda.css) y abre un panel con
+   los productos de la planilla (con un campo para filtrar). Al elegir uno, la página baja
+   suavemente hasta ese producto y su tarjeta se ilumina un momento. Si el cliente está en
+   Políticas o en la pestaña Planners, primero vuelve al catálogo. */
+(() => {
+  const btn = document.getElementById("navBuscar"), panel = document.getElementById("navPanel");
+  if (!btn || !panel) return;
+  const campo = panel.querySelector(".nav-panel__buscar"), lista = panel.querySelector(".nav-panel__lista");
+  const vacio = panel.querySelector(".nav-panel__vacio");
+  const waPanel = document.getElementById("waPanel");
+  if (waPanel) waPanel.href = `https://wa.me/${WHATSAPP}`;
+  const suave = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* "Vacunación" y "vacunacion" son lo mismo para el filtro */
+  const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+  function pintaLista(){
+    const q = norm(campo.value.trim());
+    const prods = CATALOGO.filter(p => p.vars.length && (!q || norm(p.n + " " + p.d).includes(q)));
+    lista.innerHTML = prods.map(p =>
+      `<li><button type="button" data-pid="${p.id}">${p.n}<span class="flecha" aria-hidden="true">›</span></button></li>`).join("");
+    vacio.hidden = prods.length > 0;
+  }
+  function abre(){
+    pintaLista();
+    panel.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+  }
+  function cierra(){
+    panel.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    campo.value = "";
+  }
+  btn.addEventListener("click", e => { e.stopPropagation(); panel.hidden ? abre() : cierra(); });
+  campo.addEventListener("input", pintaLista);
+  document.addEventListener("click", e => { if (!panel.hidden && !panel.contains(e.target)) cierra(); });
+  addEventListener("keydown", e => { if (e.key === "Escape" && !panel.hidden){ cierra(); btn.focus(); } });
+  /* los enlaces del pie (Planners, Políticas, Contacto) usan la navegación de siempre: solo se cierra el panel */
+  panel.querySelectorAll(".nav-panel__pie a").forEach(a => a.addEventListener("click", cierra));
+
+  /* lleva al producto: vuelve al catálogo si hace falta, espera a que termine el cambio de vista
+     y baja con desplazamiento suave */
+  function irAProducto(pid){
+    let espera = 0;
+    if (document.body.classList.contains("en-politicas")){ location.hash = "#productos"; espera = 700; }
+    const tab = document.getElementById("tabCatalogo");
+    if (tab && tab.getAttribute("aria-selected") !== "true"){ tab.click(); espera = Math.max(espera, 450); }
+    setTimeout(() => {
+      const sec = [...document.querySelectorAll("#listaProductos .prod")].find(s => s.dataset.pid === String(pid));
+      if (!sec) return;
+      desliza(sec, () => {
+        sec.classList.remove("destacado"); void sec.offsetWidth; sec.classList.add("destacado");
+        setTimeout(() => sec.classList.remove("destacado"), 3000);
+      });
+    }, espera);
+  }
+
+  /* Desplazamiento propio, más lento y parejo que el "smooth" del navegador: arranca y frena
+     despacio (curva de aceleración suave) y dura más mientras más lejos esté el producto.
+     El destino se recalcula en cada cuadro, así que aunque se carguen fotos y la página se
+     alargue durante el viaje, llega justo bajo el menú sin saltos de corrección.
+     Si la persona toca o mueve la pantalla, se detiene y no le pelea el control. */
+  function desliza(sec, alTerminar){
+    const MARGEN = 96;                                     /* = scroll-margin-top de .prod */
+    const destino = () => scrollY + sec.getBoundingClientRect().top - MARGEN;
+    if (!suave){ scrollTo({ top: destino(), behavior: "instant" }); alTerminar(); return; }
+    const ini = scrollY, dist = Math.abs(destino() - ini);
+    const dur = Math.min(2400, Math.max(1100, 700 + dist * 0.3));
+    const curva = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    let t0 = null, cortado = false;
+    const corta = () => { cortado = true; };
+    const evs = ["touchstart", "wheel", "keydown"];
+    evs.forEach(ev => addEventListener(ev, corta, { passive: true, once: true }));
+    const fin = () => evs.forEach(ev => removeEventListener(ev, corta));
+    requestAnimationFrame(function paso(ahora){
+      if (cortado){ fin(); return; }
+      if (t0 === null) t0 = ahora;
+      const t = Math.min(1, (ahora - t0) / dur);
+      scrollTo({ top: ini + (destino() - ini) * curva(t), behavior: "instant" });
+      if (t < 1) requestAnimationFrame(paso);
+      else { fin(); alTerminar(); }
+    });
+  }
+  lista.addEventListener("click", e => {
+    const b = e.target.closest("button[data-pid]");
+    if (!b) return;
+    cierra();
+    irAProducto(b.dataset.pid);
+  });
 })();

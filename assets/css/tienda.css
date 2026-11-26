@@ -70,7 +70,50 @@ nav a.ig-btn .ic{width:20px;height:20px}
 nav a.ig-btn:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
 /* tablets: los 4 enlaces se compactan; bajo 760px se esconden (no caben) */
 @media(max-width:900px){nav a.link{padding:9px 9px;font-size:13px}}
-@media(max-width:760px){nav a.link{display:none}}
+@media(max-width:700px){nav a.link{display:none}}
+
+/* ---------- Buscador del menú: lupa + panel con los productos ----------
+   En todos los tamaños la lupa reemplaza a WhatsApp e Instagram (que quedan dentro del panel). */
+nav a.wa,nav a.ig-btn{display:none}
+.nav-buscar{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;margin-left:8px;border-radius:50%;background:var(--btn-celeste);
+  border:2px solid var(--ink);color:#fff;box-shadow:3px 3px 0 var(--ink);cursor:pointer;transition:.15s;padding:0}
+.nav-buscar svg{width:21px;height:21px}
+.nav-buscar[aria-expanded="true"]{background:var(--btn-lila);transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+/* sin los enlaces, el menú es una píldora compacta (logo + lupa): en tablet o ventana
+   angosta ya no se estira a todo el ancho dejando una franja blanca vacía */
+@media(max-width:700px){
+  nav{width:min(94vw,400px)}
+  .nav-buscar{margin-left:auto}
+}
+.nav-panel{position:fixed;z-index:99;top:84px;left:50%;width:min(94vw,440px);transform:translateX(-50%);max-height:calc(100svh - 110px);overflow:auto;
+  background:#fff;border:3px solid var(--ink);border-radius:26px;box-shadow:6px 6px 0 rgba(63,60,102,.9);padding:14px;
+  animation:panelEntra .25s cubic-bezier(.2,.8,.3,1)}
+.nav-panel[hidden]{display:none}
+@keyframes panelEntra{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+.nav-panel__buscar{width:100%;font:inherit;font-size:16px;color:var(--ink);padding:11px 16px;border:2.5px solid var(--ink);border-radius:999px;
+  background:#f6f4ff;outline:none}
+.nav-panel__buscar:focus{border-color:var(--celeste-deep);background:#fff}
+.nav-panel__lista{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column}
+.nav-panel__lista button{width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border:0;border-bottom:2px dashed rgba(63,60,102,.13);
+  background:none;font:inherit;font-weight:700;font-size:15px;color:var(--ink);text-align:left;cursor:pointer;border-radius:14px}
+.nav-panel__lista li:last-child button{border-bottom:0}
+.nav-panel__lista button:active,.nav-panel__lista button:hover{background:#eef8fd}
+.nav-panel__lista .flecha{margin-left:auto;color:var(--ink-soft);font-size:18px}
+.nav-panel__vacio{margin:12px 6px 4px;font-size:14px;color:var(--ink-soft);text-align:center}
+.nav-panel__vacio[hidden]{display:none}
+.nav-panel__pie{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px;padding-top:12px;border-top:2px dashed rgba(63,60,102,.18)}
+.nav-panel__pie a{font-family:'Neulis',sans-serif;font-weight:800;font-size:13px;color:var(--ink);text-decoration:none;padding:6px 12px;
+  border:2px solid var(--ink);border-radius:999px;background:#fff}
+.nav-panel__redes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.nav-panel__redes a{display:flex;align-items:center;justify-content:center;gap:7px;font-family:'Neulis',sans-serif;font-weight:800;font-size:14px;
+  color:#fff;text-decoration:none;padding:10px;border:2.5px solid var(--ink);border-radius:999px;box-shadow:3px 3px 0 var(--ink)}
+.nav-panel__redes .wa{background:var(--btn-celeste)}
+.nav-panel__redes .ig{background:var(--btn-lila)}
+/* producto elegido desde el buscador: su tarjeta se ilumina un momento */
+@keyframes prodDestaca{0%{outline-color:rgba(108,218,244,0);outline-offset:2px}40%{outline-color:rgba(108,218,244,.95);outline-offset:8px}100%{outline-color:rgba(108,218,244,0);outline-offset:14px}}
+.prod.destacado .tarjeta{outline:4px solid transparent;animation:prodDestaca 1.3s ease 2}
+.prod{scroll-margin-top:96px}
+@media (prefers-reduced-motion: reduce){.nav-panel{animation:none}.prod.destacado .tarjeta{animation:none;outline:4px solid var(--celeste)}}
 @media(max-width:640px){
 nav{padding:6px 7px;gap:2px}
 nav .brand{font-size:17px;padding:0 7px}
@@ -268,6 +311,10 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
   .mat i{align-self:start;padding-left:0;border-left:0;text-align:left;
          white-space:normal;text-overflow:clip;line-height:1.25}
   .mat b:last-child,.mat .ico + i{grid-row:1 / 3;align-self:center}   /* si solo hay título o solo descripción */
+  /* sin ícono: título arriba y descripción abajo, a todo el ancho (antes el título quedaba
+     metido en la columna de 32px del ícono y se montaba sobre la descripción) */
+  .mat.sin-ico{grid-template-columns:minmax(0,1fr);padding:7px 16px}
+  .mat.sin-ico b,.mat.sin-ico i{grid-row:auto;align-self:auto}
 }
 
 /* el botón de detalle ahora vive bajo la foto */
@@ -323,7 +370,7 @@ nav a.ig-btn{width:36px;height:36px;margin-left:4px}}
 /* ============ CONTACTO (alineado) ============ */
 #contacto{padding:50px 20px 120px}
 .contact-sticker{max-width:760px;margin:0 auto;text-align:center;background:#fff;border:4px solid var(--ink);border-radius:46px;padding:clamp(36px,6vw,64px);box-shadow:12px 12px 0 var(--celeste),24px 24px 0 rgba(205,185,249,.6);position:relative}
-.contact-sticker .pin{position:absolute;top:-24px;right:34px;background:var(--rosa);border:3px solid var(--ink);font-weight:800;font-size:14px;padding:7px 18px;border-radius:var(--r-pill);box-shadow:4px 4px 0 var(--ink)}
+.contact-sticker .pin{position:absolute;top:-24px;right:34px;background:var(--lila);   /* lila como el resto de la tienda (el rosado queda para Planners) */border:3px solid var(--ink);font-weight:800;font-size:14px;padding:7px 18px;border-radius:var(--r-pill);box-shadow:4px 4px 0 var(--ink)}
 .contact-sticker h2{font-size:clamp(30px,5vw,48px);font-weight:900;color:var(--ink);margin-bottom:8px}
 .contact-sticker h2 b{color:var(--lila-deep)}
 .contact-sticker p{font-weight:600;color:var(--ink-soft);margin-bottom:26px}
@@ -495,11 +542,27 @@ body[data-vista="planners"] #testimonios,#testimonios[hidden]{display:none}   /*
 .testi-dots[hidden]{display:none}   /* con un solo testimonio */
 .testi-dot{width:13px;height:13px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;cursor:pointer;transition:.15s;padding:0}
 .testi-dot.on{background:var(--lila-deep)}
+/* celular: la foto arriba y más compacta; encabezado ordenado (inicial a la izquierda, nombre,
+   origen y "Pedido real" a su lado); globos, respuesta y bordes con medidas de celular */
 @media(max-width:720px){
-  .testi-slide,.testi-slide.izq{flex-direction:column-reverse;align-items:stretch}   /* en celular la foto va arriba */
-  .testi-pola{align-self:center;width:min(250px,72%)}
-  .testi-real{margin-left:0}
-  .testi-resp{max-width:none}
+  .testi-box{border-radius:32px;box-shadow:8px 8px 0 var(--lila),16px 16px 0 rgba(108,218,244,.5)}
+  .testi-slide,.testi-slide.izq{flex-direction:column-reverse;align-items:stretch;gap:24px;padding:30px 18px 58px}
+  .testi-pola,.testi-slide.izq .testi-pola{align-self:center;width:min(210px,64%);padding:10px 10px 46px;transform:rotate(2.5deg);box-shadow:7px 7px 0 var(--lila)}
+  .testi-slide.izq .testi-pola{transform:rotate(-2.5deg)}
+  .testi-pola figcaption{bottom:5px;height:38px;font-size:13.5px}
+  .testi-chat{gap:10px}
+  .testi-cab{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;row-gap:6px;align-items:center;margin-bottom:2px}
+  .testi-ava{width:44px;height:44px;font-size:19px;grid-row:span 2}
+  .testi-cab .nombre{font-size:15.5px}
+  .testi-cab .testi-ig{font-size:12.5px}
+  .testi-real{grid-column:2;justify-self:start;margin-left:0;padding:3px 10px;font-size:11.5px}
+  .testi-burbuja{max-width:100%;padding:11px 15px;font-size:15px;line-height:1.45;box-shadow:4px 4px 0 var(--celeste)}
+  .testi-stars{font-size:15px;margin:0 0 0 4px}
+  .testi-resp{max-width:none;gap:8px}
+  .testi-resp p{padding:10px 15px;font-size:14.5px;box-shadow:-4px 4px 0 var(--lila)}
+  .testi-hg{width:34px;height:34px}
+  .testi-hg svg{width:21px;height:18px}
+  .testi-dots{bottom:20px}
 }
 
 
@@ -542,8 +605,10 @@ body.en-politicas .nav-volver{display:inline-block !important}
 .pol-sec p:last-child{margin-bottom:0}
 .pol-sec b{font-family:'Neulis',sans-serif;font-weight:700}
 .pol-sec ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin:0 0 14px}
-.pol-sec ul li{position:relative;padding-left:25px;font-size:15px}
-.pol-sec ul li::before{content:"";position:absolute;left:0;top:8px;width:11px;height:11px;border-radius:50%;background:var(--celeste);border:2.5px solid var(--ink)}
+/* el círculo va centrado con la PRIMERA línea del punto: alto de línea fijo (1.5) y el círculo
+   a media línea (.75em) menos la mitad de su tamaño (5.5px) */
+.pol-sec ul li{position:relative;padding-left:25px;font-size:15px;line-height:1.5}
+.pol-sec ul li::before{content:"";position:absolute;left:0;top:calc(.75em - 5.5px);width:11px;height:11px;border-radius:50%;background:var(--celeste);border:2.5px solid var(--ink)}
 .pol-sec ul.lila li::before{background:var(--lila)}
 .pol-nota{background:#f4f1ff;border:3px solid var(--ink);border-radius:20px;padding:16px 20px;font-size:14px;display:flex;gap:12px;align-items:flex-start;margin-top:6px}
 .pol-nota .pol-ico{flex:0 0 auto;font-size:20px;line-height:1.3}
@@ -766,4 +831,23 @@ body.cargando-planners .pl-prod .pedir,body.cargando-planners .pl-prod .add-cart
 @media(prefers-reduced-motion:reduce){
   .hg-cinta__pista{animation:none}
   .hg-btn,.hg-card__img .hg-slide{transition:none}
+}
+
+/* ============ BLACK FRIDAY sobre la entrada salud (clase .hg-bf, la pone tienda.js entre BF_INICIO y BF_FIN) ============
+   Mismos colores de siempre (morado oscuro, celeste y lila): etiqueta con las fechas, título
+   "OFERTAS / BLACK FRIDAY" (en una sola línea) y contador. */
+.hg-bf-chip[hidden],.hg-bf-reloj[hidden]{display:none}
+.hg-bf-chip{font-weight:800;font-size:14px;color:var(--hg-navy);background:#fff;border:2px solid var(--hg-navy);border-radius:999px;
+  padding:6px 14px;box-shadow:3px 3px 0 var(--hg-cian-cinta)}
+/* "BLACK FRIDAY" no se parte: un poco más chico que "BUENA IMPRESIÓN" para que quepa en una línea */
+.hg-titulo__bf{white-space:nowrap;font-size:clamp(34px,5.2vw,80px)}
+.hg-bf-reloj{display:flex;gap:8px}
+.hg-bf-reloj div{min-width:58px;padding:7px 6px 6px;border-radius:12px;background:#fff;border:3px solid var(--hg-navy);
+  box-shadow:4px 4px 0 var(--hg-lila-cinta);text-align:center;line-height:1}
+.hg-bf-reloj b{display:block;font-size:22px;font-weight:900;color:var(--hg-navy);font-variant-numeric:tabular-nums}
+.hg-bf-reloj small{display:block;margin-top:4px;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--hg-texto-sec);text-transform:uppercase}
+@media(max-width:760px){
+  .hg-bf-chip{font-size:13px}
+  .hg-titulo__bf{font-size:clamp(34px,10.4vw,64px)}
+  .hg-bf-reloj div{min-width:0;flex:1}
 }
